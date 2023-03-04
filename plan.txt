@@ -1,0 +1,182 @@
+---------------------------------------------------------------------------
+BigCity
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+Alap feladat (2 pont):
+    Idő:
+        Milyen gyorasan telik alapból?
+        Mennyire lehessen gyórsítani? (3 különböző sebesség + szüneteltetés)
+    ---------------------------------------------------------------------------
+    Bevétel:
+        Éves adó. Változtatható.
+            Százalékos érték?
+                pl.: bevétel=polgár_bevétele*adó, bevétel=12324*0.3
+                pl.: 0.1-ig elégedettek, és fölötte egyre elégedetlenebbek
+                
+                /* //Amennyiben van oktatás (részfeladat) jobb a százalékos számolás,
+                 //mert különbözne az egyes polgárok bevétele.
+                (A felhasználónak talán jobban tetszene ha százalékos értéket látna 
+                és változtana. Nem az látja, hogy kap 1234$-t ipari, 234$-t szolgáltatási
+                dolgozók után, hanem csak 30% mindenki után.)
+            Fix összeg?
+                pl.: Ipari dolgozó után x, szolgáltatásban dolgozó után y bevétel.
+                Az x és y változtatható és vannak határok, hogy mennyitől elégedetlenek.
+                (Nincs double!)
+                */
+
+            Lehessen netán zónánként változtatni?
+        Adott zónán a bejövő adó függ az ott dolgozók számátol. (0, ha nincs munkás)
+        Hitel:
+            Többet keljen vissza fizetni?
+    ---------------------------------------------------------------------------
+    Költségvetési oldal:
+        Jelenlegi fenntartási dijak láthatók. Éves?
+            Csalás: Amennyiben, csak év végén számoljuk ki, akkor lehet a felhasználó 
+            az év vége fele elad minden ilyen építményt.
+        Várható éves adó?
+            Csalás: Amennyiben, az év végén hirtelen megnő a dolgozók száma és
+            az év végén számoljuk ki a bevételt.
+        Az adót inkább folyamatosan kéne számolni (havi?) és az év végén kapja meg
+        a felhasználó.
+    ---------------------------------------------------------------------------
+    Zónák:
+        A polgárok autómatikusan építkeznek, amennyiben legalább az egyik 
+        oldalát út határolja.
+        A játékos, csak a zóna kijelölésének a költségét fizeti.
+        Minden zónán van max kapacitás. Mennyi?
+        Minden polgár dolgozik valahol. Úton elérhető az ipari/szolgáltatási
+        zóna a lakó zónától.
+        Amennyiben a polgárok még nem építettek a zónán, akkor vissza lehet
+        minősíteni a területet semlegesre. Az építési költség egy része 
+        visszajár. Mennyi %? Polgárok által épített dolgokat nem lehet 
+        lebontani.(részfeladat) 
+        Polgárok 50%-a ipari, 50%-a szolgáltatási zónán dolgozik, ha
+        mindkettő elérhető. (Nem alap feladat: -nyugdíjasok, -diákok)
+        Zónák kijelölése.:
+            info:
+                kapacitás
+                telítettség
+                Eggyes polgárok elégedettségi szintje, vagy átlagos elégedettségi szint?
+        Lakó Zóna:
+        Ipari Zóna:
+        Szolgáltatási Zóna:
+    ---------------------------------------------------------------------------
+    Kiszolgáló épületek:
+        Játékos építi.
+        Nagy költség. Játékos fizeti. Mennyi?
+        Éves fenntartási díj. Játékos fizeti. Mennyi?
+        Lebontható. Az építési költség egy része visszajár. Mennyi %?
+        Rendőrség:
+            Addott sugaron belül a közbiztonság garantált, ha úton elérhető. 
+            Hány mezőnyi távolságban?
+        Stadion:
+            2x2-es mező.
+            Addott sugaron belüli lakó vagy dolgozó polgárok elégedettségét
+            növeli, ha úton elérhető az adott épület. Hány mezőnyi távolságban?
+        Utak:
+            bontás:
+                Két zónát köt össze(lakó---ipari/szolgáltatási), amelyeken 
+                már épült valami.: Bontás tiltása!
+    ---------------------------------------------------------------------------
+    Game Over:
+        Szumma elégedettségi szint kritikus. Mennyitől kritikus?
+    ---------------------------------------------------------------------------
+    Kezdő állapot:
+        Kezdő tőke. Mennyi?
+        Kezdó lakosság, ha van lakó zóna. Hány polgár jön biztosan az elején, 
+         ha már van lehetőség letelepedni? Kell hogy legyen úton elérhető 
+         munkahely a kezdő polgárok jöveteléhez? A kezdő polgárok maradnak, 
+         ha elégedetlenek?
+    ---------------------------------------------------------------------------
+    Grafika:
+        2D
+        kép:
+            Mekkora legyen az alapegység? Hány px?
+            üres mező: min 1db 
+            lakó zóna: min 2db (Házak száma különbözik, telítettség függvényében.)
+            ipari zóna: min 2db (Nagyobb épület és kapacitás?)
+            szolgáltatási zóna: min 2db (Nagyobb épület és kapacitás?)
+    ---------------------------------------------------------------------------
+    Polgár:
+        elégedettségi szint (0%-100% ? Mennyitől elégedetlen, elégedett?):
+            növeli:
+                Alacsony adó. Mennyi az alacsony?
+                Közeli munkahely. Hány mezőnyi távolság számít közelinek?
+                Fix távolság, vagy minél közolabbi, annál jobban nő az elégedetség?
+                Nincs közeli ipari terület. Hány mezőnyi távolság számít közelinek?
+                Közbiztonság a munkahelyen és a lakhelyen. Lakosság növekedésével
+                arányosan csökken a közbiztonság. Mindenhol csökken? Csak ott csökken,
+                ahol sokan laknak, dolgoznak? Egy bizonyos sugarú környezetben csökken
+                a közbiztonság, a nagy létszámú mezők körül?              
+            csökkenti:
+                Magas adó. Mennyi?
+                Távoli munkahely. Hány mezőnyi távolságtó számít távolinak?
+                Fix távolság, vagy minél távolabbi, annál jobban csökken az elégedetség?
+                Van közeli ipari terület. Hány mezőnyi távolság számít közelinek?
+                Rossz közbiztonság.
+                Az éves bevétel negatív. Évente változhat ez a faktor.
+                    Jobban csökkenti az elégedettségi szintet, ha.:
+                        Több éve zsinorban negatív a bevétel.
+                        Minnél nagyobb a szumma negatív érték a számlán.
+                Kiegyensúlyozatlan a városban a szolgáltatások és az ipari termelés aránya.
+                    Több adó jön az ipari, vagy a a szolgáltatási területekről?
+                    Többen dolgoznak az ipari, vagy a szolgáltatási épületekben?
+        Elégedetlen polgárok elköltöznek.
+        munkahely (Amennyiben a lahóhelytől úton elérhető.)
+            Legyen elégedetlen, ha nincs munkahelye?
+        lakhely
+        kor (részfeladat)
+        polgárok érkezését pozitívan befolyásolja:
+            Polgárok elégedettségi szintje.
+            pl.: sum(elégedettségi_szint)/polgárok_db*max_elégedettségi_szint
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+Részfeladatok (Minimum 3 pont kell!):
+    rangsor (Fent a legkönnyebb):
+        Metropolis [0.5 pont]
+        Perzisztencia [0.5 pont]
+            //Mindenkép kéne (nem JUnit) tesztelés szempontjából.
+        Oktatás [1 pont]
+        Nyugdíj [0.5 pont]
+        Konfliktusos bontás [0.5 pont]
+            //Az utak miat úgyis kell egy olyan algoritmus, ami megmondja, 
+            // hogy a lakóháztól elérhető-e a munkahely.
+        ---------------------------------------------------------------------------
+        Katasztrófa [0.5 pont]
+            //A vizuális hatás miatt talán nem olyan egyszerű.
+            //Talán egy egyszerű animation.:
+                //Felrobban egy épület. (Csak képek cseréje helyben. Nincs Mozgás)
+        Erdők [0.5 pont]
+        Áramellátás [1 pont]
+        Haladóbb grafika [0.5 pont]
+            //2.5D
+            //Lehetséges megoldás:
+                //Megfelelő sorrendben rajzoljuk ki az egyes elemeket, így
+                // biztosítva a megfelelő sorrendet a fedéseknél.
+                //Felülröl haladunk lefelé. (Az első sort rajzoljuk először.)
+        Járművek [1 pont]
+        Tűzoltóság [1 pont]
+        Haladóbb grafika [1 pont]
+            //3D
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+Legfontosabb kérdések:
+    Melyik részfeladatokat csináljuk meg biztosan?
+    Class, UseCase diagram és sok kis Mockup kell. Ki melyiket csinálja
+     eggyeztetve a többiekkel?
+---------------------------------------------------------------------------
+Metropolis [0.5 pont]
+Katasztrófa [0.5 pont]
+Perzisztencia [0.5 pont]
+Oktatás [1 pont]
+Konfliktusos bontás [0.5 pont]
+-------------------------------------------------------------------
+Nyugdíj [0.5 pont]
+Konfliktusos bontás [0.5 pont]
+Erdők [0.5 pont]
+Áramellátás [1 pont]
+Haladóbb grafika [0.5 pont]
+Járművek [1 pont]
+Tűzoltóság [1 pont]
+Haladóbb grafika [1 pont]
+---------------------------------------------------------------------------
