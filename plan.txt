@@ -134,18 +134,18 @@ Alap feladat (2 pont):
 Részfeladatok (Minimum 3 pont kell!):
     rangsor (Fent a legkönnyebb):
         Metropolis [0.5 pont]
-        Perzisztencia [0.5 pont]
-            //Mindenkép kéne (nem JUnit) tesztelés szempontjából.
-        Oktatás [1 pont]
-        Nyugdíj [0.5 pont]
-        Konfliktusos bontás [0.5 pont]
-            //Az utak miat úgyis kell egy olyan algoritmus, ami megmondja, 
-            // hogy a lakóháztól elérhető-e a munkahely.
-        ---------------------------------------------------------------------------
         Katasztrófa [0.5 pont]
             //A vizuális hatás miatt talán nem olyan egyszerű.
             //Talán egy egyszerű animation.:
                 //Felrobban egy épület. (Csak képek cseréje helyben. Nincs Mozgás)
+        Perzisztencia [0.5 pont]
+            //Mindenkép kéne (nem JUnit) tesztelés szempontjából.
+        Oktatás [1 pont]
+        Konfliktusos bontás [0.5 pont]
+            //Az utak miat úgyis kell egy olyan algoritmus, ami megmondja, 
+            // hogy a lakóháztól elérhető-e a munkahely.
+        ---------------------------------------------------------------------------
+        Nyugdíj [0.5 pont]
         Erdők [0.5 pont]
         Áramellátás [1 pont]
         Haladóbb grafika [0.5 pont]
@@ -162,21 +162,27 @@ Részfeladatok (Minimum 3 pont kell!):
 ---------------------------------------------------------------------------
 Legfontosabb kérdések:
     Melyik részfeladatokat csináljuk meg biztosan?
+        (done)
     Class, UseCase diagram és sok kis Mockup kell. Ki melyiket csinálja
      eggyeztetve a többiekkel?
+        Mockup: Norbi
+        Class diagram: Attila
+        UseCase diagram: Máté
+        Felhasználói történetek: Mindenki, egyenlően elosztva. (kb. 10+/fő)
 ---------------------------------------------------------------------------
-Metropolis [0.5 pont]
-Katasztrófa [0.5 pont]
-Perzisztencia [0.5 pont]
-Oktatás [1 pont]
-Konfliktusos bontás [0.5 pont]
+Tervezett minimum 3 pont:
+    Metropolis [0.5 pont]
+    Katasztrófa [0.5 pont]
+    Perzisztencia [0.5 pont]
+    Oktatás [1 pont]
+    Konfliktusos bontás [0.5 pont]
 -------------------------------------------------------------------
-Nyugdíj [0.5 pont]
-Konfliktusos bontás [0.5 pont]
-Erdők [0.5 pont]
-Áramellátás [1 pont]
-Haladóbb grafika [0.5 pont]
-Járművek [1 pont]
-Tűzoltóság [1 pont]
-Haladóbb grafika [1 pont]
+Ha lesz idő:
+    Nyugdíj [0.5 pont]
+    Erdők [0.5 pont]
+    Áramellátás [1 pont]
+    Haladóbb grafika [0.5 pont]
+    Járművek [1 pont]
+    Tűzoltóság [1 pont]
+    Haladóbb grafika [1 pont]
 ---------------------------------------------------------------------------
