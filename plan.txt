@@ -132,7 +132,6 @@ Alap feladat (2 pont):
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 Részfeladatok (Minimum 3 pont kell!):
-    rangsor (Fent a legkönnyebb):
         Metropolis [0.5 pont]
         Katasztrófa [0.5 pont]
             //A vizuális hatás miatt talán nem olyan egyszerű.
@@ -144,7 +143,6 @@ Részfeladatok (Minimum 3 pont kell!):
         Konfliktusos bontás [0.5 pont]
             //Az utak miat úgyis kell egy olyan algoritmus, ami megmondja, 
             // hogy a lakóháztól elérhető-e a munkahely.
-        ---------------------------------------------------------------------------
         Nyugdíj [0.5 pont]
         Erdők [0.5 pont]
         Áramellátás [1 pont]
