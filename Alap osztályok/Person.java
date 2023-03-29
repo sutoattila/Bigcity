@@ -1,9 +1,5 @@
 package bigcity;
 
-/**
- *
- * @author Sütő Attila
- */
 public class Person {
     protected String name;
     protected  int age;
