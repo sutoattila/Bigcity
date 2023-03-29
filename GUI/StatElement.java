@@ -1,5 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
+
 public class StatElement extends JPanel {
     int x;
     int y;
