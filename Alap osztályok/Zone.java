@@ -2,10 +2,6 @@ package bigcity;
 
 import java.util.ArrayList;
 
-/**
- *
- * @author Sütő Attila
- */
 public abstract class Zone {
     protected int width;
     protected int height;
