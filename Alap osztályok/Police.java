@@ -2,10 +2,6 @@ package bigcity;
 
 import java.util.ArrayList;
 
-/**
- *
- * @author Sütő Attila
- */
 public class Police extends PublicZone {
     
     protected ArrayList<Field> securedFields;
