@@ -1,9 +1,5 @@
 package bigcity;
 
-/**
- *
- * @author Sütő Attila
- */
 public class Field {
     protected int rowIndex;
     protected int columnIndex;
