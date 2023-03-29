@@ -1,9 +1,5 @@
 package bigcity;
 
-/**
- *
- * @author Sütő Attila
- */
 public class University extends School {
     
     @Override
