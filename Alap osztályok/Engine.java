@@ -1,9 +1,5 @@
 package bigcity;
 
-/**
- *
- * @author Sütő Attila
- */
 public class Engine {
     protected int money;
     protected double combinedHappiness;
