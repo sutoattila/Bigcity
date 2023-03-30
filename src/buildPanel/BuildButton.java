@@ -37,14 +37,14 @@ public class BuildButton extends JButton {
         btnPanel.setOpaque(false);
         JLabel priceLabel = new JLabel(price + "$");
         priceLabel.setForeground(Color.green);
-        btnPanel.add(BorderLayout.LINE_START, new JLabel(name+" "));
-        btnPanel.add(BorderLayout.LINE_END, priceLabel);
+        btnPanel.add(new JLabel(name+" "), BorderLayout.LINE_START);
+        btnPanel.add(priceLabel, BorderLayout.LINE_END);
 
-        JLabel tmp = new JLabel(new ImageIcon(url));
+        JLabel tmp = new JLabel(new ImageIcon(res.ResourceLoader.scaleImage(32, 32, url)));
         tmp.setBorder(new CompoundBorder(tmp.getBorder(), 
         new EmptyBorder(0,0,0,10)));
-        this.add(BorderLayout.LINE_START, tmp);
-        this.add(BorderLayout.CENTER, btnPanel);
+        this.add(tmp,BorderLayout.LINE_START);
+        this.add(btnPanel, BorderLayout.CENTER);
         this.addActionListener(new changeSelected());
     }
 
