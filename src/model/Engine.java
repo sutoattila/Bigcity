@@ -11,7 +11,7 @@ public class Engine {
     private int width;
     private int height;
 
-    private CursorSignal cursorSignal;
+    private static CursorSignal cursorSignal = CursorSignal.SELECT;
 
     private BufferedImage img;
 
@@ -28,15 +28,14 @@ public class Engine {
                 grid[row][column] = null;
             }
         }
-        cursorSignal = CursorSignal.SELECT;
     }
 
     public Zone getCell(int row, int column) {
         return grid[row][column];
     }
 
-    public void setCursorSignal(CursorSignal cursorSignal) {
-        this.cursorSignal = cursorSignal;
+    public static void setCursorSignal(CursorSignal signal) {
+        cursorSignal = signal;
     }
 
     //Returns true if successfully built a zone.
