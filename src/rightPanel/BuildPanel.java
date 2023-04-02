@@ -1,17 +1,10 @@
-package buildPanel;
+package rightPanel;
 
 import javax.swing.JPanel;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import model.CursorSignal;
-import model.Engine;
 
-/**
- * @author mihalkonorbi
- */
 public class BuildPanel extends JPanel {
     public static BuildButton selected = null;
     

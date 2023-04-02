@@ -1,10 +1,11 @@
 package bigcity;
 
 public class Person {
+
     protected String name;
-    protected  int age;
+    protected int age;
     protected int hapiness;
-    protected int educationLevel;
+    protected EducationLevel educationLevel;
     protected Zone home;
     protected Zone job;
 
@@ -20,55 +21,59 @@ public class Person {
         return hapiness;
     }
 
-    public int getEducationLevel() {
+    public EducationLevel getEducationLevel() {
         return educationLevel;
     }
-    
-    public int changeHappinessBy(int value){
-        hapiness+=value;
+
+    public int changeHappinessBy(int value) {
+        hapiness += value;
         return hapiness;
     }
-    
-    public int educate(){
-        return educationLevel*2;
-    } 
-    
-    public int growOlder(){
-        age+=1;
+
+    public void educate() {
+        if (EducationLevel.UNIVERSITY == educationLevel) {
+            return;
+        }
+        if (EducationLevel.HIGH_SCHOOL == educationLevel) {
+            educationLevel = EducationLevel.UNIVERSITY;
+            return;
+        }
+        if (EducationLevel.PRIMARY_SCHOOL == educationLevel) {
+            educationLevel = EducationLevel.HIGH_SCHOOL;
+            return;
+        }
+    }
+
+    public int growOlder() {
+        age += 1;
         return age;
     }
 
-    public Person(String name) {
-        //TODO
+    public Person(String name, int age, int hapiness,
+            EducationLevel educationLevel, Zone home, Zone job) {
         this.name = name;
-        this.educationLevel = 1;
-    }
-
-    public Person(String name, int age, int hapiness, int educationLevel, Zone home, Zone job) {
-        this.name = name;
+        //Min 18.
         this.age = age;
         this.hapiness = hapiness;
         this.educationLevel = educationLevel;
         this.home = home;
         this.job = job;
     }
-    
-    public Zone findJob(){
+
+    public void findJob() {
         //TODO
-        return new Industry();
     }
-    
-    public Zone findHome(){
+
+    public void findHome() {
         //TODO
-        return new Residence();
     }
-    
-    public void die(){
-        age=18;
-        educationLevel=1;
+
+    public void die() {
+        age = 18;
+        educationLevel = EducationLevel.PRIMARY_SCHOOL;
     }
-    
-    public void moveFromTown(){
+
+    public void moveFromTown() {
         //TODO
     }
 }

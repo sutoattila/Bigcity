@@ -1,16 +1,19 @@
 package bigcity;
 
-import java.util.ArrayList;
+import res.Assets;
 
 public class Stadium extends PublicZone {
-    
-    protected ArrayList<Field> nearbyFields;
-            
+
     @Override
-    public int upgrade(){
+    public int upgrade() {
         return 1;
     }
 
-    public Stadium() {
+    public Stadium(int topLeftX, int topLeftY, int maintenanceCost) {
+        this.topLeftX = topLeftX;
+        this.topLeftY = topLeftY;
+        level = 1;
+        img = Assets.stadium;
+        this.maintenanceCost = maintenanceCost;
     }
 }

@@ -1,5 +1,6 @@
 package view;
 
+import bigcity.Zone;
 import grid.Grid;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -15,8 +16,9 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import model.CursorSignal;
 import model.Engine;
 import res.Assets;
-import buildPanel.BuildPanel;
-import buildPanel.BuildButton;
+import rightPanel.BuildPanel;
+import rightPanel.BuildButton;
+import rightPanel.StatPanel;
 
 public class BigCityJframe extends JFrame {
 
@@ -47,15 +49,18 @@ public class BigCityJframe extends JFrame {
 
     Assets assets;
 
+    BuildPanel buildPanel;
+    StatPanel statPanel;
+
     public BigCityJframe() {
         super("BigCity");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-        
+
         int fieldSize = 100;
         int width = 5;
         int height = 5;
-        
+
         assets = new Assets();
 
         engine = new Engine(width, height);
@@ -66,7 +71,6 @@ public class BigCityJframe extends JFrame {
         add(topPanel, BorderLayout.NORTH);
 
         //TODO: nem volt kész a select gomb így azt ki kell javítani (XButton-ben)
-        
         BuildButton lakohely = new BuildButton("buildPanel/images/house.png", "Lakóhely", 50);
         BuildButton ipariTerulet = new BuildButton("buildPanel/images/factory.png", "Ipari terület", 50);
         BuildButton szolgaltatas = new BuildButton("buildPanel/images/store.png", "Szolgáltatás", 50);
@@ -75,7 +79,7 @@ public class BigCityJframe extends JFrame {
         BuildButton stadion = new BuildButton("buildPanel/images/stadium.png", "Stadion", 300);
         BuildButton iskola = new BuildButton("buildPanel/images/school.png", "Iskola", 300);
         BuildButton egyetem = new BuildButton("buildPanel/images/university.png", "Egyetem", 500);
-        
+
         lakohely.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -83,7 +87,7 @@ public class BigCityJframe extends JFrame {
                 engine.setImg(Assets.copperR);
             }
         });
-        
+
         ipariTerulet.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -91,7 +95,7 @@ public class BigCityJframe extends JFrame {
                 engine.setImg(Assets.copperI);
             }
         });
-        
+
         szolgaltatas.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -99,7 +103,7 @@ public class BigCityJframe extends JFrame {
                 engine.setImg(Assets.copperS);
             }
         });
-        
+
         ut.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -107,7 +111,7 @@ public class BigCityJframe extends JFrame {
                 engine.setImg(Assets.roadNS);
             }
         });
-        
+
         rendorseg.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -115,7 +119,7 @@ public class BigCityJframe extends JFrame {
                 engine.setImg(Assets.police);
             }
         });
-        
+
         stadion.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -123,7 +127,7 @@ public class BigCityJframe extends JFrame {
                 engine.setImg(Assets.stadium);
             }
         });
-        
+
         iskola.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -131,7 +135,7 @@ public class BigCityJframe extends JFrame {
                 engine.setImg(Assets.highSchool);
             }
         });
-        
+
         egyetem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -140,18 +144,17 @@ public class BigCityJframe extends JFrame {
             }
         });
 
-        BuildPanel buildPanel = new BuildPanel(
-            lakohely,
-            ipariTerulet,
-            szolgaltatas,
-            ut,
-            rendorseg,
-            stadion,
-            iskola,
-            egyetem
-            );
-        
-        
+        buildPanel = new BuildPanel(
+                lakohely,
+                ipariTerulet,
+                szolgaltatas,
+                ut,
+                rendorseg,
+                stadion,
+                iskola,
+                egyetem
+        );
+
         // IDEIGLENES GOMB -----------------------------------------------------
         destroyZone = new JButton("destroyZone");
         destroyZone.addActionListener(new ActionListener() {
@@ -161,9 +164,9 @@ public class BigCityJframe extends JFrame {
             }
         });
         buildPanel.add(destroyZone);
-        
-        /*TODO: Finish select mode first! Can be used only if an upgradable zone
-        //is selected. Appears on the new stat JPanel on the right if a zone is
+
+        /*TODO: Can be used only if an upgradable zone is selected. 
+        //Appears on the new stat JPanel on the right if a zone is
         //selected.
         upgrade = new JButton("upgrade");
         upgrade.addActionListener(new ActionListener() {
@@ -173,17 +176,37 @@ public class BigCityJframe extends JFrame {
             }
         });
          */
-        
-        // ---------------------------------------------------------------------
-        
         add(buildPanel, BorderLayout.EAST);
-        
-        grid = new Grid(fieldSize, width, height, engine);
+
+        grid = new Grid(fieldSize, width, height, engine, this);
         add(grid, BorderLayout.WEST);
+
+        statPanel = null;
 
         pack();
         setLocationRelativeTo(null);
         setResizable(false);
         setVisible(true);
+    }
+
+    public void changeRightPanelToStatPanel(Zone zone) {
+        remove(buildPanel);
+        if (null != statPanel) {
+            remove(statPanel);
+        }
+        statPanel = new StatPanel(zone, this);
+        add(statPanel, BorderLayout.EAST);
+        pack();
+        setLocationRelativeTo(null);
+    }
+
+    public void changeRightPanelToBuildPanel() {
+        //TODO (XButton in StatPanel wiil call this function.)
+        remove(statPanel);
+        statPanel = null;
+        add(buildPanel, BorderLayout.EAST);
+        pack();
+        setLocationRelativeTo(null);
+
     }
 }
