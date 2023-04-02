@@ -1,19 +1,36 @@
 package bigcity;
 
+import res.Assets;
+
 public class University extends School {
-    
+
     @Override
-    public int upgrade(){
+    public int upgrade() {
         //TODO
         return 1;
     }
-    
+
+    /**
+     * Gives university education if possible.
+     *
+     * @param person who gets educated
+     * @return true if the education was successful
+     */
     @Override
-    public void educate(Person person){
-        //TODO
+    public boolean educate(Person person) {
+        if (EducationLevel.HIGH_SCHOOL == person.getEducationLevel()) {
+            person.educate();
+            return true;
+        }
+        return false;
     }
 
-    public University() {
+    public University(int topLeftX, int topLeftY, int maintenanceCost) {
+        this.topLeftX = topLeftX;
+        this.topLeftY = topLeftY;
+        level = 1;
+        img = Assets.university;
+        this.maintenanceCost = maintenanceCost;
     }
-    
+
 }

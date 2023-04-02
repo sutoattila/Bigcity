@@ -1,7 +1,15 @@
 package model;
 
+import bigcity.HighSchool;
+import bigcity.Industry;
+import bigcity.Police;
+import bigcity.Residence;
+import bigcity.Road;
+import bigcity.Service;
+import bigcity.Stadium;
+import bigcity.University;
+import bigcity.Zone;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import res.Assets;
 
 public class Engine {
@@ -10,6 +18,13 @@ public class Engine {
 
     private int width;
     private int height;
+
+    private int money;
+    private double combinedHappiness;
+    private String date;
+    private int timeSpeed;
+    private int taxPercentage;
+    private String name;
 
     private static CursorSignal cursorSignal = CursorSignal.SELECT;
 
@@ -45,10 +60,38 @@ public class Engine {
         if (false == areaInsideGridAndFree(rowStart, rowEnd, columnStart, columnEnd)) {
             return false;
         }
-        Zone zone = new Zone(cursorSignal.getWidth(), cursorSignal.getHeight());
-        zone.setTopLeftX(columnStart * fieldSize);
-        zone.setTopLeftY(rowStart * fieldSize);
-        zone.setType(cursorSignal);
+
+        Zone zone = null;
+        int topLeftX = columnStart * fieldSize;
+        int topLeftY = rowStart * fieldSize;
+
+        if (CursorSignal.POLICE == cursorSignal) {
+            zone = new Police(topLeftX, topLeftY,
+                    cursorSignal.getPriceL1());
+        } else if (CursorSignal.STADIUM == cursorSignal) {
+            zone = new Stadium(topLeftX, topLeftY,
+                    cursorSignal.getPriceL1());
+        } else if (CursorSignal.HIGH_SCHOOL == cursorSignal) {
+            zone = new HighSchool(topLeftX, topLeftY,
+                    cursorSignal.getPriceL1());
+        } else if (CursorSignal.UNIVERSITY == cursorSignal) {
+            zone = new University(topLeftX, topLeftY,
+                    cursorSignal.getPriceL1());
+        } else if (CursorSignal.ROAD == cursorSignal) {
+            zone = new Road(topLeftX, topLeftY,
+                    cursorSignal.getPriceL1());
+        } else if (CursorSignal.RESIDENCE == cursorSignal) {
+            zone = new Residence(topLeftX, topLeftY,
+                    cursorSignal.getPriceL1());
+        } else if (CursorSignal.INDUSTRY == cursorSignal) {
+            zone = new Industry(topLeftX, topLeftY,
+                    cursorSignal.getPriceL1());
+        } else if (CursorSignal.SERVICE == cursorSignal) {
+            zone = new Service(topLeftX, topLeftY,
+                    cursorSignal.getPriceL1());
+        }
+
+        zone.setCursorSignal(cursorSignal);
         zone.setImg(img);
 
         for (int row = rowStart; row <= rowEnd; row++) {
@@ -56,30 +99,38 @@ public class Engine {
                 grid[row][column] = zone;
             }
         }
-        
-        //TODO: If cursorSignal is road, check neighboring fields. If necessary
-        //change the img of the new road and the neighboring roads.
+
         if (cursorSignal == CursorSignal.ROAD) {
-            //New road
+            //new road
             refreshImgOfRoad(zone, rowStart, columnStart);
-
-            //Up
-            refreshImgOfRoad(grid[rowStart - 1][columnStart], rowStart - 1,
-                    columnStart);
-            //Down
-            refreshImgOfRoad(grid[rowStart + 1][columnStart], rowStart + 1,
-                    columnStart);
-            //Right
-            refreshImgOfRoad(grid[rowStart][columnStart + 1], rowStart,
-                    columnStart + 1);
-            //Left
-            refreshImgOfRoad(grid[rowStart][columnStart - 1], rowStart,
-                    columnStart - 1);
-
+            //old roads
+            refreshRoadImgsAround(rowStart, columnStart);
         }
 
-        
         return true;
+    }
+
+    private void refreshRoadImgsAround(int row, int column) {
+        //Up
+        if (true == roadAndInsideGrid(row - 1, column)) {
+            refreshImgOfRoad(grid[row - 1][column], row - 1,
+                    column);
+        }
+        //Down
+        if (true == roadAndInsideGrid(row + 1, column)) {
+            refreshImgOfRoad(grid[row + 1][column], row + 1,
+                    column);
+        }
+        //Right
+        if (true == roadAndInsideGrid(row, column + 1)) {
+            refreshImgOfRoad(grid[row][column + 1], row,
+                    column + 1);
+        }
+        //Left
+        if (true == roadAndInsideGrid(row, column - 1)) {
+            refreshImgOfRoad(grid[row][column - 1], row,
+                    column - 1);
+        }
     }
 
     public CursorSignal getCursorSignal() {
@@ -110,60 +161,62 @@ public class Engine {
         if (null == target) {
             return false;
         }
-
+        CursorSignal targetSignal = target.getCursorSignal();
         int rowStart = target.getTopLeftY() / fieldSize;
-        int rowEnd = target.getTopLeftY() / fieldSize + target.getHeigth() - 1;
+        int rowEnd = target.getTopLeftY() / fieldSize
+                + target.getCursorSignal().getHeight() - 1;
         int columnStart = target.getTopLeftX() / fieldSize;
-        int columnEnd = target.getTopLeftX() / fieldSize + target.getWidth() - 1;
+        int columnEnd = target.getTopLeftX() / fieldSize
+                + target.getCursorSignal().getWidth() - 1;
         for (int row = rowStart; row <= rowEnd; row++) {
             for (int column = columnStart; column <= columnEnd; column++) {
                 grid[row][column] = null;
             }
         }
-
         target.destroy();
-
+        if (CursorSignal.ROAD == targetSignal) {
+            refreshRoadImgsAround(argRow, argColumn);
+        }
         return true;
     }
 
     public void upgradeZone(/*TODO*/) {
-        //TODO: Select mode (signal). -> Zone selected. In the class Gird check 
-        //whether it can be upgraded or not. Call this method if it can be 
-        //upgraded. -> Change the zone's img and level fields.
+        //TODO: Select mode (signal). -> Zone selected. Call this method if it
+        //can be upgraded. -> Change the zone's img and level fields.
+    }
+
+    private Boolean roadAndInsideGrid(int row, int column) {
+        if (row < 0 || height <= row || column < 0 || width <= column) {
+            return false;
+        }
+        if (null == grid[row][column]) {
+            return false;
+        }
+        if (CursorSignal.ROAD == grid[row][column].getCursorSignal()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void refreshImgOfRoad(Zone zone, int rowStart, int columnStart) {
         if (rowStart < 0 || height <= rowStart || columnStart < 0
-                || width <= columnStart || null == zone || zone.getType() != CursorSignal.ROAD) {
+                || width <= columnStart || null == zone || zone.getCursorSignal() != CursorSignal.ROAD) {
             return;
         }
-        
-        
-        //Build road at the edge of the grid: 
-        //java.lang.ArrayIndexOutOfBoundsException
-        boolean roadAbove
-                = null != grid[rowStart - 1][columnStart]
-                        ? (CursorSignal.ROAD == grid[rowStart - 1][columnStart].getType()
-                        ? true : false) : false;
-        boolean roadUnder
-                = null != grid[rowStart + 1][columnStart]
-                        ? (CursorSignal.ROAD == grid[rowStart + 1][columnStart].getType()
-                        ? true : false) : false;
-        boolean roadOnRight
-                = null != grid[rowStart][columnStart + 1]
-                        ? (CursorSignal.ROAD == grid[rowStart][columnStart + 1].getType()
-                        ? true : false) : false;
-        boolean roadOnLeft
-                = null != grid[rowStart][columnStart - 1]
-                        ? (CursorSignal.ROAD == grid[rowStart][columnStart - 1].getType()
-                        ? true : false) : false;
+
+        boolean roadAbove = roadAndInsideGrid(rowStart - 1, columnStart);
+        boolean roadUnder = roadAndInsideGrid(rowStart + 1, columnStart);
+        boolean roadOnRight = roadAndInsideGrid(rowStart, columnStart + 1);
+        boolean roadOnLeft = roadAndInsideGrid(rowStart, columnStart - 1);
+
         int roadsAroundCount = 0;
         roadsAroundCount += roadAbove ? 1 : 0;
         roadsAroundCount += roadUnder ? 1 : 0;
         roadsAroundCount += roadOnRight ? 1 : 0;
         roadsAroundCount += roadOnLeft ? 1 : 0;
         if (0 == roadsAroundCount) {
-            //Default road image stays. (NS)
+            zone.setImg(Assets.roadNS);
             return;
         }
         if (4 == roadsAroundCount) {
@@ -172,7 +225,7 @@ public class Engine {
         }
         if (1 == roadsAroundCount) {
             if (roadAbove || roadUnder) {
-                //Default road image stays. (NS)
+                zone.setImg(Assets.roadNS);
                 return;
             } else {
                 zone.setImg(Assets.roadEW);
@@ -197,9 +250,9 @@ public class Engine {
                 return;
             }
         } else {
-            //if (2 == roadsAroundCount) {
+            //if (2 == roadsAroundCount)
             if (roadAbove && roadUnder) {
-                //Default road image stays. (NS)
+                zone.setImg(Assets.roadNS);
                 return;
             }
             if (roadOnRight && roadOnLeft) {
@@ -224,5 +277,63 @@ public class Engine {
             }
 
         }
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public double getCombinedHappiness() {
+        return combinedHappiness;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public int getTimeSpeed() {
+        return timeSpeed;
+    }
+
+    public int getTaxPercentage() {
+        return taxPercentage;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int addMoney(int value) {
+        money += value;
+        return money;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void aDayPassed() {
+        //TODO
+    }
+
+    public void aMonthPassed() {
+        //TODO
+    }
+
+    public void aYearPassed() {
+        //TODO
+    }
+
+    public void setTaxPercentage(int taxPercentage) {
+        this.taxPercentage = taxPercentage;
+    }
+
+    public int calculateHappieness() {
+        //TODO
+        return 0;
+    }
+
+    public void collectTax() {
+        //TODO
     }
 }
