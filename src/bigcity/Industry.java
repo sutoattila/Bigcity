@@ -3,13 +3,7 @@ package bigcity;
 import java.util.ArrayList;
 import res.Assets;
 
-public class Industry extends PrivateZone {
-
-    @Override
-    public int upgrade() {
-        //TODO
-        return 1;
-    }
+public class Industry extends Workplace {
 
     public Industry(int topLeftX, int topLeftY, int capacity) {
         this.topLeftX = topLeftX;
@@ -18,7 +12,7 @@ public class Industry extends PrivateZone {
         this.capacity = capacity;
         level = 1;
         img = Assets.copperI;
-        people = new ArrayList<>();
+        workers = new ArrayList<>();
     }
 
 }

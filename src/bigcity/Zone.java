@@ -16,8 +16,6 @@ public abstract class Zone {
     protected BufferedImage img;
     protected CursorSignal cursorSignal;
 
-    protected ArrayList<Person> people;
-
     public CursorSignal getCursorSignal() {
         return cursorSignal;
     }
@@ -42,10 +40,6 @@ public abstract class Zone {
         return topLeftX;
     }
 
-    public ArrayList<Person> getPeople() {
-        return people;
-    }
-
     public int getSize() {
         return size;
     }
@@ -66,6 +60,4 @@ public abstract class Zone {
     public void destroy() {
         //TODO
     }
-
-    public abstract int upgrade();
 }
