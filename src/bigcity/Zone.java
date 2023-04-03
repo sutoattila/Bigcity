@@ -9,9 +9,8 @@ public abstract class Zone {
     protected int topLeftX;
     protected int topLeftY;
 
-    protected int size;
-    protected int capacity;
     protected int level;
+    protected int price;
 
     protected BufferedImage img;
     protected CursorSignal cursorSignal;
@@ -38,14 +37,6 @@ public abstract class Zone {
 
     public int getTopLeftX() {
         return topLeftX;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public int getCapacity() {
-        return capacity;
     }
 
     public int getLevel() {

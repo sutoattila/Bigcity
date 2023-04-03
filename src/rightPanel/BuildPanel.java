@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 
 public class BuildPanel extends JPanel {
     public static BuildButton selected = null;
@@ -54,5 +55,6 @@ public class BuildPanel extends JPanel {
             buildPanel.add(buildButton);
         }
         add(buildPanel);
+        setPreferredSize(new Dimension(170, 100));
     }
 }
