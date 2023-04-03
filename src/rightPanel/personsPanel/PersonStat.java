@@ -1,11 +1,10 @@
 package rightPanel.personsPanel;
 
+import static res.ResourceLoader.scaleImage;
 import bigcity.Person;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -16,8 +15,8 @@ import roundPanel.RoundedPanel;
 
 public class PersonStat extends RoundedPanel {
     public Person person;
-    private static BufferedImage male = scaleImage(14, 32, "src/images/man.png");
-    private static BufferedImage female = scaleImage(14, 32, "src/images/woman.png");
+    private static BufferedImage male = scaleImage(14, 32, "src/rightPanel/images/man.png");
+    private static BufferedImage female = scaleImage(14, 32, "src/rightPanel/images/woman.png");
     
     PersonStat(Person p){
         super(p.isMale() ? Color.CYAN : Color.PINK);
@@ -38,20 +37,5 @@ public class PersonStat extends RoundedPanel {
         happiness.setForeground(Color.MAGENTA.darker());
         this.add(happiness);
         setPreferredSize(new Dimension(100, 30));
-    }
-    
-    private static BufferedImage scaleImage(int WIDTH, int HEIGHT, String filename) {
-        BufferedImage bi;
-        try {
-            ImageIcon ii = new ImageIcon(filename);
-            bi = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2d = (Graphics2D) bi.createGraphics();
-            g2d.addRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_QUALITY));
-            g2d.drawImage(ii.getImage(), 0, 0, WIDTH, HEIGHT, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        return bi;
-    }
+    }   
 }

@@ -4,6 +4,7 @@ import bigcity.Zone;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -13,6 +14,8 @@ import roundPanel.RoundedBorder;
 public class BuildingStat extends JPanel {
     // TODO hatékonyságnövelés: Mind a BuildStatPanel, mind a PersonPanel egyke
     //      osztály és csak beállítom hogy éppen mit mutatson
+    //      Vagy minden épület eltárolja a saját stat paneljét és csak azt
+    //      jeleníti meg, ha nincs még, létrehozza
     
     private Zone building;
     
