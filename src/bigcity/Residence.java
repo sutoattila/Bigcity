@@ -10,7 +10,7 @@ public class Residence extends PrivateZone {
     public Residence(int topLeftX, int topLeftY, int price) {
         this.topLeftX = topLeftX;
         this.topLeftY = topLeftY;
-        this.size = 0;
+        //this.size = 0;
         this.capacity = 8;
         this.level = 1;
         this.img = Assets.copperR;
@@ -20,6 +20,17 @@ public class Residence extends PrivateZone {
 
     public List<Person> getResidents(){
         return resinedts;
+    }
+    
+    @Override
+    public void addPerson(Person p) {
+        if(capacity > getSize())
+            resinedts.add(p);
+    }
+    
+    @Override
+    public int getSize() {
+        return resinedts.size();
     }
     
     @Override

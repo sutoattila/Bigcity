@@ -15,8 +15,8 @@ import roundPanel.RoundedPanel;
 
 public class PersonStat extends RoundedPanel {
     public Person person;
-    private static BufferedImage male = scaleImage(14, 32, "src/rightPanel/images/man.png");
-    private static BufferedImage female = scaleImage(14, 32, "src/rightPanel/images/woman.png");
+    private static BufferedImage male = scaleImage(14, 32, "rightPanel/images/man.png");
+    private static BufferedImage female = scaleImage(14, 32, "rightPanel/images/woman.png");
     
     PersonStat(Person p){
         super(p.isMale() ? Color.CYAN : Color.PINK);
