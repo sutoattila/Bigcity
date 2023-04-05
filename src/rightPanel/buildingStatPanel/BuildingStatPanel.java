@@ -77,6 +77,7 @@ public class BuildingStatPanel extends JPanel {
             }
         }));
         add(exitPanel);
+        
         JButton addPerson = new JButton("Ember hozzáadása");
         addPerson.addActionListener(new ActionListener() {
             @Override
@@ -98,11 +99,13 @@ public class BuildingStatPanel extends JPanel {
                 }
             }
         });
-        JPanel asd = new JPanel();
-        asd.add(addPerson);
-        //add(addPerson);
-        add(asd);
-        
+        if(zone instanceof PrivateZone) {
+            JPanel asd = new JPanel();
+            asd.add(addPerson);
+            //add(addPerson);
+            add(asd);
+        }
+            
         this.bigCityJFrame = bigCityJFrame;
         this.zone = zone;
         if(zone instanceof Residence) {
@@ -137,17 +140,23 @@ public class BuildingStatPanel extends JPanel {
         add(bStat);
         add(Box.createRigidArea(new Dimension(0,20)));
         JPanel upgradePanel = new JPanel();
-        JButton upgradeButton = new JButton("upgrade");
-        upgradeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(zone instanceof PrivateZone) {
-                    PrivateZone tmp = (PrivateZone) zone;
+        JButton upgradeButton = new JButton("-");
+        if(zone instanceof PrivateZone) {
+            PrivateZone tmp = (PrivateZone) zone;
+            if(tmp.getLevel() < 3) {
+                upgradeButton.setText("upgrade");
+            }
+            upgradeButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
                     tmp.upgrade();
+                    if(tmp.getLevel() == 3) {
+                        upgradeButton.setText("-");
+                    }
                     bStat.updateStats();
                 }
-            }
-        });
+            });
+        }
         upgradeButton.setBackground(Color.CYAN);
         
         JButton destroyButton = new JButton("destroy");
