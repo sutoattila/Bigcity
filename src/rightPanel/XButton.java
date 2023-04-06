@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 import model.CursorSignal;
 import model.Engine;
 
-class XButton extends JButton {
+public class XButton extends JButton {
 
     /**
      * Constructor

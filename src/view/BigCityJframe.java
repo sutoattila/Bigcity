@@ -18,7 +18,7 @@ import model.Engine;
 import res.Assets;
 import rightPanel.BuildPanel;
 import rightPanel.BuildButton;
-import rightPanel.StatPanel;
+import rightPanel.buildingStatPanel.BuildingStatPanel;
 
 public class BigCityJframe extends JFrame {
 
@@ -50,7 +50,7 @@ public class BigCityJframe extends JFrame {
     Assets assets;
 
     BuildPanel buildPanel;
-    StatPanel statPanel;
+    BuildingStatPanel statPanel;
 
     public BigCityJframe() {
         super("BigCity");
@@ -194,7 +194,7 @@ public class BigCityJframe extends JFrame {
         if (null != statPanel) {
             remove(statPanel);
         }
-        statPanel = new StatPanel(zone, this);
+        statPanel = new BuildingStatPanel(zone, this);
         add(statPanel, BorderLayout.EAST);
         pack();
         setLocationRelativeTo(null);

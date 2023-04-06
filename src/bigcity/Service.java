@@ -3,21 +3,30 @@ package bigcity;
 import java.util.ArrayList;
 import res.Assets;
 
-public class Service extends PrivateZone {
-
-    @Override
-    public int upgrade() {
-        //TODO
-        return 1;
-    }
-
-    public Service(int topLeftX, int topLeftY, int capacity) {
+public class Service extends Workplace {
+    public Service(int topLeftX, int topLeftY, int price) {
         this.topLeftX = topLeftX;
         this.topLeftY = topLeftY;
-        size = 0;
-        this.capacity = capacity;
-        level = 1;
-        img = Assets.copperS;
-        people = new ArrayList<>();
+        //this.size = 0;
+        this.capacity = 8;
+        this.level = 1;
+        this.img = Assets.copperS;
+        this.workers = new ArrayList<>();
+        this.price = price;
+    }
+    
+    
+    @Override
+    public int getSize() {
+        return workers.size();
+    }
+    
+    @Override
+    public int upgrade() {
+        if(getLevel() < 3) {
+            capacity *= 2;
+            level++;
+        }
+        return level;
     }
 }

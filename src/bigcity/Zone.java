@@ -9,14 +9,11 @@ public abstract class Zone {
     protected int topLeftX;
     protected int topLeftY;
 
-    protected int size;
-    protected int capacity;
     protected int level;
+    protected int price;
 
     protected BufferedImage img;
     protected CursorSignal cursorSignal;
-
-    protected ArrayList<Person> people;
 
     public CursorSignal getCursorSignal() {
         return cursorSignal;
@@ -42,18 +39,6 @@ public abstract class Zone {
         return topLeftX;
     }
 
-    public ArrayList<Person> getPeople() {
-        return people;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
     public int getLevel() {
         return level;
     }
@@ -66,6 +51,4 @@ public abstract class Zone {
     public void destroy() {
         //TODO
     }
-
-    public abstract int upgrade();
 }

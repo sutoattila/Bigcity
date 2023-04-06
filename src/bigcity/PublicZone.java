@@ -7,5 +7,4 @@ public abstract class PublicZone extends Zone {
     public int getMaintenanceCost() {
         return maintenanceCost;
     }
-    
 }

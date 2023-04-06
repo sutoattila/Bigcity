@@ -1,24 +1,44 @@
 package bigcity;
 
 import java.util.ArrayList;
+import java.util.List;
 import res.Assets;
 
 public class Residence extends PrivateZone {
-
-    @Override
-    public int upgrade() {
-        //TODO
-        return 1;
-    }
-
-    public Residence(int topLeftX, int topLeftY, int capacity) {
+    protected List<Person> resinedts;
+    
+    public Residence(int topLeftX, int topLeftY, int price) {
         this.topLeftX = topLeftX;
         this.topLeftY = topLeftY;
-        size = 0;
-        this.capacity = capacity;
-        level = 1;
-        img = Assets.copperR;
-        people = new ArrayList<>();
+        //this.size = 0;
+        this.capacity = 8;
+        this.level = 1;
+        this.img = Assets.copperR;
+        this.resinedts = new ArrayList<>();
+        this.price = price;
     }
 
+    public List<Person> getResidents(){
+        return resinedts;
+    }
+    
+    @Override
+    public void addPerson(Person p) {
+        if(capacity > getSize())
+            resinedts.add(p);
+    }
+    
+    @Override
+    public int getSize() {
+        return resinedts.size();
+    }
+    
+    @Override
+    public int upgrade(){
+        if(getLevel() < 3) {
+            capacity *= 2;
+            level++;
+        }
+        return level;
+    }
 }

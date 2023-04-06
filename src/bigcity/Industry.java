@@ -3,22 +3,31 @@ package bigcity;
 import java.util.ArrayList;
 import res.Assets;
 
-public class Industry extends PrivateZone {
+public class Industry extends Workplace {
 
-    @Override
-    public int upgrade() {
-        //TODO
-        return 1;
-    }
-
-    public Industry(int topLeftX, int topLeftY, int capacity) {
+    public Industry(int topLeftX, int topLeftY, int price) {
         this.topLeftX = topLeftX;
         this.topLeftY = topLeftY;
-        size = 0;
-        this.capacity = capacity;
-        level = 1;
-        img = Assets.copperI;
-        people = new ArrayList<>();
+        //this.size = 0;
+        this.capacity = 16;
+        this.level = 1;
+        this.img = Assets.copperI;
+        this.workers = new ArrayList<>();
+        this.price = price;
     }
-
+    
+    
+    @Override
+    public int getSize() {
+        return workers.size();
+    }
+    
+    @Override
+    public int upgrade() {
+        if(getLevel() < 3) {
+            capacity *= 2;
+            level++;
+        }
+        return level;
+    }
 }

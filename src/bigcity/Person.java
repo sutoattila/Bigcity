@@ -4,10 +4,11 @@ public class Person {
 
     protected String name;
     protected int age;
-    protected int hapiness;
+    protected int happiness;
     protected EducationLevel educationLevel;
     protected Zone home;
     protected Zone job;
+    protected boolean male;
 
     public String getName() {
         return name;
@@ -17,17 +18,21 @@ public class Person {
         return age;
     }
 
-    public int getHapiness() {
-        return hapiness;
+    public int getHappiness() {
+        return happiness;
     }
 
     public EducationLevel getEducationLevel() {
         return educationLevel;
     }
 
+    public boolean isMale(){
+        return male;
+    }
+    
     public int changeHappinessBy(int value) {
-        hapiness += value;
-        return hapiness;
+        happiness += value;
+        return happiness;
     }
 
     public void educate() {
@@ -49,12 +54,13 @@ public class Person {
         return age;
     }
 
-    public Person(String name, int age, int hapiness,
+    public Person(String name, int age, int happiness, boolean male,
             EducationLevel educationLevel, Zone home, Zone job) {
         this.name = name;
         //Min 18.
         this.age = age;
-        this.hapiness = hapiness;
+        this.happiness = happiness;
+        this.male = male;
         this.educationLevel = educationLevel;
         this.home = home;
         this.job = job;

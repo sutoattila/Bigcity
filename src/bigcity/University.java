@@ -3,13 +3,6 @@ package bigcity;
 import res.Assets;
 
 public class University extends School {
-
-    @Override
-    public int upgrade() {
-        //TODO
-        return 1;
-    }
-
     /**
      * Gives university education if possible.
      *
