@@ -7,8 +7,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 import javax.swing.JPanel;
 
@@ -54,6 +58,70 @@ public class BigCityJframe extends JFrame {
 
     public BigCityJframe() {
         super("BigCity");
+        //Attila menu 
+        JMenuBar menuBar = new JMenuBar();
+        JMenu gameMenu = new JMenu("Játék");
+        JMenuItem saveJMenuItem = new JMenuItem(new AbstractAction("Mentés") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    //TODO
+                }
+        });
+        JMenuItem disasterJMenuItem = new JMenuItem(new AbstractAction("Katasztrófa kérése") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    //TODO
+                }
+        });
+        JMenuItem settingsJMenuItem = new JMenuItem(new AbstractAction("Beállítások") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    //TODO
+                }
+        });
+        JMenuItem exitJMenuItem = new JMenuItem(new AbstractAction("Kilépés") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.exit(0);
+                }
+        });
+        gameMenu.add(saveJMenuItem);
+        gameMenu.add(disasterJMenuItem);
+        gameMenu.add(settingsJMenuItem);
+        gameMenu.add(exitJMenuItem);
+        menuBar.add(gameMenu);
+        JMenu timeMenu = new JMenu("Idő");
+        JMenuItem speed1 = new JMenuItem(new AbstractAction("x1") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    //TODO
+                }
+        });
+        JMenuItem speed3 = new JMenuItem(new AbstractAction("x3") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    //TODO
+                }
+        });
+        JMenuItem speed5 = new JMenuItem(new AbstractAction("x5") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    //TODO
+                }
+        });
+        JMenuItem startStop = new JMenuItem(new AbstractAction("Megállít/Elindít") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    //TODO
+                }
+        });
+        timeMenu.add(speed1);
+        timeMenu.add(speed3);
+        timeMenu.add(speed5);
+        timeMenu.add(startStop);
+        menuBar.add(timeMenu);
+        this.setJMenuBar(menuBar);
+        //Attila menu vége
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
