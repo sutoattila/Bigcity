@@ -29,7 +29,7 @@ public class Engine {
     private static CursorSignal cursorSignal = CursorSignal.SELECT;
 
     private BufferedImage img;
-
+    
     public void setImg(BufferedImage img) {
         this.img = img;
     }
@@ -310,18 +310,6 @@ public class Engine {
 
     public void setDate(String date) {
         this.date = date;
-    }
-
-    public void aDayPassed() {
-        //TODO
-    }
-
-    public void aMonthPassed() {
-        //TODO
-    }
-
-    public void aYearPassed() {
-        //TODO
     }
 
     public void setTaxPercentage(int taxPercentage) {

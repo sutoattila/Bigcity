@@ -14,7 +14,6 @@ import java.util.Date;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -43,7 +42,6 @@ public class BigCityJframe extends JFrame {
     //Select a zone to see its own JPanel on the right of the JFrame.
     
     Timer timer;
-    JLabel dateLabel;
     Date date;
     boolean isStopped;
     
@@ -55,6 +53,8 @@ public class BigCityJframe extends JFrame {
     StatElement calendar;//Attila volt
     StatElement money;
     StatElement happy;
+    
+    
     public BigCityJframe() {
         super("BigCity");
         
@@ -154,26 +154,21 @@ public class BigCityJframe extends JFrame {
         engine = new Engine(width, height);
 
         topPanel = new JPanel();
-        
-        //dateLabel = new JLabel(); sry Attila volt
-        //topPanel.add(dateLabel); sry Attila volt
-        
-        
         topPanel.setPreferredSize(new Dimension(-1, 50));
-        topPanel.setBackground(Color.LIGHT_GRAY);
-        //Attila statelement
-        //JPanel p = new JPanel();
-        //p.setLayout(new FlowLayout());
-        //p.setPreferredSize(new Dimension(400,100));
-        happy=new StatElement("view/happy.png","83%");
-        topPanel.add(happy);
-        topPanel.setBackground(Color.GREEN.darker());
+        topPanel.setBackground(Color.GREEN.darker().darker());
+        
+        happy = new StatElement("view/happiness.png","83%");
+        happy.setTextColor(Color.MAGENTA.darker());
+        
         calendar = new StatElement("view/calendar.png","2023-03-19");
-        topPanel.add(calendar);
+        
         money = new StatElement("view/money.png","200.000$");
+        money.setTextColor(Color.YELLOW.darker());
+        
         topPanel.add(money);
-        //topPanel.add(p);
-        //Attila statelement vége
+        topPanel.add(happy);
+        topPanel.add(calendar);
+        
         date = new Date(75, 0, 1);
         calendar.setText(dateFormater.format(date));
         add(topPanel, BorderLayout.NORTH);
