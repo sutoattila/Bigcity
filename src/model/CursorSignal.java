@@ -2,15 +2,15 @@ package model;
 
 public enum CursorSignal {
     //Private zones.----------------
-    POLICE(1, 1, 300, 200, 300),
-    STADIUM(2, 2, 300, 200, 300),
-    HIGH_SCHOOL(2, 1, 300, 200, 300),
-    UNIVERSITY(2, 2, 500, 200, 300),
-    ROAD(1, 1, 50, 200, 300),
+    POLICE(1, 1, 300, 0, 0),
+    STADIUM(2, 2, 300, 0, 0),
+    HIGH_SCHOOL(2, 1, 300, 0, 0),
+    UNIVERSITY(2, 2, 500, 0, 0),
+    ROAD(1, 1, 50, 0, 0),
     //Public zones.-----------------
-    RESIDENCE(1, 1, 50, 200, 300),
-    INDUSTRY(1, 1, 50, 200, 300),
-    SERVICE(1, 1, 50, 200, 300),
+    RESIDENCE(1, 1, 50, 100, 300),
+    INDUSTRY(1, 1, 100, 300, 1000),
+    SERVICE(1, 1, 50, 100, 300),
     //------------------------------
     DESTROY(1, 1),
     //It's for selecting a zone.
@@ -45,7 +45,7 @@ public enum CursorSignal {
         return height;
     }
 
-    int getPriceL1() {
+    public int getPriceL1() {
         return priceL1;
     }
 

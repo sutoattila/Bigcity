@@ -92,6 +92,8 @@ public class Engine {
                     cursorSignal.getPriceL1());
         }
 
+        addMoney(-cursorSignal.getPriceL1());
+        
         zone.setCursorSignal(cursorSignal);
         zone.setImg(img);
 

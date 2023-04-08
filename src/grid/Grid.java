@@ -77,6 +77,7 @@ public class Grid extends JPanel {
                         repaint();
                     }
                 }
+                bigCityJFrame.refreshMoney();
             }
         });
 

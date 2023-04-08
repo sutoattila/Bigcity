@@ -165,8 +165,7 @@ public class BigCityJframe extends JFrame {
         this.date = new Date(0);
         calendar.setText(dateFormater.format(date));
         
-        money = new StatElement("view/money.png","200.000$");
-        money.setText(String.format("%,d", engine.getMoney()) + "$");
+        money = new StatElement("view/money.png",String.format("%,d", engine.getMoney()) + "$");
         money.setTextColor(Color.YELLOW.darker());
         
         topPanel.add(money);
@@ -175,14 +174,14 @@ public class BigCityJframe extends JFrame {
         
         add(topPanel, BorderLayout.NORTH);
 
-        BuildButton lakohely = new BuildButton("buildPanel/images/house.png", "Lakóhely", 50);
-        BuildButton ipariTerulet = new BuildButton("buildPanel/images/factory.png", "Ipari terület", 50);
-        BuildButton szolgaltatas = new BuildButton("buildPanel/images/store.png", "Szolgáltatás", 50);
-        BuildButton ut = new BuildButton("buildPanel/images/road.png", "Út", 50);
-        BuildButton rendorseg = new BuildButton("buildPanel/images/police.png", "Rendőrség", 300);
-        BuildButton stadion = new BuildButton("buildPanel/images/stadium.png", "Stadion", 300);
-        BuildButton iskola = new BuildButton("buildPanel/images/school.png", "Iskola", 300);
-        BuildButton egyetem = new BuildButton("buildPanel/images/university.png", "Egyetem", 500);
+        BuildButton lakohely = new BuildButton("buildPanel/images/house.png", "Lakóhely", CursorSignal.RESIDENCE.getPriceL1());
+        BuildButton ipariTerulet = new BuildButton("buildPanel/images/factory.png", "Ipari terület", CursorSignal.INDUSTRY.getPriceL1());
+        BuildButton szolgaltatas = new BuildButton("buildPanel/images/store.png", "Szolgáltatás", CursorSignal.SERVICE.getPriceL1());
+        BuildButton ut = new BuildButton("buildPanel/images/road.png", "Út", CursorSignal.ROAD.getPriceL1());
+        BuildButton rendorseg = new BuildButton("buildPanel/images/police.png", "Rendőrség", CursorSignal.POLICE.getPriceL1());
+        BuildButton stadion = new BuildButton("buildPanel/images/stadium.png", "Stadion", CursorSignal.STADIUM.getPriceL1());
+        BuildButton iskola = new BuildButton("buildPanel/images/school.png", "Iskola", CursorSignal.HIGH_SCHOOL.getPriceL1());
+        BuildButton egyetem = new BuildButton("buildPanel/images/university.png", "Egyetem", CursorSignal.UNIVERSITY.getPriceL1());
 
         lakohely.addActionListener(new ActionListener() {
             @Override
@@ -309,11 +308,23 @@ public class BigCityJframe extends JFrame {
         c.setTime(date); 
         c.add(Calendar.DATE, 1);
         date = c.getTime();
-        calendar.setText(dateFormater.format(date));
-        money.setText(String.format("%,d", engine.getMoney()) + "$");
-        // ITT HÍVJUK MEG AZ ÚJRASZÁMOLÓ FÜGGVÉNYEKET ==> így minden nap
-        //      újraszámolja a megfelelő dolgokat (boldogság, megfelelő munkahely,
-        //      elköltöznek-e, költözik-e be valaki stb)
+        refreshDate();
+        refreshMoney();
         
+        // ITT HÍVJUK MEG A NAPONTA ÚJRASZÁMOLANDÓÓ FÜGGVÉNYEKET ==> 
+        //      (elköltöznek-e, költözik-e be valaki stb)
+    }
+    
+    public void refreshMoney() {
+        money.setText(String.format("%,d", engine.getMoney()) + "$");
+    }
+    
+    public void refreshDate() {
+        calendar.setText(dateFormater.format(date));
+    }
+    
+    public void addMoney(int money) {
+        engine.addMoney(money);
+        refreshMoney();
     }
 }
