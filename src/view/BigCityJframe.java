@@ -169,7 +169,7 @@ public class BigCityJframe extends JFrame {
         topPanel.add(happy);
         topPanel.add(calendar);
         
-        date = new Date(75, 0, 1);
+        this.date = new Date(0);
         calendar.setText(dateFormater.format(date));
         add(topPanel, BorderLayout.NORTH);
 
