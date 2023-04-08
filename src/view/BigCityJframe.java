@@ -58,6 +58,7 @@ public class BigCityJframe extends JFrame {
     public BigCityJframe() {
         super("BigCity");
         
+        
         this.timer = new Timer(3000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -161,16 +162,17 @@ public class BigCityJframe extends JFrame {
         happy.setTextColor(Color.MAGENTA.darker());
         
         calendar = new StatElement("view/calendar.png","2023-03-19");
+        this.date = new Date(0);
+        calendar.setText(dateFormater.format(date));
         
         money = new StatElement("view/money.png","200.000$");
+        money.setText(String.format("%,d", engine.getMoney()) + "$");
         money.setTextColor(Color.YELLOW.darker());
         
         topPanel.add(money);
         topPanel.add(happy);
         topPanel.add(calendar);
         
-        this.date = new Date(0);
-        calendar.setText(dateFormater.format(date));
         add(topPanel, BorderLayout.NORTH);
 
         BuildButton lakohely = new BuildButton("buildPanel/images/house.png", "Lakóhely", 50);
@@ -308,7 +310,7 @@ public class BigCityJframe extends JFrame {
         c.add(Calendar.DATE, 1);
         date = c.getTime();
         calendar.setText(dateFormater.format(date));
-        
+        money.setText(String.format("%,d", engine.getMoney()) + "$");
         // ITT HÍVJUK MEG AZ ÚJRASZÁMOLÓ FÜGGVÉNYEKET ==> így minden nap
         //      újraszámolja a megfelelő dolgokat (boldogság, megfelelő munkahely,
         //      elköltöznek-e, költözik-e be valaki stb)

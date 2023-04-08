@@ -37,6 +37,7 @@ public class Engine {
     public Engine(int width, int height) {
         this.width = width;
         this.height = height;
+        this.money = 20000;
         grid = new Zone[height][width];
         for (int column = 0; column < width; column++) {
             for (int row = 0; row < height; row++) {
