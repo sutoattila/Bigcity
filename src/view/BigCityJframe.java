@@ -7,14 +7,19 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import model.CursorSignal;
@@ -26,31 +31,21 @@ import rightPanel.buildingStatPanel.BuildingStatPanel;
 
 public class BigCityJframe extends JFrame {
 
+    public static SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd");
+    
     Engine engine;
 
     Grid grid;
     JPanel topPanel;
-    JPanel rightPanel;
-
-    JButton police;
-    JButton stadium;
-    JButton highScool;
-    JButton university;
-
-    JButton road;
-
-    JButton residence;
-    JButton service;
-    JButton industry;
 
     JButton destroyZone;
     //Select a zone to see its own JPanel on the right of the JFrame.
-    JButton selectMode;
-
-    JButton upgrade;
-
-    JButton fillGrid;
-
+    
+    Timer timer;
+    JLabel dateLabel;
+    Date date;
+    boolean isStopped;
+    
     Assets assets;
 
     BuildPanel buildPanel;
@@ -58,6 +53,17 @@ public class BigCityJframe extends JFrame {
 
     public BigCityJframe() {
         super("BigCity");
+        
+        this.timer = new Timer(3000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!isStopped)
+                    dayPassed();
+            }
+        });
+        timer.start();
+        isStopped = false;
+        
         //Attila menu 
         JMenuBar menuBar = new JMenuBar();
         JMenu gameMenu = new JMenu("Játék");
@@ -94,25 +100,34 @@ public class BigCityJframe extends JFrame {
         JMenuItem speed1 = new JMenuItem(new AbstractAction("x1") {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    //TODO
+                    if(isStopped) {
+                        isStopped = false;
+                    }
+                    timer.setDelay(3000);
                 }
         });
         JMenuItem speed3 = new JMenuItem(new AbstractAction("x3") {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    //TODO
+                    if(isStopped) {
+                        isStopped = false;
+                    }
+                    timer.setDelay(1000);
                 }
         });
         JMenuItem speed5 = new JMenuItem(new AbstractAction("x5") {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    //TODO
+                    if(isStopped) {
+                        isStopped = false;
+                    }
+                    timer.setDelay(600);
                 }
         });
         JMenuItem startStop = new JMenuItem(new AbstractAction("Megállít/Elindít") {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    //TODO
+                    isStopped = !isStopped;
                 }
         });
         timeMenu.add(speed1);
@@ -122,6 +137,7 @@ public class BigCityJframe extends JFrame {
         menuBar.add(timeMenu);
         this.setJMenuBar(menuBar);
         //Attila menu vége
+        
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -134,11 +150,16 @@ public class BigCityJframe extends JFrame {
         engine = new Engine(width, height);
 
         topPanel = new JPanel();
+        
+        dateLabel = new JLabel();
+        topPanel.add(dateLabel);
+        date = new Date(75, 0, 1);
+        dateLabel.setText(dateFormater.format(date));
+        
         topPanel.setPreferredSize(new Dimension(-1, 50));
         topPanel.setBackground(Color.LIGHT_GRAY);
         add(topPanel, BorderLayout.NORTH);
 
-        //TODO: nem volt kész a select gomb így azt ki kell javítani (XButton-ben)
         BuildButton lakohely = new BuildButton("buildPanel/images/house.png", "Lakóhely", 50);
         BuildButton ipariTerulet = new BuildButton("buildPanel/images/factory.png", "Ipari terület", 50);
         BuildButton szolgaltatas = new BuildButton("buildPanel/images/store.png", "Szolgáltatás", 50);
@@ -232,18 +253,8 @@ public class BigCityJframe extends JFrame {
             }
         });
         buildPanel.add(destroyZone);
-
-        /*TODO: Can be used only if an upgradable zone is selected. 
-        //Appears on the new stat JPanel on the right if a zone is
-        //selected.
-        upgrade = new JButton("upgrade");
-        upgrade.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO
-            }
-        });
-         */
+        // ---------------------------------------------------------------------
+        
         add(buildPanel, BorderLayout.EAST);
 
         grid = new Grid(fieldSize, width, height, engine, this);
@@ -269,12 +280,25 @@ public class BigCityJframe extends JFrame {
     }
 
     public void changeRightPanelToBuildPanel() {
-        //TODO (XButton in StatPanel wiil call this function.)
+        //TODO (XButton in StatPanel will call this function.)
         remove(statPanel);
         statPanel = null;
         add(buildPanel, BorderLayout.EAST);
         pack();
         setLocationRelativeTo(null);
 
+    }
+    
+    public void dayPassed(){
+        Calendar c = Calendar.getInstance(); 
+        c.setTime(date); 
+        c.add(Calendar.DATE, 1);
+        date = c.getTime();
+        dateLabel.setText(dateFormater.format(date));
+        
+        // ITT HÍVJUK MEG AZ ÚJRASZÁMOLÓ FÜGGVÉNYEKET ==> így minden nap
+        //      újraszámolja a megfelelő dolgokat (boldogság, megfelelő munkahely,
+        //      elköltöznek-e, költözik-e be valaki stb)
+        
     }
 }
