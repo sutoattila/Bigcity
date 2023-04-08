@@ -1,5 +1,6 @@
 package view;
 
+import GUI.StatElement;
 import bigcity.Zone;
 import grid.Grid;
 import java.awt.BorderLayout;
@@ -50,7 +51,10 @@ public class BigCityJframe extends JFrame {
 
     BuildPanel buildPanel;
     BuildingStatPanel statPanel;
-
+    
+    StatElement calendar;//Attila volt
+    StatElement money;
+    StatElement happy;
     public BigCityJframe() {
         super("BigCity");
         
@@ -151,13 +155,27 @@ public class BigCityJframe extends JFrame {
 
         topPanel = new JPanel();
         
-        dateLabel = new JLabel();
-        topPanel.add(dateLabel);
-        date = new Date(75, 0, 1);
-        dateLabel.setText(dateFormater.format(date));
+        //dateLabel = new JLabel(); sry Attila volt
+        //topPanel.add(dateLabel); sry Attila volt
+        
         
         topPanel.setPreferredSize(new Dimension(-1, 50));
         topPanel.setBackground(Color.LIGHT_GRAY);
+        //Attila statelement
+        //JPanel p = new JPanel();
+        //p.setLayout(new FlowLayout());
+        //p.setPreferredSize(new Dimension(400,100));
+        happy=new StatElement("view/happy.png","83%");
+        topPanel.add(happy);
+        topPanel.setBackground(Color.GREEN.darker());
+        calendar = new StatElement("view/calendar.png","2023-03-19");
+        topPanel.add(calendar);
+        money = new StatElement("view/money.png","200.000$");
+        topPanel.add(money);
+        //topPanel.add(p);
+        //Attila statelement vége
+        date = new Date(75, 0, 1);
+        calendar.setText(dateFormater.format(date));
         add(topPanel, BorderLayout.NORTH);
 
         BuildButton lakohely = new BuildButton("buildPanel/images/house.png", "Lakóhely", 50);
@@ -294,7 +312,7 @@ public class BigCityJframe extends JFrame {
         c.setTime(date); 
         c.add(Calendar.DATE, 1);
         date = c.getTime();
-        dateLabel.setText(dateFormater.format(date));
+        calendar.setText(dateFormater.format(date));
         
         // ITT HÍVJUK MEG AZ ÚJRASZÁMOLÓ FÜGGVÉNYEKET ==> így minden nap
         //      újraszámolja a megfelelő dolgokat (boldogság, megfelelő munkahely,
