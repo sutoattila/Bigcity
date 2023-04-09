@@ -6,12 +6,15 @@ import grid.Grid;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.AbstractAction;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -154,7 +157,7 @@ public class BigCityJframe extends JFrame {
 
         engine = new Engine(width, height);
 
-        topPanel = new JPanel();
+        topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setPreferredSize(new Dimension(-1, 50));
         topPanel.setBackground(Color.GREEN.darker().darker());
         
@@ -172,8 +175,6 @@ public class BigCityJframe extends JFrame {
         topPanel.add(happy);
         topPanel.add(calendar);
         
-        add(topPanel, BorderLayout.NORTH);
-
         BuildButton lakohely = new BuildButton("buildPanel/images/house.png", "Lakóhely", CursorSignal.RESIDENCE.getPriceL1());
         BuildButton ipariTerulet = new BuildButton("buildPanel/images/factory.png", "Ipari terület", CursorSignal.INDUSTRY.getPriceL1());
         BuildButton szolgaltatas = new BuildButton("buildPanel/images/store.png", "Szolgáltatás", CursorSignal.SERVICE.getPriceL1());
@@ -269,10 +270,15 @@ public class BigCityJframe extends JFrame {
         buildPanel.add(destroyZone);
         // ---------------------------------------------------------------------
         
-        add(buildPanel, BorderLayout.EAST);
-
+        
         grid = new Grid(fieldSize, width, height, engine, this);
-        add(grid, BorderLayout.WEST);
+        
+        JPanel leftPanel = new JPanel();
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+        leftPanel.add(topPanel);
+        leftPanel.add(grid);
+        add(leftPanel, BorderLayout.WEST);
+        add(buildPanel, BorderLayout.EAST);
 
         statPanel = null;
 
