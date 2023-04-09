@@ -3,6 +3,8 @@ package model;
 import bigcity.HighSchool;
 import bigcity.Industry;
 import bigcity.Police;
+import bigcity.PrivateZone;
+import bigcity.PublicZone;
 import bigcity.Residence;
 import bigcity.Road;
 import bigcity.Service;
@@ -29,7 +31,7 @@ public class Engine {
     private static CursorSignal cursorSignal = CursorSignal.SELECT;
 
     private BufferedImage img;
-
+    
     public void setImg(BufferedImage img) {
         this.img = img;
     }
@@ -37,6 +39,7 @@ public class Engine {
     public Engine(int width, int height) {
         this.width = width;
         this.height = height;
+        this.money = 20000;
         grid = new Zone[height][width];
         for (int column = 0; column < width; column++) {
             for (int row = 0; row < height; row++) {
@@ -91,6 +94,8 @@ public class Engine {
                     cursorSignal.getPriceL1());
         }
 
+        addMoney(-cursorSignal.getPriceL1());
+        
         zone.setCursorSignal(cursorSignal);
         zone.setImg(img);
 
@@ -161,6 +166,31 @@ public class Engine {
         if (null == target) {
             return false;
         }
+        
+        int zoneLevel = 1;
+        CursorSignal type;
+        
+        if(target instanceof Residence tmp) {
+            zoneLevel = tmp.getLevel();
+            type = CursorSignal.RESIDENCE;
+        } else if(target instanceof Industry tmp) {
+            zoneLevel = tmp.getLevel();
+            type = CursorSignal.INDUSTRY;
+        } else if(target instanceof Service tmp) {
+            zoneLevel = tmp.getLevel();
+            type = CursorSignal.SERVICE;
+        } else if(target instanceof Road) {
+            type = CursorSignal.ROAD;
+        } else if(target instanceof Police) {
+            type = CursorSignal.POLICE;
+        } else if(target instanceof Stadium) {
+            type = CursorSignal.STADIUM;
+        } else if(target instanceof HighSchool) {
+            type = CursorSignal.HIGH_SCHOOL;
+        } else {
+            type = CursorSignal.UNIVERSITY;
+        }
+        
         CursorSignal targetSignal = target.getCursorSignal();
         int rowStart = target.getTopLeftY() / fieldSize;
         int rowEnd = target.getTopLeftY() / fieldSize
@@ -177,6 +207,12 @@ public class Engine {
         if (CursorSignal.ROAD == targetSignal) {
             refreshRoadImgsAround(argRow, argColumn);
         }
+        
+        int returnMoney = type.getPriceL1() + 
+                (zoneLevel > 1 ? type.getPriceL2() : 0) + 
+                (zoneLevel > 2 ? type.getPriceL3() : 0);
+        addMoney(returnMoney/2);
+        
         return true;
     }
 
@@ -310,18 +346,6 @@ public class Engine {
 
     public void setDate(String date) {
         this.date = date;
-    }
-
-    public void aDayPassed() {
-        //TODO
-    }
-
-    public void aMonthPassed() {
-        //TODO
-    }
-
-    public void aYearPassed() {
-        //TODO
     }
 
     public void setTaxPercentage(int taxPercentage) {

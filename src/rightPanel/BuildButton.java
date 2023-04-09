@@ -39,7 +39,8 @@ public class BuildButton extends JButton {
         btnPanel.add(new JLabel(name + " "), BorderLayout.LINE_START);
         btnPanel.add(priceLabel, BorderLayout.LINE_END);
 
-        JLabel tmp = new JLabel(new ImageIcon(res.ResourceLoader.scaleImage(32, 32, url)));
+        JLabel tmp = new JLabel(new ImageIcon(res.ResourceLoader
+                .scaleImage(32, 32, url)));
         tmp.setBorder(new CompoundBorder(tmp.getBorder(),
                 new EmptyBorder(0, 0, 0, 10)));
         this.add(tmp, BorderLayout.LINE_START);

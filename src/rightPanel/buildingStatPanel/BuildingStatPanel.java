@@ -12,7 +12,6 @@ import bigcity.Stadium;
 import bigcity.Workplace;
 import bigcity.Zone;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -149,7 +148,24 @@ public class BuildingStatPanel extends JPanel {
             upgradeButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    tmp.upgrade();
+                    if(tmp.getLevel() < 3) {
+                        int price;
+                        if(tmp instanceof Residence) {
+                            price = tmp.getLevel() == 1 ? 
+                                    CursorSignal.RESIDENCE.getPriceL2() : 
+                                    CursorSignal.RESIDENCE.getPriceL3();
+                        } else if(tmp instanceof Industry) {
+                            price = tmp.getLevel() == 1 ? 
+                                    CursorSignal.INDUSTRY.getPriceL2() :
+                                    CursorSignal.INDUSTRY.getPriceL3();
+                        } else {
+                            price = price = tmp.getLevel() == 1 ? 
+                                    CursorSignal.SERVICE.getPriceL2() :
+                                    CursorSignal.SERVICE.getPriceL3();
+                        }
+                        tmp.upgrade();
+                        bigCityJFrame.addMoney(-price);
+                    }
                     if(tmp.getLevel() == 3) {
                         upgradeButton.setText("-");
                     }

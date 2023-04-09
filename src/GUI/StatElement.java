@@ -1,44 +1,42 @@
 package GUI;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import res.ResourceLoader;
+import roundPanel.RoundedBorder;
 
 public class StatElement extends JPanel {
-    int x;
-    int y;
-    int width;
-    int height;
-    Color textColor;
-    JLabel txt= new JLabel();;
-   public StatElement(String filename,String text) {
-      Dimension d = new Dimension(120,40);
-      height=d.height;
-      width=d.width;
-      setPreferredSize(d);
-      setBackground(Color.GREEN.darker());
-      JLabel image = new JLabel();
-      ImageIcon iconLogo = new ImageIcon(filename);
-      image.setIcon(iconLogo);
-      setTextColor(Color.WHITE);
-      setText(text);
-      txt.setForeground(textColor);
-      setLayout(new FlowLayout());
-      add(image);
-      add(txt);
-      setVisible(true);
-   }
+    protected JLabel text;
+    
+    public StatElement(String filename, String text) {
+        setPreferredSize(new Dimension(150, 40));
+        
+        JLabel image = new JLabel(new ImageIcon(ResourceLoader.scaleImage(26, 26, filename)));
+        this.text = new JLabel(text);
+        this.text.setForeground(Color.WHITE);
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        
+        add(image);
+        add(Box.createHorizontalGlue());
+        add(this.text);
+        setBorder(new RoundedBorder(Color.BLACK, 2, 20));
+        setBackground(Color.BLACK);
+    }
    
-   public void setTextColor(Color c){
-      textColor=c;
-   }
-   public void setText(String text){
-       txt.setText(text);
-   }
-   public void paintComponent(Graphics g) {
-    super.paintComponent(g);
-      Graphics2D g2d = (Graphics2D) g;
-      g2d.setColor(Color.BLACK);
-      //System.out.println(width+" "+height);
-      g2d.fillRoundRect(0, 0, width,height,40,40); // to draw a rounded rectangle.
-   }
+    public JLabel getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text.setText(text);
+    }
+    
+    public void setTextColor(Color c){
+       text.setForeground(c);
+    }
 }

@@ -6,15 +6,17 @@ import grid.Grid;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.AbstractAction;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -43,7 +45,6 @@ public class BigCityJframe extends JFrame {
     //Select a zone to see its own JPanel on the right of the JFrame.
     
     Timer timer;
-    JLabel dateLabel;
     Date date;
     boolean isStopped;
     
@@ -55,8 +56,11 @@ public class BigCityJframe extends JFrame {
     StatElement calendar;//Attila volt
     StatElement money;
     StatElement happy;
+    
+    
     public BigCityJframe() {
         super("BigCity");
+        
         
         this.timer = new Timer(3000, new ActionListener() {
             @Override
@@ -153,39 +157,32 @@ public class BigCityJframe extends JFrame {
 
         engine = new Engine(width, height);
 
-        topPanel = new JPanel();
-        
-        //dateLabel = new JLabel(); sry Attila volt
-        //topPanel.add(dateLabel); sry Attila volt
-        
-        
+        topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setPreferredSize(new Dimension(-1, 50));
-        topPanel.setBackground(Color.LIGHT_GRAY);
-        //Attila statelement
-        //JPanel p = new JPanel();
-        //p.setLayout(new FlowLayout());
-        //p.setPreferredSize(new Dimension(400,100));
-        happy=new StatElement("view/happy.png","83%");
-        topPanel.add(happy);
-        topPanel.setBackground(Color.GREEN.darker());
+        topPanel.setBackground(Color.GREEN.darker().darker());
+        
+        happy = new StatElement("view/happiness.png","83%");
+        happy.setTextColor(Color.MAGENTA.darker());
+        
         calendar = new StatElement("view/calendar.png","2023-03-19");
-        topPanel.add(calendar);
-        money = new StatElement("view/money.png","200.000$");
-        topPanel.add(money);
-        //topPanel.add(p);
-        //Attila statelement vége
-        date = new Date(75, 0, 1);
+        this.date = new Date(0);
         calendar.setText(dateFormater.format(date));
-        add(topPanel, BorderLayout.NORTH);
-
-        BuildButton lakohely = new BuildButton("buildPanel/images/house.png", "Lakóhely", 50);
-        BuildButton ipariTerulet = new BuildButton("buildPanel/images/factory.png", "Ipari terület", 50);
-        BuildButton szolgaltatas = new BuildButton("buildPanel/images/store.png", "Szolgáltatás", 50);
-        BuildButton ut = new BuildButton("buildPanel/images/road.png", "Út", 50);
-        BuildButton rendorseg = new BuildButton("buildPanel/images/police.png", "Rendőrség", 300);
-        BuildButton stadion = new BuildButton("buildPanel/images/stadium.png", "Stadion", 300);
-        BuildButton iskola = new BuildButton("buildPanel/images/school.png", "Iskola", 300);
-        BuildButton egyetem = new BuildButton("buildPanel/images/university.png", "Egyetem", 500);
+        
+        money = new StatElement("view/money.png",String.format("%,d", engine.getMoney()) + "$");
+        money.setTextColor(Color.YELLOW.darker());
+        
+        topPanel.add(money);
+        topPanel.add(happy);
+        topPanel.add(calendar);
+        
+        BuildButton lakohely = new BuildButton("buildPanel/images/house.png", "Lakóhely", CursorSignal.RESIDENCE.getPriceL1());
+        BuildButton ipariTerulet = new BuildButton("buildPanel/images/factory.png", "Ipari terület", CursorSignal.INDUSTRY.getPriceL1());
+        BuildButton szolgaltatas = new BuildButton("buildPanel/images/store.png", "Szolgáltatás", CursorSignal.SERVICE.getPriceL1());
+        BuildButton ut = new BuildButton("buildPanel/images/road.png", "Út", CursorSignal.ROAD.getPriceL1());
+        BuildButton rendorseg = new BuildButton("buildPanel/images/police.png", "Rendőrség", CursorSignal.POLICE.getPriceL1());
+        BuildButton stadion = new BuildButton("buildPanel/images/stadium.png", "Stadion", CursorSignal.STADIUM.getPriceL1());
+        BuildButton iskola = new BuildButton("buildPanel/images/school.png", "Iskola", CursorSignal.HIGH_SCHOOL.getPriceL1());
+        BuildButton egyetem = new BuildButton("buildPanel/images/university.png", "Egyetem", CursorSignal.UNIVERSITY.getPriceL1());
 
         lakohely.addActionListener(new ActionListener() {
             @Override
@@ -273,10 +270,15 @@ public class BigCityJframe extends JFrame {
         buildPanel.add(destroyZone);
         // ---------------------------------------------------------------------
         
-        add(buildPanel, BorderLayout.EAST);
-
+        
         grid = new Grid(fieldSize, width, height, engine, this);
-        add(grid, BorderLayout.WEST);
+        
+        JPanel leftPanel = new JPanel();
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+        leftPanel.add(topPanel);
+        leftPanel.add(grid);
+        add(leftPanel, BorderLayout.WEST);
+        add(buildPanel, BorderLayout.EAST);
 
         statPanel = null;
 
@@ -312,11 +314,23 @@ public class BigCityJframe extends JFrame {
         c.setTime(date); 
         c.add(Calendar.DATE, 1);
         date = c.getTime();
+        refreshDate();
+        refreshMoney();
+        
+        // ITT HÍVJUK MEG A NAPONTA ÚJRASZÁMOLANDÓÓ FÜGGVÉNYEKET ==> 
+        //      (elköltöznek-e, költözik-e be valaki stb)
+    }
+    
+    public void refreshMoney() {
+        money.setText(String.format("%,d", engine.getMoney()) + "$");
+    }
+    
+    public void refreshDate() {
         calendar.setText(dateFormater.format(date));
-        
-        // ITT HÍVJUK MEG AZ ÚJRASZÁMOLÓ FÜGGVÉNYEKET ==> így minden nap
-        //      újraszámolja a megfelelő dolgokat (boldogság, megfelelő munkahely,
-        //      elköltöznek-e, költözik-e be valaki stb)
-        
+    }
+    
+    public void addMoney(int money) {
+        engine.addMoney(money);
+        refreshMoney();
     }
 }
