@@ -1,5 +1,8 @@
 package grid;
 
+import bigcity.Industry;
+import bigcity.PrivateZone;
+import bigcity.Residence;
 import bigcity.Zone;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,6 +14,7 @@ import java.awt.event.MouseMotionAdapter;
 import javax.swing.JPanel;
 import model.CursorSignal;
 import model.Engine;
+import res.Assets;
 import view.BigCityJframe;
 
 public class Grid extends JPanel {
@@ -20,7 +24,6 @@ public class Grid extends JPanel {
     The pixels start with the index 0. If the whole map is just one field 
     with a size of 50 pixels, then the range is 0-49.
      */
-
     private int fieldSize;
     //The number of columns.
     private int width;
@@ -134,6 +137,9 @@ public class Grid extends JPanel {
                 if (null != engine.getCell(row, column)) {
                     //TODO: Different images for each zone types. 
                     //(level, saturation)
+                    changeImageAccordingSaturationAndLevel(
+                            engine.getCell(row, column));
+
                     g2.drawImage(engine.getCell(row, column).getImg(),
                             engine.getCell(row, column).getTopLeftX(),
                             engine.getCell(row, column).getTopLeftY(),
@@ -174,6 +180,105 @@ public class Grid extends JPanel {
                 }
                 //Draw hover rectangle.
                 paintArea(rowStart, rowEnd, columnStart, columnEnd, g2);
+            }
+        }
+    }
+
+    //TODO
+    /*
+                    zone.getLevel();
+                ((Residence) zone).getCapacity();
+                ((Residence) zone).getSize();
+     */
+    private void changeImageAccordingSaturationAndLevel(Zone zone) {
+        if (zone instanceof PrivateZone) {
+            int level = zone.getLevel();
+            int capacity;
+            int size;
+            if (zone instanceof Residence) {
+                capacity = ((Residence) zone).getCapacity();
+                size = ((Residence) zone).getSize();
+                if (1 == level) {
+                    if (0 == size) {
+                        zone.setImg(Assets.copperR);
+                    } else if (0 < size && size < capacity / 2) {
+                        zone.setImg(Assets.house);
+                    } else {//capacity / 2 <= size
+                        zone.setImg(Assets.houses);
+                    }
+                } else if (2 == level) {
+                    if (0 == size) {
+                        zone.setImg(Assets.silverR);
+                    } else if (0 < size && size < capacity / 2) {
+                        zone.setImg(Assets.bigHouse);
+                    } else {//capacity / 2 <= size
+                        zone.setImg(Assets.bigHouses);
+                    }
+                } else if (3 == level) {
+                    if (0 == size) {
+                        zone.setImg(Assets.goldR);
+                    } else if (0 < size && size < capacity / 2) {
+                        zone.setImg(Assets.panel);
+                    } else {//capacity / 2 <= size
+                        zone.setImg(Assets.panels);
+                    }
+                }
+            } else if (zone instanceof Industry) {
+                capacity = ((Industry) zone).getCapacity();
+                size = ((Industry) zone).getSize();
+                if (1 == level) {
+                    if (0 == size) {
+                        zone.setImg(Assets.copperI);
+                    } else if (0 < size && size < capacity / 2) {
+                        zone.setImg(Assets.ranch);
+                    } else {//capacity / 2 <= size
+                        zone.setImg(Assets.ranches);
+                    }
+                } else if (2 == level) {
+                    if (0 == size) {
+                        zone.setImg(Assets.silverI);
+                    } else if (0 < size && size < capacity / 2) {
+                        zone.setImg(Assets.mine);
+                    } else {//capacity / 2 <= size
+                        zone.setImg(Assets.mines);
+                    }
+                } else if (3 == level) {
+                    if (0 == size) {
+                        zone.setImg(Assets.goldI);
+                    } else if (0 < size && size < capacity / 2) {
+                        zone.setImg(Assets.factory);
+                    } else {//capacity / 2 <= size
+                        zone.setImg(Assets.factories);
+                    }
+                }
+            } else {//Service
+                capacity = ((PrivateZone) zone).getCapacity();
+                size = ((PrivateZone) zone).getSize();
+                if (1 == level) {
+                    if (0 == size) {
+                        zone.setImg(Assets.copperS);
+                    } else if (0 < size && size < capacity / 2) {
+                        zone.setImg(Assets.shop);
+                    } else {//capacity / 2 <= size
+                        zone.setImg(Assets.shops);
+                    }
+                } else if (2 == level) {
+                    if (0 == size) {
+                        zone.setImg(Assets.silverS);
+                    } else if (0 < size && size < capacity / 2) {
+                        zone.setImg(Assets.bigShop);
+                    } else {//capacity / 2 <= size
+                        zone.setImg(Assets.bigShops);
+                    }
+                } else if (3 == level) {
+                    if (0 == size) {
+                        zone.setImg(Assets.goldS);
+                    } else if (0 < size && size < capacity / 2) {
+                        zone.setImg(Assets.mall);
+                    } else {//capacity / 2 <= size
+                        zone.setImg(Assets.malls);
+                    }
+                }
             }
         }
     }
@@ -227,4 +332,5 @@ public class Grid extends JPanel {
             }
         }
     }
+
 }

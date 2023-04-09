@@ -34,70 +34,76 @@ import rightPanel.buildingStatPanel.BuildingStatPanel;
 
 public class BigCityJframe extends JFrame {
 
-    public static SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd");
-    
+    public static SimpleDateFormat dateFormater
+            = new SimpleDateFormat("yyyy-MM-dd");
+
     Engine engine;
+
+    private int fieldSize;
 
     Grid grid;
     JPanel topPanel;
 
     JButton destroyZone;
     //Select a zone to see its own JPanel on the right of the JFrame.
-    
+
     Timer timer;
     Date date;
     boolean isStopped;
-    
+
     Assets assets;
 
     BuildPanel buildPanel;
     BuildingStatPanel statPanel;
-    
+
     StatElement calendar;//Attila volt
     StatElement money;
     StatElement happy;
-    
-    
+
     public BigCityJframe() {
         super("BigCity");
-        
-        
+
         this.timer = new Timer(3000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(!isStopped)
+                if (!isStopped) {
                     dayPassed();
+                }
             }
         });
         timer.start();
         isStopped = false;
-        
+
         //Attila menu 
         JMenuBar menuBar = new JMenuBar();
         JMenu gameMenu = new JMenu("Játék");
-        JMenuItem saveJMenuItem = new JMenuItem(new AbstractAction("Mentés") {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    //TODO
-                }
+        JMenuItem saveJMenuItem = new JMenuItem(
+                new AbstractAction("Mentés") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO
+            }
         });
-        JMenuItem disasterJMenuItem = new JMenuItem(new AbstractAction("Katasztrófa kérése") {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    //TODO
-                }
+        JMenuItem disasterJMenuItem = new JMenuItem(
+                new AbstractAction("Katasztrófa kérése") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO
+            }
         });
-        JMenuItem settingsJMenuItem = new JMenuItem(new AbstractAction("Beállítások") {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    //TODO
-                }
+        JMenuItem settingsJMenuItem = new JMenuItem(
+                new AbstractAction("Beállítások") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO
+            }
         });
-        JMenuItem exitJMenuItem = new JMenuItem(new AbstractAction("Kilépés") {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.exit(0);
-                }
+        JMenuItem exitJMenuItem = new JMenuItem(
+                new AbstractAction("Kilépés") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
         });
         gameMenu.add(saveJMenuItem);
         gameMenu.add(disasterJMenuItem);
@@ -106,37 +112,38 @@ public class BigCityJframe extends JFrame {
         menuBar.add(gameMenu);
         JMenu timeMenu = new JMenu("Idő");
         JMenuItem speed1 = new JMenuItem(new AbstractAction("x1") {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if(isStopped) {
-                        isStopped = false;
-                    }
-                    timer.setDelay(3000);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (isStopped) {
+                    isStopped = false;
                 }
+                timer.setDelay(3000);
+            }
         });
         JMenuItem speed3 = new JMenuItem(new AbstractAction("x3") {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if(isStopped) {
-                        isStopped = false;
-                    }
-                    timer.setDelay(1000);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (isStopped) {
+                    isStopped = false;
                 }
+                timer.setDelay(1000);
+            }
         });
         JMenuItem speed5 = new JMenuItem(new AbstractAction("x5") {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if(isStopped) {
-                        isStopped = false;
-                    }
-                    timer.setDelay(600);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (isStopped) {
+                    isStopped = false;
                 }
+                timer.setDelay(600);
+            }
         });
-        JMenuItem startStop = new JMenuItem(new AbstractAction("Megállít/Elindít") {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    isStopped = !isStopped;
-                }
+        JMenuItem startStop = new JMenuItem(
+                new AbstractAction("Megállít/Elindít") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isStopped = !isStopped;
+            }
         });
         timeMenu.add(speed1);
         timeMenu.add(speed3);
@@ -145,11 +152,12 @@ public class BigCityJframe extends JFrame {
         menuBar.add(timeMenu);
         this.setJMenuBar(menuBar);
         //Attila menu vége
-        
+
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         int fieldSize = 100;
+        this.fieldSize = fieldSize;
         int width = 5;
         int height = 5;
 
@@ -160,21 +168,21 @@ public class BigCityJframe extends JFrame {
         topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setPreferredSize(new Dimension(-1, 50));
         topPanel.setBackground(Color.GREEN.darker().darker());
-        
-        happy = new StatElement("view/happiness.png","83%");
+
+        happy = new StatElement("view/happiness.png", "83%");
         happy.setTextColor(Color.MAGENTA.darker());
-        
-        calendar = new StatElement("view/calendar.png","2023-03-19");
+
+        calendar = new StatElement("view/calendar.png", "2023-03-19");
         this.date = new Date(0);
         calendar.setText(dateFormater.format(date));
-        
-        money = new StatElement("view/money.png",String.format("%,d", engine.getMoney()) + "$");
+
+        money = new StatElement("view/money.png", String.format("%,d", engine.getMoney()) + "$");
         money.setTextColor(Color.YELLOW.darker());
-        
+
         topPanel.add(money);
         topPanel.add(happy);
         topPanel.add(calendar);
-        
+
         BuildButton lakohely = new BuildButton("buildPanel/images/house.png", "Lakóhely", CursorSignal.RESIDENCE.getPriceL1());
         BuildButton ipariTerulet = new BuildButton("buildPanel/images/factory.png", "Ipari terület", CursorSignal.INDUSTRY.getPriceL1());
         BuildButton szolgaltatas = new BuildButton("buildPanel/images/store.png", "Szolgáltatás", CursorSignal.SERVICE.getPriceL1());
@@ -260,6 +268,9 @@ public class BigCityJframe extends JFrame {
         );
 
         // IDEIGLENES GOMB -----------------------------------------------------
+        // Keep it for test. It's faster (not faster performance but easier to 
+        // use) to destroy a zone with this. It makes easier to destroy multiple
+        // zones.
         destroyZone = new JButton("destroyZone");
         destroyZone.addActionListener(new ActionListener() {
             @Override
@@ -269,10 +280,9 @@ public class BigCityJframe extends JFrame {
         });
         buildPanel.add(destroyZone);
         // ---------------------------------------------------------------------
-        
-        
+
         grid = new Grid(fieldSize, width, height, engine, this);
-        
+
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.add(topPanel);
@@ -308,29 +318,38 @@ public class BigCityJframe extends JFrame {
         setLocationRelativeTo(null);
 
     }
-    
-    public void dayPassed(){
-        Calendar c = Calendar.getInstance(); 
-        c.setTime(date); 
+
+    public void dayPassed() {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
         c.add(Calendar.DATE, 1);
         date = c.getTime();
         refreshDate();
         refreshMoney();
-        
+
         // ITT HÍVJUK MEG A NAPONTA ÚJRASZÁMOLANDÓÓ FÜGGVÉNYEKET ==> 
         //      (elköltöznek-e, költözik-e be valaki stb)
     }
-    
+
     public void refreshMoney() {
         money.setText(String.format("%,d", engine.getMoney()) + "$");
     }
-    
+
     public void refreshDate() {
         calendar.setText(dateFormater.format(date));
     }
-    
+
     public void addMoney(int money) {
         engine.addMoney(money);
         refreshMoney();
     }
+
+    public Engine getEngine() {
+        return engine;
+    }
+
+    public int getFieldSize() {
+        return fieldSize;
+    }
+
 }
