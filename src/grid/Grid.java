@@ -184,12 +184,6 @@ public class Grid extends JPanel {
         }
     }
 
-    //TODO
-    /*
-                    zone.getLevel();
-                ((Residence) zone).getCapacity();
-                ((Residence) zone).getSize();
-     */
     private void changeImageAccordingSaturationAndLevel(Zone zone) {
         if (zone instanceof PrivateZone) {
             int level = zone.getLevel();
