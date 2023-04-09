@@ -12,9 +12,9 @@ public enum CursorSignal {
     INDUSTRY(1, 1, 100, 300, 1000),
     SERVICE(1, 1, 50, 100, 300),
     //------------------------------
-    DESTROY(1, 1),
+    DESTROY(1, 1,0,0,0),
     //It's for selecting a zone.
-    SELECT(1, 1);
+    SELECT(1, 1,0,0,0);
 
     private int width;
     private int height;
@@ -22,11 +22,6 @@ public enum CursorSignal {
     private int priceL1;
     private int priceL2;
     private int priceL3;
-
-    private CursorSignal(int width, int height) {
-        this.width = width;
-        this.height = height;
-    }
 
     private CursorSignal(int width, int height, int priceL1, int priceL2,
             int priceL3) {

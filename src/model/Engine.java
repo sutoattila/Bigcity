@@ -3,6 +3,8 @@ package model;
 import bigcity.HighSchool;
 import bigcity.Industry;
 import bigcity.Police;
+import bigcity.PrivateZone;
+import bigcity.PublicZone;
 import bigcity.Residence;
 import bigcity.Road;
 import bigcity.Service;
@@ -164,6 +166,31 @@ public class Engine {
         if (null == target) {
             return false;
         }
+        
+        int zoneLevel = 1;
+        CursorSignal type;
+        
+        if(target instanceof Residence tmp) {
+            zoneLevel = tmp.getLevel();
+            type = CursorSignal.RESIDENCE;
+        } else if(target instanceof Industry tmp) {
+            zoneLevel = tmp.getLevel();
+            type = CursorSignal.INDUSTRY;
+        } else if(target instanceof Service tmp) {
+            zoneLevel = tmp.getLevel();
+            type = CursorSignal.SERVICE;
+        } else if(target instanceof Road) {
+            type = CursorSignal.ROAD;
+        } else if(target instanceof Police) {
+            type = CursorSignal.POLICE;
+        } else if(target instanceof Stadium) {
+            type = CursorSignal.STADIUM;
+        } else if(target instanceof HighSchool) {
+            type = CursorSignal.HIGH_SCHOOL;
+        } else {
+            type = CursorSignal.UNIVERSITY;
+        }
+        
         CursorSignal targetSignal = target.getCursorSignal();
         int rowStart = target.getTopLeftY() / fieldSize;
         int rowEnd = target.getTopLeftY() / fieldSize
@@ -180,6 +207,12 @@ public class Engine {
         if (CursorSignal.ROAD == targetSignal) {
             refreshRoadImgsAround(argRow, argColumn);
         }
+        
+        int returnMoney = type.getPriceL1() + 
+                (zoneLevel > 1 ? type.getPriceL2() : 0) + 
+                (zoneLevel > 2 ? type.getPriceL3() : 0);
+        addMoney(returnMoney/2);
+        
         return true;
     }
 

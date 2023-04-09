@@ -20,8 +20,6 @@ public class Grid extends JPanel {
     The pixels start with the index 0. If the whole map is just one field 
     with a size of 50 pixels, then the range is 0-49.
      */
-    public Grid() {
-    }
 
     private int fieldSize;
     //The number of columns.
