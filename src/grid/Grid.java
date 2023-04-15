@@ -295,8 +295,8 @@ public class Grid extends JPanel {
     }
 
     /**
-     * Paints fields with transparent colours. If the mouse is above a zone all
-     * of its fields get coloured.
+     * Paints fields with transparent colours.
+     * When a zone is selected all of its fields gets coloured.
      *
      * @param rowStart is the top Y coordinate of the zone
      * @param rowEnd is the bottom Y coordinate of the zone
@@ -306,14 +306,16 @@ public class Grid extends JPanel {
      */
     private void paintArea(int rowStart, int rowEnd,
             int columnStart, int columnEnd, Graphics2D g2) {
-        Zone target = engine.getCell(rowStart, columnStart);
-        if (null != target) {
-            rowEnd = target.getTopLeftY() / fieldSize
-                    + target.getCursorSignal().getHeight() - 1;
-            rowStart = target.getTopLeftY() / fieldSize;
-            columnEnd = target.getTopLeftX() / fieldSize
-                    + target.getCursorSignal().getWidth() - 1;
-            columnStart = target.getTopLeftX() / fieldSize;
+        if (CursorSignal.SELECT == engine.getCursorSignal()) {
+            Zone target = engine.getCell(rowStart, columnStart);
+            if (null != target) {
+                rowEnd = target.getTopLeftY() / fieldSize
+                        + target.getCursorSignal().getHeight() - 1;
+                rowStart = target.getTopLeftY() / fieldSize;
+                columnEnd = target.getTopLeftX() / fieldSize
+                        + target.getCursorSignal().getWidth() - 1;
+                columnStart = target.getTopLeftX() / fieldSize;
+            }
         }
         for (int row = rowStart; row <= rowEnd; row++) {
             for (int column = columnStart; column <= columnEnd; column++) {
