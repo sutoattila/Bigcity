@@ -320,7 +320,6 @@ public class BigCityJframe extends JFrame {
 
         // ITT HÍVJUK MEG A NAPONTA ÚJRASZÁMOLANDÓÓ FÜGGVÉNYEKET ==> 
         //      (elköltöznek-e, költözik-e be valaki stb)
-        
         //TODO
         //0. ------------------------------------------------------------------
         //100 people move in immediately if possible. They leave only if there 
@@ -334,27 +333,35 @@ public class BigCityJframe extends JFrame {
         //connections.
         //2. ------------------------------------------------------------------
         //The new residents try to take the best places.
+        //
+        //Calculated not in this function!
+        //Destroying or building a zone causes to move people.
+        //After road change everybody moves.
+        //After service, industry or residence change only associated people 
+        //move.
+        //
         //3. ------------------------------------------------------------------
         //Calculate the happiness of each redident. The happiness changes with a
         //calculated value everyday.
         //Calculate the average happiness.
         //4. ------------------------------------------------------------------
-        //Check whether the game is over or not. (average happiness < 20%)
-        //5. ------------------------------------------------------------------
         //Residents with low happiness move out. (<10%)
-        //6. ------------------------------------------------------------------
-        //Increase education level.
-        //The maximum amount of residents with high school and university 
-        //education level depends on how many we have of these zones.
-        //+1 High school = +30 capacity for people with high school education
-        //+1 University  = +30 capacity for people with university education
-        //7. ------------------------------------------------------------------
+        //5. ------------------------------------------------------------------
         //Pay the expenses. 
         //(high school -20$, university -30$, police -30$, stadium -$40)
         //Collect the taxes. Residents pay a fix amount (~1$) for the residence, and a
         //salary tax according their education level.
         //(+1$ primary school, +4$ high school, +8$ university) 
-        //---------------------------------------------------------------------
+        //6. ------------------------------------------------------------------
+        //Increase education level.
+        //One high school gives education to one resident a day. 
+        //Same for the university.
+        //The maximum amount of residents with high school and university 
+        //education level depends on how many we have of these zones.
+        //+1 High school = +30 capacity for people with high school education
+        //+1 University  = +30 capacity for people with university education
+        //7. ------------------------------------------------------------------
+        //Check whether the game is over or not. (average happiness < 20%)
     }
 
     public void refreshMoney() {
