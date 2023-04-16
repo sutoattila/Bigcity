@@ -79,7 +79,7 @@ public class BuildingStatPanel extends JPanel {
         add(exitPanel);
 
         this.bigCityJFrame = bigCityJFrame;
-        
+
         JButton addPerson = new JButton("Ember hozzáadása");
         addPerson.addActionListener(new ActionListener() {
             @Override
@@ -105,7 +105,7 @@ public class BuildingStatPanel extends JPanel {
                     repaint();
                     bigCityJFrame.repaint();
                 }
-                
+
             }
         });
         if (zone instanceof PrivateZone) {
@@ -115,7 +115,6 @@ public class BuildingStatPanel extends JPanel {
             add(asd);
         }
 
-        
         this.zone = zone;
         if (zone instanceof Residence) {
             Residence tmp = (Residence) zone;
@@ -180,6 +179,8 @@ public class BuildingStatPanel extends JPanel {
                         upgradeButton.setText("-");
                     }
                     bStat.updateStats();
+                    
+                    bigCityJFrame.getEngine().moveEveryOne();
                     bigCityJFrame.repaint();
                 }
             });
@@ -213,4 +214,17 @@ public class BuildingStatPanel extends JPanel {
 
     }
 
+    public Zone getZone() {
+        return zone;
+    }
+
+    public PersonsPanel getpPanel() {
+        return pPanel;
+    }
+
+    public BuildingStat getbStat() {
+        return bStat;
+    }
+
+    
 }

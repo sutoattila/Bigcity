@@ -26,10 +26,10 @@ public class Person {
         return educationLevel;
     }
 
-    public boolean isMale(){
+    public boolean isMale() {
         return male;
     }
-    
+
     public int changeHappinessBy(int value) {
         happiness += value;
         return happiness;
@@ -82,4 +82,21 @@ public class Person {
     public void moveFromTown() {
         //TODO
     }
+
+    public Zone getHome() {
+        return home;
+    }
+
+    public Zone getJob() {
+        return job;
+    }
+
+    public void setHome(Zone home) {
+        this.home = home;
+    }
+
+    public void setJob(Zone job) {
+        this.job = job;
+    }
+
 }

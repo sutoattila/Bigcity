@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
@@ -154,7 +155,7 @@ public class BigCityJframe extends JFrame {
 
         new Assets();
 
-        engine = new Engine(width, height, this.fieldSize);
+        engine = new Engine(width, height, this.fieldSize, this);
 
         topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setPreferredSize(new Dimension(-1, 50));
@@ -308,6 +309,22 @@ public class BigCityJframe extends JFrame {
         pack();
         setLocationRelativeTo(null);
 
+    }
+
+    public void repaintStatPanelAndGrid() {
+        if (null != statPanel) {
+            //remove(statPanel);
+            //statPanel = new BuildingStatPanel(statPanel.getZone(), this);
+            //add(statPanel, BorderLayout.EAST);
+            //pack();
+            if (null != statPanel.getpPanel()) {
+                statPanel.getpPanel().updatePeople();
+            }
+            if (null != statPanel.getbStat()) {
+                statPanel.getbStat().updateStats();
+            }
+        }
+        grid.repaint();
     }
 
     public void dayPassed() {

@@ -10,16 +10,22 @@ import java.util.List;
  *
  * @author mihalkonorbi
  */
-public abstract class Workplace extends PrivateZone{
+public abstract class Workplace extends PrivateZone {
+
     protected List<Person> workers;
-    
-    public List<Person> getWorkers(){
+
+    public List<Person> getWorkers() {
         return workers;
     }
-    
+
     @Override
     public void addPerson(Person p) {
-        if(capacity > getSize())
+        if (capacity > getSize()) {
             workers.add(p);
+        }
+    }
+
+    public void clearWorkers() {
+        workers.clear();
     }
 }

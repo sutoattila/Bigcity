@@ -1,11 +1,10 @@
 package model;
 
+import bigcity.EducationLevel;
 import bigcity.HighSchool;
 import bigcity.Industry;
 import bigcity.Person;
 import bigcity.Police;
-import bigcity.PrivateZone;
-import bigcity.PublicZone;
 import bigcity.Residence;
 import bigcity.Road;
 import bigcity.Service;
@@ -18,10 +17,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
-import javax.swing.RowFilter;
 import res.Assets;
+import view.BigCityJframe;
 
 public class Engine {
 
@@ -48,11 +45,14 @@ public class Engine {
 
     private int fieldSize;
 
-    public Engine(int width, int height, int fieldSize) {
+    private BigCityJframe bigCityJframe;
+
+    public Engine(int width, int height, int fieldSize, BigCityJframe bigCityJframe) {
         this.width = width;
         this.height = height;
         this.fieldSize = fieldSize;
-        this.money = 20000;
+        this.money = 1000;
+        this.bigCityJframe = bigCityJframe;
         grid = new Zone[height][width];
         for (int column = 0; column < width; column++) {
             for (int row = 0; row < height; row++) {
@@ -126,6 +126,7 @@ public class Engine {
             refreshRoadImgsAround(rowStart, columnStart);
         }
 
+        moveEveryOne();
         return true;
     }
 
@@ -227,12 +228,8 @@ public class Engine {
                 + (zoneLevel > 2 ? type.getPriceL3() : 0);
         addMoney(returnMoney / 2);
 
+        moveEveryOne();
         return true;
-    }
-
-    public void upgradeZone(/*TODO*/) {
-        //TODO: Select mode (signal). -> Zone selected. Call this method if it
-        //can be upgraded. -> Change the zone's img and level fields.
     }
 
     private Boolean roadAndInsideGrid(int row, int column) {
@@ -329,18 +326,30 @@ public class Engine {
         }
     }
 
-    public void dayPassed() {
-        //TODO
-        //------------------------------------------------------------------
-        //100 people move in immediately if possible. They leave only if there 
-        //isn't enough residence.
-        //The polpulation tries to increase by 5% everyday.
-        int fixGroupOfPeopleCount = 100;
-        float percentageOfNewResidents = 0.05f;
-        int newResidentsCount = (int) Math.round(
-                residents.size() * percentageOfNewResidents);
-        if (residents.size() < fixGroupOfPeopleCount) {
-            newResidentsCount += fixGroupOfPeopleCount - residents.size();
+    public void moveEveryOne() {
+
+        residents.forEach(resident -> {
+            resident.setHome(null);
+            resident.setJob(null);
+        });
+
+        int sumResidenceCapacity = 0;
+        for (int row = 0; row < height; row++) {
+            for (int column = 0; column < width; column++) {
+                if (null != grid[row][column]) {
+                    if (grid[row][column] instanceof Residence) {
+                        Residence residence = (Residence) grid[row][column];
+                        sumResidenceCapacity += residence.getCapacity();
+                        residence.clearResidents();
+                    } else if (grid[row][column] instanceof Workplace) {
+                        Workplace workplace = (Workplace) grid[row][column];
+                        workplace.clearWorkers();
+                    }
+                }
+            }
+        }
+        while (sumResidenceCapacity < residents.size()) {
+            residents.remove(0);
         }
         // ------------------------------------------------------------------
         //Find all residences.
@@ -472,11 +481,10 @@ public class Engine {
                 residencesWithNoWorkplace.add(residence);
             }
         });
-        
+
         Collections.sort(distances);
 
-        //System.out.println(residencesWithNoWorkplace);
-        //System.out.println(distances);
+        /*
         System.out.println("----------------------------------------------");
         System.out.println("residences with no connections: ");
         residencesWithNoWorkplace.forEach(residence -> {
@@ -485,25 +493,336 @@ public class Engine {
         });
         System.out.println("residences with connections: ");
         distances.forEach(residenceWorkplaceDistance -> {
-            System.out.print("residence: row"
+            System.out.print("residence: row: "
                     + residenceWorkplaceDistance.getResidence().getTopLeftY()
                     / fieldSize);
-            System.out.println("; column"
+            System.out.println("; column: "
                     + residenceWorkplaceDistance.getResidence().getTopLeftX()
                     / fieldSize);
-            System.out.print("workplace: row"
+            System.out.print("workplace: row: "
                     + residenceWorkplaceDistance.getWorkplace().getTopLeftY()
                     / fieldSize);
-            System.out.println("; column"
+            System.out.println("; column: "
                     + residenceWorkplaceDistance.getWorkplace().getTopLeftX()
                     / fieldSize);
             System.out.println("distance: " + residenceWorkplaceDistance
                     .getDistance());
         });
         System.out.println("----------------------------------------------");
+         */
         //------------------------------------------------------------------
         //The new residents try to take the best places.
+        residents.forEach(resident -> {
+            boolean movedIn = false;
+            for (ResidenceWorkplaceDistance distance : distances) {
+                Residence residence = distance.getResidence();
+                Workplace workplace = distance.getWorkplace();
+                int residenceSize = residence.getSize();
+                int residenceCapacity = residence.getCapacity();
+                int workplaceSize = workplace.getSize();
+                int workplaceCapacity = workplace.getCapacity();
+                if (residenceSize < residenceCapacity
+                        && workplaceSize < workplaceCapacity) {
+                    residence.addPerson(resident);
+                    workplace.addPerson(resident);
+                    movedIn = true;
+                    //Moved in.
+                    break;
+                }
+            }
+            if (false == movedIn) {
+                for (Residence residence : residencesWithNoWorkplace) {
+                    int residenceSize = residence.getSize();
+                    int residenceCapacity = residence.getCapacity();
+                    if (residenceSize < residenceCapacity) {
+                        residence.addPerson(resident);
+                        movedIn = true;
+                        //Moved in.
+                        break;
+                    }
+                }
+            }
+
+            //Residences with connections, but all connected workplaces are full
+            //and there is still free place on the residential zone.
+            if (false == movedIn) {
+                for (ResidenceWorkplaceDistance distance : distances) {
+                    Residence residence = distance.getResidence();
+                    int residenceSize = residence.getSize();
+                    int residenceCapacity = residence.getCapacity();
+                    if (residenceSize < residenceCapacity) {
+                        residence.addPerson(resident);
+                        movedIn = true;
+                        //Moved in.
+                        break;
+                    }
+                }
+            }
+        });
+
+    }
+
+    public void dayPassed() {
+        //TODO
+        //------------------------------------------------------------------
+        //100 people move in immediately if possible. They leave only if there 
+        //isn't enough residence.
+        //The polpulation tries to increase by 5% everyday.
+        int fixGroupOfPeopleCount = 10;
+        float percentageOfNewResidents = 0.01f;
+        int newResidentsCount = (int) Math.ceil(
+                residents.size() * percentageOfNewResidents);
+        if (residents.size() < fixGroupOfPeopleCount) {
+            newResidentsCount += fixGroupOfPeopleCount - residents.size();
+        }
+        //System.out.println("newResidentsCount: "+newResidentsCount);
+        // ------------------------------------------------------------------
+        //Find all residences.
+        //Find all industries and services connected to a residence. Store every 
+        //connections. Store the distances. Sort according the distances.
+        //Residences with no connection are stored separately from those with
+        //connections.
+        ArrayList<Residence> residences = new ArrayList<>();
+        for (int row = 0; row < height; row++) {
+            for (int column = 0; column < width; column++) {
+                if (null != grid[row][column]) {
+                    if (grid[row][column] instanceof Residence) {
+                        residences.add((Residence) grid[row][column]);
+                    }
+                }
+            }
+        }
+        ArrayList<ResidenceWorkplaceDistance> distances = new ArrayList<>();
+        ArrayList<Residence> residencesWithNoWorkplace = new ArrayList<>();
+
+        residences.forEach(residence -> {
+            HashSet<Zone> foundZones = new HashSet<>();
+            foundZones.add(residence);
+            LinkedList<ZoneDistancePair> zoneDistancePairs = new LinkedList<>();
+            int foundWorkplacesCount = 0;
+            zoneDistancePairs.addLast(new ZoneDistancePair(residence,
+                    0));
+
+            while (zoneDistancePairs.size() > 0) {
+                ZoneDistancePair currentZoneDistancePair
+                        = zoneDistancePairs.removeFirst();
+                int row = currentZoneDistancePair.getZone().getTopLeftY()
+                        / fieldSize;
+                int column = currentZoneDistancePair.getZone().getTopLeftX()
+                        / fieldSize;
+
+                Zone foundZone;
+                //up
+                if (0 <= row - 1 && row - 1 < height) {
+                    if (null != grid[row - 1][column]) {
+                        foundZone = grid[row - 1][column];
+                        if (!foundZones.contains(foundZone)) {
+                            foundZones.add(foundZone);
+                            if (foundZone instanceof Road) {
+                                zoneDistancePairs.addLast(
+                                        new ZoneDistancePair(foundZone,
+                                                currentZoneDistancePair
+                                                        .getDistance() + 1));
+                            } else if (foundZone instanceof Workplace) {
+                                foundWorkplacesCount++;
+                                distances.add(new ResidenceWorkplaceDistance(
+                                        residence, (Workplace) foundZone,
+                                        currentZoneDistancePair.getDistance()
+                                        + 1));
+                            }
+                        }
+
+                    }
+                }
+                //right
+                if (0 <= column + 1 && column + 1 < width) {
+                    if (null != grid[row][column + 1]) {
+                        foundZone = grid[row][column + 1];
+                        if (!foundZones.contains(foundZone)) {
+                            foundZones.add(foundZone);
+                            if (foundZone instanceof Road) {
+                                zoneDistancePairs.addLast(
+                                        new ZoneDistancePair(foundZone,
+                                                currentZoneDistancePair
+                                                        .getDistance() + 1));
+                            } else if (foundZone instanceof Workplace) {
+                                foundWorkplacesCount++;
+                                distances.add(new ResidenceWorkplaceDistance(
+                                        residence, (Workplace) foundZone,
+                                        currentZoneDistancePair.getDistance()
+                                        + 1));
+                            }
+                        }
+
+                    }
+                }
+                //down
+                if (0 <= row + 1 && row + 1 < height) {
+                    if (null != grid[row + 1][column]) {
+                        foundZone = grid[row + 1][column];
+                        if (!foundZones.contains(foundZone)) {
+                            foundZones.add(foundZone);
+                            if (foundZone instanceof Road) {
+                                zoneDistancePairs.addLast(
+                                        new ZoneDistancePair(foundZone,
+                                                currentZoneDistancePair
+                                                        .getDistance() + 1));
+                            } else if (foundZone instanceof Workplace) {
+                                foundWorkplacesCount++;
+                                distances.add(new ResidenceWorkplaceDistance(
+                                        residence, (Workplace) foundZone,
+                                        currentZoneDistancePair.getDistance()
+                                        + 1));
+                            }
+                        }
+
+                    }
+                }
+                //left
+                if (0 <= column - 1 && column - 1 < width) {
+                    if (null != grid[row][column - 1]) {
+                        foundZone = grid[row][column - 1];
+                        if (!foundZones.contains(foundZone)) {
+                            foundZones.add(foundZone);
+                            if (foundZone instanceof Road) {
+                                zoneDistancePairs.addLast(
+                                        new ZoneDistancePair(foundZone,
+                                                currentZoneDistancePair
+                                                        .getDistance() + 1));
+                            } else if (foundZone instanceof Workplace) {
+                                foundWorkplacesCount++;
+                                distances.add(new ResidenceWorkplaceDistance(
+                                        residence, (Workplace) foundZone,
+                                        currentZoneDistancePair.getDistance()
+                                        + 1));
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            if (0 == foundWorkplacesCount) {
+                residencesWithNoWorkplace.add(residence);
+            }
+        });
+
+        Collections.sort(distances);
+
+        /*
+        System.out.println("----------------------------------------------");
+        System.out.println("residences with no connections: ");
+        residencesWithNoWorkplace.forEach(residence -> {
+            System.out.print("row: " + residence.getTopLeftY() / fieldSize);
+            System.out.println("; column: " + residence.getTopLeftX() / fieldSize);
+        });
+        System.out.println("residences with connections: ");
+        distances.forEach(residenceWorkplaceDistance -> {
+            System.out.print("residence: row: "
+                    + residenceWorkplaceDistance.getResidence().getTopLeftY()
+                    / fieldSize);
+            System.out.println("; column: "
+                    + residenceWorkplaceDistance.getResidence().getTopLeftX()
+                    / fieldSize);
+            System.out.print("workplace: row: "
+                    + residenceWorkplaceDistance.getWorkplace().getTopLeftY()
+                    / fieldSize);
+            System.out.println("; column: "
+                    + residenceWorkplaceDistance.getWorkplace().getTopLeftX()
+                    / fieldSize);
+            System.out.println("distance: " + residenceWorkplaceDistance
+                    .getDistance());
+        });
+        System.out.println("----------------------------------------------");
+         */
+        //------------------------------------------------------------------
+        //The new residents try to take the best places.
+        while (newResidentsCount > 0) {
+            boolean movedIn = false;
+            for (ResidenceWorkplaceDistance distance : distances) {
+                Residence residence = distance.getResidence();
+                Workplace workplace = distance.getWorkplace();
+                int residenceSize = residence.getSize();
+                int residenceCapacity = residence.getCapacity();
+                int workplaceSize = workplace.getSize();
+                int workplaceCapacity = workplace.getCapacity();
+                if (residenceSize < residenceCapacity
+                        && workplaceSize < workplaceCapacity) {
+                    Person newPerson = new Person(
+                            "Cool Name",
+                            30,
+                            100,
+                            true,
+                            EducationLevel.PRIMARY_SCHOOL,
+                            residence,
+                            workplace
+                    );
+                    residents.add(newPerson);
+                    residence.addPerson(newPerson);
+                    workplace.addPerson(newPerson);
+                    movedIn = true;
+                    //Moved in.
+                    break;
+                }
+            }
+            if (false == movedIn) {
+                for (Residence residence : residencesWithNoWorkplace) {
+                    int residenceSize = residence.getSize();
+                    int residenceCapacity = residence.getCapacity();
+                    if (residenceSize < residenceCapacity) {
+                        Person newPerson = new Person(
+                                "Cool Name",
+                                42,
+                                100,
+                                false,
+                                EducationLevel.HIGH_SCHOOL,
+                                residence,
+                                null
+                        );
+                        residents.add(newPerson);
+                        residence.addPerson(newPerson);
+                        movedIn = true;
+                        //Moved in.
+                        break;
+                    }
+                }
+            }
+
+            //Residences with connections, but all connected workplaces are full
+            //and there is still free place on the residential zone.
+            if (false == movedIn) {
+                for (ResidenceWorkplaceDistance distance : distances) {
+                    Residence residence = distance.getResidence();
+                    int residenceSize = residence.getSize();
+                    int residenceCapacity = residence.getCapacity();
+                    if (residenceSize < residenceCapacity) {
+                        Person newPerson = new Person(
+                                "Cool Name",
+                                30,
+                                100,
+                                true,
+                                EducationLevel.PRIMARY_SCHOOL,
+                                residence,
+                                null
+                        );
+                        residents.add(newPerson);
+                        residence.addPerson(newPerson);
+                        movedIn = true;
+                        //Moved in.
+                        break;
+                    }
+                }
+            }
+
+            if (false == movedIn) {
+                //The city is full, there is no more residence with free place.
+                break;
+            }
+
+            newResidentsCount--;
+        }
         //
+        //TODO!!!
         //Calculated not in this function!
         //Destroying or building a zone causes to move people.
         //After road change everybody moves.
@@ -511,7 +830,7 @@ public class Engine {
         //move.
         //
         //------------------------------------------------------------------
-        //Calculate the happiness of each redident. The happiness changes with a
+        //Calculate the happiness of each resident. The happiness changes with a
         //calculated value everyday.
         //Calculate the average happiness.
         //------------------------------------------------------------------
@@ -527,11 +846,15 @@ public class Engine {
         //One high school gives education to one resident a day. 
         //Same for the university.
         //The maximum amount of residents with high school and university 
-        //education level depends on how many we have of these zones.
+        //education level depends on how many we have of these zones and how 
+        //many people lives in the city.
+        //(educated people count <= ~50% of people)
         //+1 High school = +30 capacity for people with high school education
         //+1 University  = +30 capacity for people with university education
         //------------------------------------------------------------------
         //Check whether the game is over or not. (average happiness < 20%)
+
+        bigCityJframe.repaintStatPanelAndGrid();
     }
 
     public int getMoney() {
