@@ -5,7 +5,7 @@ import java.util.List;
 import res.Assets;
 
 public class Residence extends PrivateZone {
-    protected List<Person> resinedts;
+    protected List<Person> residents;
     
     public Residence(int topLeftX, int topLeftY, int price) {
         this.topLeftX = topLeftX;
@@ -14,23 +14,23 @@ public class Residence extends PrivateZone {
         this.capacity = 8;
         this.level = 1;
         this.img = Assets.copperR;
-        this.resinedts = new ArrayList<>();
+        this.residents = new ArrayList<>();
         this.price = price;
     }
 
     public List<Person> getResidents(){
-        return resinedts;
+        return residents;
     }
     
     @Override
     public void addPerson(Person p) {
         if(capacity > getSize())
-            resinedts.add(p);
+            residents.add(p);
     }
     
     @Override
     public int getSize() {
-        return resinedts.size();
+        return residents.size();
     }
     
     @Override
