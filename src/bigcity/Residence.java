@@ -5,8 +5,9 @@ import java.util.List;
 import res.Assets;
 
 public class Residence extends PrivateZone {
+
     protected List<Person> residents;
-    
+
     public Residence(int topLeftX, int topLeftY, int price) {
         this.topLeftX = topLeftX;
         this.topLeftY = topLeftY;
@@ -18,31 +19,33 @@ public class Residence extends PrivateZone {
         this.price = price;
     }
 
-    public List<Person> getResidents(){
+    public List<Person> getResidents() {
         return residents;
     }
-    
+
     @Override
     public void addPerson(Person p) {
-        if(capacity > getSize())
+        if (capacity > getSize()) {
             residents.add(p);
+        }
     }
-    
+
     @Override
     public int getSize() {
         return residents.size();
     }
-    
+
     @Override
-    public int upgrade(){
-        if(getLevel() < 3) {
+    public int upgrade() {
+        if (getLevel() < 3) {
             capacity *= 2;
             level++;
         }
         return level;
     }
-    
-    public void clearResidents(){
+
+    public void clearResidents() {
         residents.clear();
     }
+
 }

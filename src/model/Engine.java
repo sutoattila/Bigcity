@@ -455,6 +455,7 @@ public class Engine {
                 workplace.addPerson(resident);
                 resident.setHome(residence);
                 resident.setJob(workplace);
+                resident.setHomeJobDistance(distance.getDistance());
                 movedIn = true;
                 //Moved in.
                 break;
@@ -467,6 +468,7 @@ public class Engine {
                 if (residenceSize < residenceCapacity) {
                     residence.addPerson(resident);
                     resident.setHome(residence);
+                    resident.setHomeJobDistance(-1);
                     movedIn = true;
                     //Moved in.
                     break;
@@ -483,6 +485,7 @@ public class Engine {
                 if (residenceSize < residenceCapacity) {
                     residence.addPerson(resident);
                     resident.setHome(residence);
+                    resident.setHomeJobDistance(-1);
                     movedIn = true;
                     //Moved in.
                     break;
@@ -658,21 +661,174 @@ public class Engine {
             newResidentsCount--;
         }
         //
-        //
+        //Done
         //Calculated not in this function!
         //Destroying or building a zone causes to move people.
         //
         //------------------------------------------------------------------
         //Calculate the happiness of each resident. The happiness changes with a
         //calculated value everyday.
-        //Calculate the average happiness.
+        //has job: +1
+        //doesn't have job: -1
+        //Person objects should store the distance between house and workplace.
+        //distance between house and workplace: (distance/5==0) [1;4]-> +1,
+        //[5,...[ -> -1*2^n where n=distance/5
+        //Zone happiness change according range. (industry, stadium)
+        //Happiness change according saturation(home, job). If capacity==size
+        //and there is no police nearby, then -3.
+        //Calculate the average happiness. Write it to the top panel.
+
+        //has job: +1
+        //doesn't have job: -1
+        //Person objects should store the distance between house and workplace.
+        //distance between house and workplace: (distance/5==0) [1;4]-> +1,
+        //[5,...[ -> -1*2^n where n=distance/5
+        residents.forEach(resident -> {
+            if (null == resident.getJob()) {
+                resident.changeHappinessBy(-1);
+            } else {
+                resident.changeHappinessBy(1);
+                //distance between house and workplace:
+                //  (distance/5==0) [0;4]-> +1,
+                //  [5,...[ -> -1*2^n where n=distance/5
+                int happinessChangeAccordingDistance
+                        = resident.getHomeJobDistance() / 5 == 0
+                        ? 1
+                        : -1 * (int) Math.pow(2,
+                                resident.getHomeJobDistance() / 5);
+                resident.changeHappinessBy(happinessChangeAccordingDistance);
+            }
+        });
+        //Find all industries and stadiums. Change happiness inside the range.
+        findAllIndustries().forEach(industry -> {
+            findCoordsInsideRange(industry, Industry.range)
+                    .forEach(coords -> {
+                        Zone zone = grid[coords.getY()][coords.getX()];
+                        if (null != zone) {
+                            if (zone instanceof Residence) {
+                                ((Residence) zone).getResidents().forEach(
+                                        resident -> {
+                                            resident.changeHappinessBy(-1);
+                                        });
+                            } else if (zone instanceof Workplace) {
+                                ((Workplace) zone).getWorkers().forEach(
+                                        worker -> {
+                                            worker.changeHappinessBy(-1);
+                                        });
+                            }
+                        }
+                    });
+        });
+        /*//debug
+        findAllStadiums().forEach(stadium
+                -> System.out.println("count coords around: "
+                        + findCoordsInsideRange(stadium,
+                                Stadium.range).size()));
+         */
+        findAllStadiums().forEach(stadium -> {
+            //System.out.println("---------------------------------");
+            findCoordsInsideRange(stadium, Stadium.range)
+                    .forEach(coords -> {
+                        /*
+                        System.out.println("x: " + coords.getX() + ", y: "
+                                + coords.getY() + ",step: " + coords.getStep()
+                        );
+                         */
+                        Zone zone = grid[coords.getY()][coords.getX()];
+                        if (null != zone) {
+                            if (zone instanceof Residence) {
+                                ((Residence) zone).getResidents().forEach(
+                                        resident -> {
+                                            resident.changeHappinessBy(4);
+                                        });
+                            } else if (zone instanceof Workplace) {
+                                ((Workplace) zone).getWorkers().forEach(
+                                        worker -> {
+                                            worker.changeHappinessBy(4);
+                                        });
+                            }
+                        }
+                    });
+            //System.out.println("---------------------------------");
+        });
+
+        ///Happiness change according saturation(home, job). If capacity==size
+        //and there is no police nearby, then -3.
+        ArrayList<Coords> coordsInPoliceRange = new ArrayList<>();
+        for (int row = 0; row < height; row++) {
+            for (int column = 0; column < width; column++) {
+                Zone zone = grid[row][column];
+                if (null != zone) {
+                    if (zone instanceof Police) {
+                        for (Coords coords
+                                : findCoordsInsideRange(zone,
+                                        Police.range)) {
+                            boolean alreadyIn = false;
+                            for (Coords coordsInRange : coordsInPoliceRange) {
+                                if (coordsInRange.getX() == coords.getX()
+                                        && coordsInRange.getY()
+                                        == coords.getY()) {
+                                    alreadyIn = true;
+                                    break;
+                                }
+                            }
+                            if (false == alreadyIn) {
+                                coordsInPoliceRange.add(coords);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ArrayList<Coords> coordsNotInPoliceRange = new ArrayList<>();
+        for (int row = 0; row < height; row++) {
+            for (int column = 0; column < width; column++) {
+                boolean coordsAffectedByPolice = false;
+                for (Coords coords : coordsInPoliceRange) {
+                    if (column == coords.getX() && row == coords.getY()) {
+                        coordsAffectedByPolice = true;
+                        break;
+                    }
+                }
+                if (false == coordsAffectedByPolice) {
+                    coordsNotInPoliceRange.add(new Coords(column, row));
+                }
+            }
+        }
+        coordsNotInPoliceRange.forEach(coords -> {
+            Zone zone = grid[coords.getY()][coords.getX()];
+            if (null != zone) {
+                if (zone instanceof Residence) {
+                    Residence residence = (Residence) zone;
+                    residence.getResidents().forEach(resident -> {
+                        if (residence.getCapacity() == residence.getSize()) {
+                            resident.changeHappinessBy(-3);
+                        }
+                    });
+                } else if (zone instanceof Workplace) {
+                    Workplace workplace = (Workplace) zone;
+                    workplace.getWorkers().forEach(worker -> {
+                        if (workplace.getCapacity() == workplace.getSize()) {
+                            worker.changeHappinessBy(-3);
+                        }
+                    });
+                }
+            }
+        });
+
+        //Set maximum happiness.
+        residents.forEach(resident -> {
+            if (100 < resident.getHappiness()) {
+                resident.setHappiness(100);
+            }
+        });
         //------------------------------------------------------------------
         //Residents with low happiness move out. (<10%)
         //------------------------------------------------------------------
         //Pay the expenses. 
         //(high school -20$, university -30$, police -30$, stadium -$40)
-        //Collect the taxes. Residents pay a fix amount (~1$) for the residence, and a
-        //salary tax according their education level.
+        //Collect the taxes. Residents pay a fix amount (~1$) for the residence,
+        //and a salary tax according their education level.
         //(+1$ primary school, +4$ high school, +8$ university) 
         //------------------------------------------------------------------
         //Increase education level.
@@ -686,8 +842,136 @@ public class Engine {
         //+1 University  = +30 capacity for people with university education
         //------------------------------------------------------------------
         //Check whether the game is over or not. (average happiness < 20%)
-
         bigCityJframe.repaintStatPanelAndGrid();
+    }
+
+    private ArrayList<Industry> findAllIndustries() {
+        ArrayList<Industry> industries = new ArrayList<>();
+        for (int row = 0; row < height; row++) {
+            for (int column = 0; column < width; column++) {
+                if (null != grid[row][column]) {
+                    if (grid[row][column] instanceof Industry) {
+                        industries.add((Industry) grid[row][column]);
+                    }
+                }
+            }
+        }
+        return industries;
+    }
+
+    private ArrayList<Stadium> findAllStadiums() {
+        ArrayList<Stadium> stadiums = new ArrayList<>();
+        for (int row = 0; row < height; row++) {
+            for (int column = 0; column < width; column++) {
+                Zone zone = grid[row][column];
+                if (null != zone) {
+                    if (zone instanceof Stadium) {
+                        boolean alreadyIn = false;
+                        for (Stadium stadium : stadiums) {
+                            if (stadium == zone) {
+                                alreadyIn = true;
+                                break;
+                            }
+                        }
+                        if (false == alreadyIn) {
+                            stadiums.add((Stadium) grid[row][column]);
+                        }
+                    }
+                }
+            }
+        }
+        return stadiums;
+    }
+
+    public ArrayList<Coords> findCoordsInsideRange(Zone centerZone, int range) {
+        LinkedList<Coords> coordsInRange = new LinkedList<>();
+        ArrayList<Coords> processedCoords = new ArrayList<>();
+
+        int x = centerZone.getTopLeftX() / fieldSize;
+        int y = centerZone.getTopLeftY() / fieldSize;
+
+        Coords coords = new Coords(x, y);
+        coords.setStep(0);
+        coordsInRange.addLast(coords);
+        processedCoords.add(coords);
+
+        //The center zone is a 2x2 zone if it is a stadium.
+        if (centerZone instanceof Stadium) {
+            coords = new Coords(x + 1, y);
+            coords.setStep(0);
+            coordsInRange.addLast(coords);
+            processedCoords.add(coords);
+
+            coords = new Coords(x + 1, y + 1);
+            coords.setStep(0);
+            coordsInRange.addLast(coords);
+            processedCoords.add(coords);
+
+            coords = new Coords(x, y + 1);
+            coords.setStep(0);
+            coordsInRange.addLast(coords);
+            processedCoords.add(coords);
+        }
+
+        ArrayList<Coords> result = new ArrayList<>();
+
+        while (0 != coordsInRange.size()) {
+            coords = coordsInRange.removeFirst();
+            x = coords.getX();
+            y = coords.getY();
+            int nextStep = coords.getStep() + 1;
+            //up
+            Coords nextCoords = getNextCoords(x, y - 1, nextStep, range,
+                    processedCoords);
+            if (null != nextCoords) {
+                processedCoords.add(nextCoords);
+                result.add(nextCoords);
+                coordsInRange.addLast(nextCoords);
+            }
+            //right
+            nextCoords = getNextCoords(x + 1, y, nextStep, range,
+                    processedCoords);
+            if (null != nextCoords) {
+                processedCoords.add(nextCoords);
+                result.add(nextCoords);
+                coordsInRange.addLast(nextCoords);
+            }
+            //down
+            nextCoords = getNextCoords(x, y + 1, nextStep, range,
+                    processedCoords);
+            if (null != nextCoords) {
+                processedCoords.add(nextCoords);
+                result.add(nextCoords);
+                coordsInRange.addLast(nextCoords);
+            }
+            //left
+            nextCoords = getNextCoords(x - 1, y, nextStep, range,
+                    processedCoords);
+            if (null != nextCoords) {
+                processedCoords.add(nextCoords);
+                result.add(nextCoords);
+                coordsInRange.addLast(nextCoords);
+            }
+        }
+
+        return result;
+    }
+
+    private Coords getNextCoords(int x, int y, int newStep, int range,
+            ArrayList<Coords> processedCoords) {
+        if (0 <= x && x < width && 0 <= y && y < height && newStep <= range) {
+            for (Coords processedCoord : processedCoords) {
+                //already found coords
+                if (processedCoord.getX() == x && processedCoord.getY() == y) {
+                    return null;
+                }
+            }
+            Coords coords = new Coords(x, y);
+            coords.setStep(newStep);
+            return coords;
+        } else {
+            return null;
+        }
     }
 
     public int getMoney() {

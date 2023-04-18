@@ -10,6 +10,9 @@ public class Person {
     protected Zone job;
     protected boolean male;
 
+    //-1 means that this person doesn't have a job.
+    protected int homeJobDistance = -1;
+
     public String getName() {
         return name;
     }
@@ -98,5 +101,19 @@ public class Person {
     public void setJob(Zone job) {
         this.job = job;
     }
+
+    public void setHomeJobDistance(int homeJobDistance) {
+        this.homeJobDistance = homeJobDistance;
+    }
+
+    public int getHomeJobDistance() {
+        return homeJobDistance;
+    }
+
+    public void setHappiness(int happiness) {
+        this.happiness = happiness;
+    }
+    
+    
 
 }
