@@ -361,4 +361,8 @@ public class BigCityJframe extends JFrame {
         return fieldSize;
     }
 
+    public StatElement getHappy() {
+        return happy;
+    }
+
 }

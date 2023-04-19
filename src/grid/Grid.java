@@ -295,8 +295,8 @@ public class Grid extends JPanel {
     }
 
     /**
-     * Paints fields with transparent colours.
-     * When a zone is selected all of its fields gets coloured.
+     * Paints fields with transparent colours. When a zone is selected all of
+     * its fields gets coloured.
      *
      * @param rowStart is the top Y coordinate of the zone
      * @param rowEnd is the bottom Y coordinate of the zone
@@ -306,7 +306,8 @@ public class Grid extends JPanel {
      */
     private void paintArea(int rowStart, int rowEnd,
             int columnStart, int columnEnd, Graphics2D g2) {
-        if (CursorSignal.SELECT == engine.getCursorSignal()) {
+        if (CursorSignal.SELECT == engine.getCursorSignal()
+                || CursorSignal.DESTROY == engine.getCursorSignal()) {
             Zone target = engine.getCell(rowStart, columnStart);
             if (null != target) {
                 rowEnd = target.getTopLeftY() / fieldSize

@@ -13,6 +13,7 @@ import bigcity.University;
 import bigcity.Workplace;
 import bigcity.Zone;
 import java.awt.image.BufferedImage;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -46,6 +47,8 @@ public class Engine {
     private int fieldSize;
 
     private BigCityJframe bigCityJframe;
+
+    private final int fixGroupOfPeopleCount = 10;
 
     public Engine(int width, int height, int fieldSize, BigCityJframe bigCityJframe) {
         this.width = width;
@@ -228,6 +231,12 @@ public class Engine {
                 + (zoneLevel > 2 ? type.getPriceL3() : 0);
         addMoney(returnMoney / 2);
 
+        //TODO (Mate's issue)
+        //Conflictual destruction.
+        //If private zone has been destroyed, decrease the people's happiness
+        //who worked or lived there.
+        //If a road has been destroyed find those people who can't get to their
+        //workplace on road and decrease their happiness.
         moveEveryOne();
         return true;
     }
@@ -496,7 +505,7 @@ public class Engine {
     }
 
     private int newResidentsCount() {
-        int fixGroupOfPeopleCount = 10;
+
         float percentageOfNewResidents = 0.01f;
         int newResidentsCount = (int) Math.ceil(
                 residents.size() * percentageOfNewResidents);
@@ -552,11 +561,10 @@ public class Engine {
     }
 
     public void dayPassed() {
-        //TODO
         //------------------------------------------------------------------
-        //~100 people move in immediately if possible. They leave only if there 
+        //~10 people move in immediately if possible. They leave only if there 
         //isn't enough residence.
-        //The polpulation tries to increase by ~5% everyday.
+        //The polpulation tries to increase by ~1% everyday.
         int newResidentsCount = newResidentsCount();
         //System.out.println("newResidentsCount: "+newResidentsCount);
         // ------------------------------------------------------------------
@@ -640,7 +648,7 @@ public class Engine {
         //The new residents try to take the best places.
         while (newResidentsCount > 0) {
             Person newPerson = new Person(
-                    "Cool Name",
+                    "Name",
                     30,
                     100,
                     true,
@@ -660,11 +668,6 @@ public class Engine {
 
             newResidentsCount--;
         }
-        //
-        //Done
-        //Calculated not in this function!
-        //Destroying or building a zone causes to move people.
-        //
         //------------------------------------------------------------------
         //Calculate the happiness of each resident. The happiness changes with a
         //calculated value everyday.
@@ -816,21 +819,104 @@ public class Engine {
             }
         });
 
-        //Set maximum happiness.
+        //Big difference between industry and service workers causes negative 
+        //happiness.
+        int numberOfIndustryWorkers = 0;
+        int numberOfServiceWorkers = 0;
+        for (Person resident : residents) {
+            if (null != resident.getJob()) {
+                if (resident.getJob() instanceof Service) {
+                    numberOfServiceWorkers++;
+                } else if (resident.getJob() instanceof Industry) {
+                    numberOfIndustryWorkers++;
+                }
+            }
+        }
+        /*//debug
+        System.out.println("----------------------------------------------");
+        System.out.println("(double) Math.abs("
+                + "numberOfIndustryWorkers - numberOfServiceWorkers): "
+                + (double) Math.abs(
+                        numberOfIndustryWorkers - numberOfServiceWorkers));
+        System.out.println("numberOfIndustryWorkers + numberOfServiceWorkers: "
+                + (numberOfIndustryWorkers + numberOfServiceWorkers));
+        System.out.println("(double) Math.abs("
+                + "numberOfIndustryWorkers - numberOfServiceWorkers)"
+                + " / (numberOfIndustryWorkers + numberOfServiceWorkers): " + (double) Math.abs(
+                        numberOfIndustryWorkers - numberOfServiceWorkers)
+                / (numberOfIndustryWorkers + numberOfServiceWorkers));
+         */
+        if (0.5 < (double) Math.abs(
+                numberOfIndustryWorkers - numberOfServiceWorkers)
+                / (numberOfIndustryWorkers + numberOfServiceWorkers)) {
+            //System.out.println("The difference is greater than 50%.");
+            residents.forEach(resident -> resident.changeHappinessBy(-1));
+        }/* else {
+            System.out.println("The difference is less than 50%.");
+        }*/
+        //System.out.println("----------------------------------------------");
+
+
+        //------------------------------------------------------------------
+        //Residents with low happiness move out. (<10%)
+        //The starter group won't move out unless there is not enough place.
+        ArrayList<Person> peopleMoveOut = new ArrayList<>();
+
+        residents.stream().forEach(resident -> {
+            if (resident.getHappiness() < 10) {
+                peopleMoveOut.add(resident);
+            }
+        });
+        for (Person resident : peopleMoveOut) {
+            if (residents.size() <= fixGroupOfPeopleCount) {
+                break;
+            }
+            ((Residence) resident.getHome()).getResidents().remove(resident);
+            if (null != resident.getJob()) {
+                ((Workplace) resident.getJob()).getWorkers().remove(resident);
+            }
+            residents.remove(resident);
+        }
+
+        //Set maximum and minimum happiness.
         residents.forEach(resident -> {
             if (100 < resident.getHappiness()) {
                 resident.setHappiness(100);
+            } else if (resident.getHappiness() < 0) {
+                resident.setHappiness(0);
             }
         });
-        //------------------------------------------------------------------
-        //Residents with low happiness move out. (<10%)
+
         //------------------------------------------------------------------
         //Pay the expenses. 
         //(high school -20$, university -30$, police -30$, stadium -$40)
+        HashSet<Zone> zonesCostMoney = new HashSet<>();
+        for (int row = 0; row < height; row++) {
+            for (int column = 0; column < width; column++) {
+                if (null != grid[row][column]
+                        && !zonesCostMoney.contains(grid[row][column])) {
+                    if (grid[row][column] instanceof HighSchool) {
+                        money -= 20;
+                        zonesCostMoney.add(grid[row][column]);
+                    } else if (grid[row][column] instanceof University) {
+                        money -= 30;
+                        zonesCostMoney.add(grid[row][column]);
+                    } else if (grid[row][column] instanceof Police) {
+                        money -= 30;
+                        zonesCostMoney.add(grid[row][column]);
+                    } else if (grid[row][column] instanceof Stadium) {
+                        money -= 40;
+                        zonesCostMoney.add(grid[row][column]);
+                    }
+                }
+            }
+        }
+        //TODO (Norbi's issue)
         //Collect the taxes. Residents pay a fix amount (~1$) for the residence,
         //and a salary tax according their education level.
         //(+1$ primary school, +4$ high school, +8$ university) 
         //------------------------------------------------------------------
+        //TODO (Norbi's issue)
         //Increase education level.
         //One high school gives education to one resident a day. 
         //Same for the university.
@@ -842,6 +928,29 @@ public class Engine {
         //+1 University  = +30 capacity for people with university education
         //------------------------------------------------------------------
         //Check whether the game is over or not. (average happiness < 20%)
+        int maxSumHappiness = residents.size() * 100;
+        int currentSumHappiness = 0;
+        for (Person person : residents) {
+            currentSumHappiness += person.getHappiness();
+        }
+        int averageHappiness = Math.round(
+                (float) currentSumHappiness / maxSumHappiness * 100);
+        if (0 == residents.size()) {
+            averageHappiness = 100;
+        }
+        bigCityJframe.getHappy().setText(averageHappiness + "%");
+
+        checkGameOver(averageHappiness);
+        //------------------------------------------------------------------
+        //Increase age. Old people die and changed to new people with
+        //low education level.
+        for (Person resident : residents) {
+            resident.growOlder();
+            if (70 == resident.getAge()) {
+                resident.die();
+            }
+        }
+        //------------------------------------------------------------------
         bigCityJframe.repaintStatPanelAndGrid();
     }
 
@@ -1022,6 +1131,18 @@ public class Engine {
 
     public ArrayList<Person> getResidents() {
         return residents;
+    }
+
+    private void checkGameOver(int averageHappiness) {
+        if (averageHappiness < 20) {
+            System.out.println("Game over! "
+                    + "The average happiness is below 20%");
+            gameOver();
+        }
+    }
+
+    private void gameOver() {
+        //TODO
     }
 
 }
