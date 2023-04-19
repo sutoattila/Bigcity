@@ -7,23 +7,21 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.AbstractAction;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-
 import javax.swing.JPanel;
 import javax.swing.Timer;
-
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import model.CursorSignal;
 import model.Engine;
@@ -39,22 +37,17 @@ public class BigCityJframe extends JFrame {
 
     Engine engine;
 
-    private int fieldSize;
-
-    Grid grid;
-    JPanel topPanel;
-
     JButton destroyZone;
-    //Select a zone to see its own JPanel on the right of the JFrame.
 
     Timer timer;
     Date date;
     boolean isStopped;
 
-    Assets assets;
-
+    JPanel topPanel;
     BuildPanel buildPanel;
     BuildingStatPanel statPanel;
+    Grid grid;
+    private final int fieldSize;
 
     StatElement calendar;//Attila volt
     StatElement money;
@@ -156,14 +149,13 @@ public class BigCityJframe extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        int fieldSize = 100;
-        this.fieldSize = fieldSize;
+        this.fieldSize = 100;
         int width = 5;
         int height = 5;
 
-        assets = new Assets();
+        new Assets();
 
-        engine = new Engine(width, height);
+        engine = new Engine(width, height, this.fieldSize, this);
 
         topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setPreferredSize(new Dimension(-1, 50));
@@ -310,13 +302,29 @@ public class BigCityJframe extends JFrame {
     }
 
     public void changeRightPanelToBuildPanel() {
-        //TODO (XButton in StatPanel will call this function.)
+        //The XButton in StatPanel will call this function.
         remove(statPanel);
         statPanel = null;
         add(buildPanel, BorderLayout.EAST);
         pack();
         setLocationRelativeTo(null);
 
+    }
+
+    public void repaintStatPanelAndGrid() {
+        if (null != statPanel) {
+            //remove(statPanel);
+            //statPanel = new BuildingStatPanel(statPanel.getZone(), this);
+            //add(statPanel, BorderLayout.EAST);
+            //pack();
+            if (null != statPanel.getpPanel()) {
+                statPanel.getpPanel().updatePeople();
+            }
+            if (null != statPanel.getbStat()) {
+                statPanel.getbStat().updateStats();
+            }
+        }
+        grid.repaint();
     }
 
     public void dayPassed() {
@@ -329,6 +337,7 @@ public class BigCityJframe extends JFrame {
 
         // ITT HÍVJUK MEG A NAPONTA ÚJRASZÁMOLANDÓÓ FÜGGVÉNYEKET ==> 
         //      (elköltöznek-e, költözik-e be valaki stb)
+        engine.dayPassed();
     }
 
     public void refreshMoney() {
@@ -350,6 +359,10 @@ public class BigCityJframe extends JFrame {
 
     public int getFieldSize() {
         return fieldSize;
+    }
+
+    public StatElement getHappy() {
+        return happy;
     }
 
 }
