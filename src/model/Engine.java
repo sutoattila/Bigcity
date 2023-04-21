@@ -13,11 +13,11 @@ import bigcity.University;
 import bigcity.Workplace;
 import bigcity.Zone;
 import java.awt.image.BufferedImage;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.stream.Stream;
 import res.Assets;
 import view.BigCityJframe;
 
@@ -56,6 +56,7 @@ public class Engine {
         this.fieldSize = fieldSize;
         this.money = 1000;
         this.bigCityJframe = bigCityJframe;
+        this.taxPercentage = 20;
         grid = new Zone[height][width];
         for (int column = 0; column < width; column++) {
             for (int row = 0; row < height; row++) {
@@ -561,6 +562,11 @@ public class Engine {
     }
 
     public void dayPassed() {
+        
+        // -------- COLLECT TAX --------
+            collectTax();
+        // -----------------------------
+        
         //------------------------------------------------------------------
         //~10 people move in immediately if possible. They leave only if there 
         //isn't enough residence.
@@ -1126,7 +1132,13 @@ public class Engine {
     }
 
     public void collectTax() {
-        //TODO
+        for (Person p : residents) {
+            addMoney(Math.round(5 * taxPercentage / 100) * p.getEducationLevel().getLevel());
+            if(null != p.getJob()) {
+                addMoney(Math.round(5 * taxPercentage / 100) * p.getEducationLevel().getLevel());
+            }
+        }
+        bigCityJframe.refreshMoney();
     }
 
     public ArrayList<Person> getResidents() {
