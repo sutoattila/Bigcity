@@ -1133,9 +1133,9 @@ public class Engine {
 
     public void collectTax() {
         for (Person p : residents) {
-            addMoney(Math.round(5 * taxPercentage / 100) * p.getEducationLevel().getLevel());
+            addMoney(Math.round(10 * taxPercentage / 100 * p.getEducationLevel().getLevel()));
             if(null != p.getJob()) {
-                addMoney(Math.round(5 * taxPercentage / 100) * p.getEducationLevel().getLevel());
+                addMoney(Math.round(10 * taxPercentage / 100 * p.getEducationLevel().getLevel()));
             }
         }
         bigCityJframe.refreshMoney();
