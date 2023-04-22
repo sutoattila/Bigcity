@@ -1,5 +1,6 @@
 package view;
 
+import GUI.SettingsDialog;
 import GUI.StatElement;
 import bigcity.Zone;
 import grid.Grid;
@@ -7,7 +8,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
@@ -42,6 +42,7 @@ public class BigCityJframe extends JFrame {
     Timer timer;
     Date date;
     boolean isStopped;
+    SettingsDialog settings;
 
     JPanel topPanel;
     BuildPanel buildPanel;
@@ -66,7 +67,7 @@ public class BigCityJframe extends JFrame {
         });
         timer.start();
         isStopped = false;
-
+        
         //Attila menu 
         JMenuBar menuBar = new JMenuBar();
         JMenu gameMenu = new JMenu("Játék");
@@ -88,7 +89,10 @@ public class BigCityJframe extends JFrame {
                 new AbstractAction("Beállítások") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO
+                if(null == settings) {
+                    settings = new SettingsDialog(BigCityJframe.this);
+                }
+                settings.setActive();
             }
         });
         JMenuItem exitJMenuItem = new JMenuItem(
@@ -365,4 +369,11 @@ public class BigCityJframe extends JFrame {
         return happy;
     }
 
+    public int getCurrentTax() {
+        return engine.getTaxPercentage();
+    }
+    
+    public void setTax(int tax) {
+        engine.setTaxPercentage(tax);
+    }
 }
