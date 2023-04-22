@@ -2,7 +2,6 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -54,7 +53,7 @@ public class SettingsDialog extends JDialog implements ChangeListener{
             }
         );
         
-        value = new JLabel(""+frame.getCurrentTax());
+        value = new JLabel("Adókulcs: " + frame.getCurrentTax() + "%");
         
         setLayout(new BorderLayout());
         btnPanel = new JPanel();
@@ -75,13 +74,13 @@ public class SettingsDialog extends JDialog implements ChangeListener{
     @Override
     public void stateChanged(ChangeEvent e)
     {
-        value.setText("" + slider.getValue());
+        value.setText("Adókulcs: " + slider.getValue() + "%");
     }
     
     public void setActive() {
         setLocationRelativeTo(null);
         int tmp = frame.getCurrentTax();
-        value.setText(""+tmp);
+        value.setText("Adókulcs: " + tmp + "%");
         slider.setValue(tmp);
         this.setVisible(true);
     }
