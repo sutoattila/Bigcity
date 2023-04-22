@@ -141,17 +141,6 @@ public class Engine {
 
         moveEveryOne();
         
-        // ------- ONLY FOR TEST ---------
-            System.out.println("HighSchools:");
-            for (HighSchool h : highSchools) {
-                System.out.println(h.getTopLeftX() + " " + h.getTopLeftY());
-            }
-            System.out.println("Universities:");
-            for (University u : universities) {
-                System.out.println(u.getTopLeftX() + " " + u.getTopLeftY());
-            }
-        // -------------------------------
-        
         return true;
     }
 
@@ -262,17 +251,6 @@ public class Engine {
         //If a road has been destroyed find those people who can't get to their
         //workplace on road and decrease their happiness.
         moveEveryOne();
-        
-        // ------- ONLY FOR TEST ---------
-            System.out.println("HighSchools:");
-            for (HighSchool h : highSchools) {
-                System.out.println(h.getTopLeftX() + " " + h.getTopLeftY());
-            }
-            System.out.println("Universities:");
-            for (University u : universities) {
-                System.out.println(u.getTopLeftX() + " " + u.getTopLeftY());
-            }
-        // -------------------------------
         
         return true;
     }
@@ -1195,24 +1173,70 @@ public class Engine {
     }
 
     public void educatePeople() {
-        int possibeHighSchoolDegrees = highSchools.size()*5;
-        int possibeUniversityDegrees = universities.size()*10;
+        int hsd = 0;
+        int ud = 0;
+        for (Person p : residents) {
+            if(p.getEducationLevel() == EducationLevel.HIGH_SCHOOL)
+                hsd++;
+            else if(p.getEducationLevel() == EducationLevel.UNIVERSITY)
+                ud++;
+        }
         
-        System.out.println("Universities coordinates:");
+        int possibeHighSchoolDegrees = Integer.min(highSchools.size()*5,    
+                (int)(Math.round(residents.size()*0.8)-hsd-ud));
+        int possibeUniversityDegrees = Integer.min(universities.size()*10,  
+                (int)(Math.round(residents.size()*0.5)-ud));
+        
         for (University u : universities) {
             int row = u.getTopLeftY() / fieldSize;
             int col = u.getTopLeftX() / fieldSize;
             
             Set<Residence> residences = findResidencesOnRoad(row, col, 2,2);
-            System.out.println(residences.size());
+            List<Person> educateables = new ArrayList<>();
+            
+            for (Residence residence : residences) {
+                for (Person p : residence.getResidents()) {
+                    if(p.getEducationLevel() == EducationLevel.HIGH_SCHOOL) {
+                        educateables.add(p);
+                    }
+                }
+            }
+            
+            for (Person p : educateables) {
+                if(possibeUniversityDegrees > 0){
+                    p.educate();
+                    possibeUniversityDegrees--;
+                }
+            }
         }
         for (HighSchool h : highSchools) {
             int row = h.getTopLeftY() / fieldSize;
             int col = h.getTopLeftX() / fieldSize;
             
             Set<Residence> residences = findResidencesOnRoad(row, col, 2,1);
-            System.out.println(residences.size());
+            List<Person> educateables = new ArrayList<>();
+            
+            for (Residence residence : residences) {
+                for (Person p : residence.getResidents()) {
+                    if(p.getEducationLevel() == EducationLevel.PRIMARY_SCHOOL) {
+                        educateables.add(p);
+                    }
+                }
+            }
+            
+            for (Person p : educateables) {
+                if(possibeHighSchoolDegrees > 0){
+                    p.educate();
+                    possibeHighSchoolDegrees--;
+                }
+            }
         }
+        
+        /*System.out.println("\n\n");
+        for (Person p : residents) {
+            System.out.println(p.getEducationLevel());
+        }
+        System.out.println("\n\n");*/
     }
     
     public Set<Residence> findResidencesOnRoad(int row, int col, int fieldWidth, int fieldHeight) {
