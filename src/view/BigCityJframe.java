@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -24,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import model.CursorSignal;
+import model.Disaster;
 import model.Engine;
 import res.Assets;
 import rightPanel.BuildPanel;
@@ -82,7 +84,9 @@ public class BigCityJframe extends JFrame {
                 new AbstractAction("Katasztrófa kérése") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO
+                Random rnd = new Random();
+                int index = rnd.nextInt(Disaster.values().length);
+                Disaster.values()[index].activate(engine);
             }
         });
         JMenuItem settingsJMenuItem = new JMenuItem(
@@ -165,7 +169,7 @@ public class BigCityJframe extends JFrame {
         topPanel.setPreferredSize(new Dimension(-1, 50));
         topPanel.setBackground(Color.GREEN.darker().darker());
 
-        happy = new StatElement("view/happiness.png", "83%");
+        happy = new StatElement("view/happiness.png", "100%");
         happy.setTextColor(Color.MAGENTA.darker());
 
         calendar = new StatElement("view/calendar.png", "2023-03-19");
@@ -350,6 +354,14 @@ public class BigCityJframe extends JFrame {
 
     public void refreshDate() {
         calendar.setText(dateFormater.format(date));
+    }
+    
+    public void setHappiness(double happiness) {
+        happy.setText(Math.round(happiness)+"%");
+    }
+    
+    public void refreshGrid() {
+        grid.repaint();
     }
 
     public void addMoney(int money) {
