@@ -3,16 +3,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import view.BigCityJframe;
 
-public class BackgroundImageFrame extends JFrame {
+
+public class MainMenu extends JFrame {
 
     private JButton newGameBtn, resumeGameBtn, exitGame;
     private JLabel title;
     JLabel gap;
     private ImageIcon backgroundImage;
 
-    public BackgroundImageFrame() {
+    public MainMenu() {
         // Set the title of the JFrame
         setTitle("BigCity");
 
@@ -39,8 +39,9 @@ public class BackgroundImageFrame extends JFrame {
         newGameBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new BigCityJframe();
-                BackgroundImageFrame.this.dispose();
+                new NameWindow();
+               
+                MainMenu.this.dispose();
             }
         });
         resumeGameBtn.addActionListener(new ActionListener() {

@@ -54,8 +54,8 @@ public class BigCityJframe extends JFrame {
     StatElement money;
     StatElement happy;
 
-    public BigCityJframe() {
-        super("BigCity");
+    public BigCityJframe(String cityname) {
+        super(cityname);
 
         this.timer = new Timer(3000, new ActionListener() {
             @Override
