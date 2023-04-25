@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import res.Assets;
 import view.BigCityJframe;
@@ -39,6 +40,10 @@ public class Engine {
     private int timeSpeed;
     private int taxPercentage;
     private String name;
+    
+    private double disasterChanse;
+    private Random rnd;
+    private int daysPassedWithoutDisaster;
 
     private static CursorSignal cursorSignal = CursorSignal.SELECT;
 
@@ -61,6 +66,9 @@ public class Engine {
         this.money = 1000;
         this.bigCityJframe = bigCityJframe;
         this.taxPercentage = 20;
+        this.disasterChanse = 0;
+        this.rnd = new Random();
+        this.daysPassedWithoutDisaster = 0;
         this.highSchools = new ArrayList<>();
         this.universities = new ArrayList<>();
         this.buildings = new ArrayList<>();
@@ -947,6 +955,18 @@ public class Engine {
             }
         }
         //------------------------------------------------------------------
+        
+        double tmp = rnd.nextDouble();
+        disasterChanse += (daysPassedWithoutDisaster / 1000.0) * tmp;
+        if((int)disasterChanse > 0) {
+            int index = rnd.nextInt(Disaster.values().length);
+            Disaster.values()[index].activate(Engine.this);
+            daysPassedWithoutDisaster = 0;
+            disasterChanse -= 1.0;
+        } else {
+            daysPassedWithoutDisaster++;
+        }
+        
         bigCityJframe.repaintStatPanelAndGrid();
     }
 
