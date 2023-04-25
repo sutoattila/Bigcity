@@ -41,7 +41,7 @@ public class Engine {
     private int timeSpeed;
     private int taxPercentage;
     private String name;
-    
+
     private double disasterChanse;
     private Random rnd;
     private int daysPassedWithoutDisaster;
@@ -151,10 +151,10 @@ public class Engine {
         }
 
         moveEveryOne();
-        
+
         bigCityJframe.refreshGrid();
         buildings.add(zone);
-        
+
         return true;
     }
 
@@ -204,12 +204,13 @@ public class Engine {
     }
 
     //Returns true if successfully destroyed a zone.
-    public boolean destroyZone(int argRow, int argColumn, int fieldSize) {
+    public boolean destroyZone(int argRow, int argColumn, int fieldSize,
+            boolean disasterHappened) {
         Zone target = grid[argRow][argColumn];
         if (null == target) {
             return false;
         }
-        
+
         buildings.remove(target);
 
         int zoneLevel = 1;
@@ -243,7 +244,10 @@ public class Engine {
         if (target instanceof Residence tmp) {
             zoneLevel = tmp.getLevel();
             type = CursorSignal.RESIDENCE;
-            if (peopleOnPrivateZone((PrivateZone) target)) {
+            if (disasterHappened) {
+                tmp.getResidents().forEach(person
+                        -> person.changeHappinessBy(-1));
+            } else if (peopleOnPrivateZone((PrivateZone) target)) {
                 if (bigCityJframe.conflictualDestructionOkCancleDialog(
                         "People live on this residence. Destroying it will "
                         + "decrease the happiness of people living here. "
@@ -259,7 +263,10 @@ public class Engine {
         } else if (target instanceof Industry tmp) {
             zoneLevel = tmp.getLevel();
             type = CursorSignal.INDUSTRY;
-            if (peopleOnPrivateZone((PrivateZone) target)) {
+            if (disasterHappened) {
+                tmp.getWorkers().forEach(person
+                        -> person.changeHappinessBy(-1));
+            } else if (peopleOnPrivateZone((PrivateZone) target)) {
                 if (bigCityJframe.conflictualDestructionOkCancleDialog(
                         "People have a job on this zone. Destroying it will "
                         + "decrease the happiness of people working here. "
@@ -275,7 +282,10 @@ public class Engine {
         } else if (target instanceof Service tmp) {
             zoneLevel = tmp.getLevel();
             type = CursorSignal.SERVICE;
-            if (peopleOnPrivateZone((PrivateZone) target)) {
+            if (disasterHappened) {
+                tmp.getWorkers().forEach(person
+                        -> person.changeHappinessBy(-1));
+            } else if (peopleOnPrivateZone((PrivateZone) target)) {
                 if (bigCityJframe.conflictualDestructionOkCancleDialog(
                         "People have a job on this zone. Destroying it will "
                         + "decrease the happiness of people working here. "
@@ -290,8 +300,12 @@ public class Engine {
             }
         } else if (target instanceof Road tmp) {
             type = CursorSignal.ROAD;
-            ArrayList<Person> angryPeople = peopleWhoCantFindTheirJobAnymore(tmp);
-            if (angryPeople.size() > 0) {
+            ArrayList<Person> angryPeople
+                    = peopleWhoCantFindTheirJobAnymore(tmp);
+            if (disasterHappened) {
+                angryPeople.forEach(person
+                        -> person.changeHappinessBy(-1));
+            } else if (angryPeople.size() > 0) {
                 //System.out.println(angryPeople.size());
                 //dialog
                 if (bigCityJframe.conflictualDestructionOkCancleDialog(
@@ -343,9 +357,9 @@ public class Engine {
         addMoney(returnMoney / 2);
 
         moveEveryOne();
-        
+
         bigCityJframe.refreshGrid();
-        
+
         return true;
     }
 
@@ -1135,11 +1149,11 @@ public class Engine {
         }
         //------------------------------------------------------------------
         //Check whether the game is over or not. (average happiness < 20%)
-        
+
         calculateHappieness();
         bigCityJframe.getHappy().setText(Math.round(combinedHappiness) + "%");
 
-        checkGameOver((int)Math.round(combinedHappiness));
+        checkGameOver((int) Math.round(combinedHappiness));
         //------------------------------------------------------------------
         //Increase age. Old people die and changed to new people with
         //low education level.
@@ -1150,15 +1164,15 @@ public class Engine {
             }
         }
         //------------------------------------------------------------------
-        
+
         double tmp = rnd.nextDouble();
         disasterChanse += (daysPassedWithoutDisaster / 1000.0) * tmp;
-        if((int)disasterChanse > 0) {
+        if ((int) disasterChanse > 0) {
             makeDisaster();
         } else {
             daysPassedWithoutDisaster++;
         }
-        
+
         bigCityJframe.repaintStatPanelAndGrid();
     }
 
@@ -1329,7 +1343,7 @@ public class Engine {
     }
 
     public double calculateHappieness() {
-        if(residents.isEmpty()) {
+        if (residents.isEmpty()) {
             combinedHappiness = 100.0;
             return combinedHappiness;
         }
@@ -1337,15 +1351,15 @@ public class Engine {
         for (Person p : residents) {
             sum += p.getHappiness();
         }
-        combinedHappiness = (double)sum / residents.size();
+        combinedHappiness = (double) sum / residents.size();
         return combinedHappiness;
     }
 
     public void collectTax() {
         for (Person p : residents) {
-            addMoney((int)Math.round((double)(10 * taxPercentage) / 100 * p.getEducationLevel().getLevel()));
-            if(null != p.getJob()) {
-                addMoney((int)Math.round((double)(10 * taxPercentage) / 100 * p.getEducationLevel().getLevel()));
+            addMoney((int) Math.round((double) (10 * taxPercentage) / 100 * p.getEducationLevel().getLevel()));
+            if (null != p.getJob()) {
+                addMoney((int) Math.round((double) (10 * taxPercentage) / 100 * p.getEducationLevel().getLevel()));
             }
         }
         bigCityJframe.refreshMoney();
@@ -1500,19 +1514,19 @@ public class Engine {
     public int getWidth() {
         return width;
     }
-    
+
     public int getHeight() {
         return height;
     }
-    
+
     public int getFieldsize() {
         return fieldSize;
     }
-    
+
     public List<Zone> getBuildingsList() {
         return buildings;
     }
-    
+
     public void refreshHappiness() {
         calculateHappieness();
         bigCityJframe.setHappiness(Math.round(combinedHappiness));
