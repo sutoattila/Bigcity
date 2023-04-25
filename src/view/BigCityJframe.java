@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -29,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
+import javax.swing.border.Border;
 import model.CursorSignal;
 import model.Engine;
 import res.Assets;
@@ -314,6 +316,11 @@ public class BigCityJframe extends JFrame {
         d.getContentPane().setBackground(Color.GREEN);
         d.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         d.setLayout(new FlowLayout());
+        
+        Border border = BorderFactory.createLineBorder(Color.BLACK, 2);
+        // Set the border for the dialog
+        d.getRootPane().setBorder(border);
+        
         JButton resume = new JButton("Játék folytatása");
         resume.setBackground(new Color(240,207,96));
         JButton b = new JButton("Kilépés a főmenübe, játék mentése");
