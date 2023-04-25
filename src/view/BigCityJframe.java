@@ -1,5 +1,6 @@
 package view;
 
+import GUI.MainMenu;
 import GUI.SettingsDialog;
 import GUI.StatElement;
 import bigcity.Zone;
@@ -10,18 +11,23 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import model.CursorSignal;
 import model.Engine;
@@ -56,7 +62,16 @@ public class BigCityJframe extends JFrame {
 
     public BigCityJframe(String cityname) {
         super(cityname);
-
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                showExitDialog();
+            }
+        });
+        //exit options
+        ImageIcon icon = new ImageIcon("GUI/house.png");
+        setIconImage(icon.getImage());
         this.timer = new Timer(3000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -99,7 +114,7 @@ public class BigCityJframe extends JFrame {
                 new AbstractAction("Kilépés") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+                showExitDialog();
             }
         });
         gameMenu.add(saveJMenuItem);
@@ -150,7 +165,6 @@ public class BigCityJframe extends JFrame {
         this.setJMenuBar(menuBar);
         //Attila menu vége
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         this.fieldSize = 100;
@@ -292,6 +306,59 @@ public class BigCityJframe extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
         setVisible(true);
+    }
+    
+    public void showExitDialog(){
+        timer.stop();
+        JDialog d = new JDialog(BigCityJframe.this, "Kilépés", true);
+        d.getContentPane().setBackground(Color.GREEN);
+        d.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        d.setLayout(new FlowLayout());
+        JButton resume = new JButton("Játék folytatása");
+        resume.setBackground(new Color(240,207,96));
+        JButton b = new JButton("Vissza a főmenübe, játék mentése");
+        b.setBackground(new Color(240,207,96));
+        JButton a = new JButton("Vissza a főmenübe mentés nélkül");
+        a.setBackground(new Color(240,207,96));
+        JButton c = new JButton("Kilépés mentés nélkül");
+        c.setBackground(new Color(240,207,96));
+        resume.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                d.dispose();
+                timer.restart();
+            }
+        });
+        b.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO save
+                d.setVisible(false);
+                BigCityJframe.this.dispose();
+                new MainMenu();
+            }
+        });
+        a.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                d.setVisible(false);
+                BigCityJframe.this.dispose();
+                new MainMenu();
+            }
+        });
+        c.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+        d.add(resume);
+        d.add(a);
+        d.add(b);
+        d.add(c);
+        d.setSize(330, 200);
+        d.setLocationRelativeTo(null);
+        d.setVisible(true);
     }
 
     public void changeRightPanelToStatPanel(Zone zone) {
