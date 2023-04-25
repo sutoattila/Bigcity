@@ -234,6 +234,8 @@ public class Engine {
                         + "decrease the happiness of people living here. "
                         + "Are you sure you want to destroy it?")) {
                     //System.out.println("Approved");
+                    tmp.getResidents().forEach(person
+                            -> person.changeHappinessBy(-1));
                 } else {
                     //System.out.println("Canceled");
                     return false;
@@ -248,6 +250,8 @@ public class Engine {
                         + "decrease the happiness of people working here. "
                         + "Are you sure you want to destroy it?")) {
                     //System.out.println("Approved");
+                    tmp.getWorkers().forEach(person
+                            -> person.changeHappinessBy(-1));
                 } else {
                     //System.out.println("Canceled");
                     return false;
@@ -262,13 +266,33 @@ public class Engine {
                         + "decrease the happiness of people working here. "
                         + "Are you sure you want to destroy it?")) {
                     //System.out.println("Approved");
+                    tmp.getWorkers().forEach(person
+                            -> person.changeHappinessBy(-1));
                 } else {
                     //System.out.println("Canceled");
                     return false;
                 }
             }
-        } else if (target instanceof Road) {
+        } else if (target instanceof Road tmp) {
             type = CursorSignal.ROAD;
+            ArrayList<Person> angryPeople = peopleWhoCantFindTheirJobAnymore(tmp);
+            if (angryPeople.size() > 0) {
+                //System.out.println(angryPeople.size());
+                //dialog
+                if (bigCityJframe.conflictualDestructionOkCancleDialog(
+                        angryPeople.size()
+                        + " people won't be able to reach their workplace if"
+                        + " you destory this road. Destroying it will "
+                        + "decrease the happiness of these people. "
+                        + "Are you sure you want to destroy it?")) {
+                    //System.out.println("Approved");
+                    angryPeople.forEach(person
+                            -> person.changeHappinessBy(-1));
+                } else {
+                    //System.out.println("Canceled");
+                    return false;
+                }
+            }
         } else if (target instanceof Police) {
             type = CursorSignal.POLICE;
         } else if (target instanceof Stadium) {
@@ -308,6 +332,102 @@ public class Engine {
         return true;
     }
 
+    private ArrayList<Person> peopleWhoCantFindTheirJobAnymore(Road closedRoad) {
+        ArrayList<Person> angryPeople = new ArrayList<>();
+
+        for (Person resident : residents) {
+            if (null != resident.getJob()) {
+                if (!foundTheWorkplaceOfAPersonWhileARoadIsClosed(resident,
+                        closedRoad)) {
+                    angryPeople.add(resident);
+                }
+            }
+        }
+
+        return angryPeople;
+    }
+
+    private boolean foundTheWorkplaceOfAPersonWhileARoadIsClosed(Person resident,
+            Road closedRoad) {
+        Zone home = resident.getHome();
+        Zone workplace = resident.getJob();
+
+        HashSet<Zone> foundZones = new HashSet<>();
+        //This road can't be used.
+        foundZones.add(closedRoad);
+
+        LinkedList<Zone> queue = new LinkedList<>();
+        queue.addLast(home);
+
+        while (!queue.isEmpty()) {
+            Zone currentZone = queue.removeFirst();
+            //Find the roads around and insert them into the set and into the 
+            //queue if they weren't in the set before.
+            for (Road road : roadsAroundZone(currentZone)) {
+                if (!foundZones.contains(road)) {
+                    foundZones.add(road);
+                    queue.addLast(road);
+                }
+            }
+            //Find the workplaces around and check whether is it the resident's
+            //workplace.
+            //If we found the workplace of the resident, then return true.
+            for (Workplace workplaceFound
+                    : workplacesAroundZone(currentZone)) {
+                if (workplaceFound == workplace) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private ArrayList<Workplace> workplacesAroundZone(Zone centerZone) {
+        ArrayList<Workplace> workplacesAround = new ArrayList<>();
+        int rowOfCenterZone = centerZone.getTopLeftY() / fieldSize;
+        int columnOfCenterZone = centerZone.getTopLeftX() / fieldSize;
+        //up
+        if (workplaceAndInsideGrid(rowOfCenterZone - 1, columnOfCenterZone)) {
+            workplacesAround.add((Workplace) grid[rowOfCenterZone - 1][columnOfCenterZone]);
+        }
+        //right
+        if (workplaceAndInsideGrid(rowOfCenterZone, columnOfCenterZone + 1)) {
+            workplacesAround.add((Workplace) grid[rowOfCenterZone][columnOfCenterZone + 1]);
+        }
+        //down
+        if (workplaceAndInsideGrid(rowOfCenterZone + 1, columnOfCenterZone)) {
+            workplacesAround.add((Workplace) grid[rowOfCenterZone + 1][columnOfCenterZone]);
+        }
+        //left
+        if (workplaceAndInsideGrid(rowOfCenterZone, columnOfCenterZone - 1)) {
+            workplacesAround.add((Workplace) grid[rowOfCenterZone][columnOfCenterZone - 1]);
+        }
+        return workplacesAround;
+    }
+
+    private ArrayList<Road> roadsAroundZone(Zone centerZone) {
+        ArrayList<Road> roadsAround = new ArrayList<>();
+        int rowOfCenterZone = centerZone.getTopLeftY() / fieldSize;
+        int columnOfCenterZone = centerZone.getTopLeftX() / fieldSize;
+        //up
+        if (roadAndInsideGrid(rowOfCenterZone - 1, columnOfCenterZone)) {
+            roadsAround.add((Road) grid[rowOfCenterZone - 1][columnOfCenterZone]);
+        }
+        //right
+        if (roadAndInsideGrid(rowOfCenterZone, columnOfCenterZone + 1)) {
+            roadsAround.add((Road) grid[rowOfCenterZone][columnOfCenterZone + 1]);
+        }
+        //down
+        if (roadAndInsideGrid(rowOfCenterZone + 1, columnOfCenterZone)) {
+            roadsAround.add((Road) grid[rowOfCenterZone + 1][columnOfCenterZone]);
+        }
+        //left
+        if (roadAndInsideGrid(rowOfCenterZone, columnOfCenterZone - 1)) {
+            roadsAround.add((Road) grid[rowOfCenterZone][columnOfCenterZone - 1]);
+        }
+        return roadsAround;
+    }
+
     private boolean peopleOnPrivateZone(PrivateZone zone) {
         if (zone instanceof Residence tmp) {
             return tmp.getResidents().size() > 0 ? true : false;
@@ -325,6 +445,20 @@ public class Engine {
             return false;
         }
         if (CursorSignal.ROAD == grid[row][column].getCursorSignal()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private Boolean workplaceAndInsideGrid(int row, int column) {
+        if (row < 0 || height <= row || column < 0 || width <= column) {
+            return false;
+        }
+        if (null == grid[row][column]) {
+            return false;
+        }
+        if (grid[row][column] instanceof Workplace) {
             return true;
         } else {
             return false;
