@@ -17,6 +17,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import view.BigCityJframe;
@@ -67,8 +68,24 @@ public class ThreeColumnLayout extends JPanel {
         secondButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                parent.dispose();
-                new BigCityJframe(textField.getText());
+                if(textField.getText().isEmpty()){
+                    JLabel message = new JLabel("A város nevének megadása kötelező");
+                    message.setFont(new Font("Verdana", Font.PLAIN, 15));
+                    message.setPreferredSize(new Dimension(300, 100));
+                    JOptionPane.showMessageDialog(null, message, "Üresen hagyott városnév", JOptionPane.ERROR_MESSAGE);
+                }
+                else{
+                    if( textField.getText().trim().isEmpty()){
+                        JLabel message = new JLabel("A város nevének tartalmaznia kell legalább egy szót");
+                        message.setFont(new Font("Verdana", Font.PLAIN, 15));
+                        message.setPreferredSize(new Dimension(300, 100));
+                        JOptionPane.showMessageDialog(null, message, "Üresen hagyott városnév", JOptionPane.ERROR_MESSAGE);
+                    }
+                    else{
+                        new BigCityJframe(textField.getText());
+                        parent.dispose();                    
+                    }
+                }
             }
         });
         secondButton.setFont(new Font("Verdana", Font.PLAIN, 25));

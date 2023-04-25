@@ -316,9 +316,9 @@ public class BigCityJframe extends JFrame {
         d.setLayout(new FlowLayout());
         JButton resume = new JButton("Játék folytatása");
         resume.setBackground(new Color(240,207,96));
-        JButton b = new JButton("Vissza a főmenübe, játék mentése");
+        JButton b = new JButton("Kilépés a főmenübe, játék mentése");
         b.setBackground(new Color(240,207,96));
-        JButton a = new JButton("Vissza a főmenübe mentés nélkül");
+        JButton a = new JButton("Kilépés a főmenübe mentés nélkül");
         a.setBackground(new Color(240,207,96));
         JButton c = new JButton("Kilépés mentés nélkül");
         c.setBackground(new Color(240,207,96));
@@ -356,8 +356,9 @@ public class BigCityJframe extends JFrame {
         d.add(a);
         d.add(b);
         d.add(c);
-        d.setSize(330, 200);
+        d.setSize(230, 140);
         d.setLocationRelativeTo(null);
+        d.setUndecorated(true);
         d.setVisible(true);
     }
 
