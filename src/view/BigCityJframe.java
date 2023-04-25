@@ -86,7 +86,7 @@ public class BigCityJframe extends JFrame {
         });
         timer.start();
         isStopped = false;
-        
+
         //Attila menu 
         JMenuBar menuBar = new JMenuBar();
         JMenu gameMenu = new JMenu("Játék");
@@ -108,7 +108,7 @@ public class BigCityJframe extends JFrame {
                 new AbstractAction("Beállítások") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(null == settings) {
+                if (null == settings) {
                     settings = new SettingsDialog(BigCityJframe.this);
                 }
                 settings.setActive();
@@ -457,8 +457,25 @@ public class BigCityJframe extends JFrame {
     public int getCurrentTax() {
         return engine.getTaxPercentage();
     }
-    
+
     public void setTax(int tax) {
         engine.setTaxPercentage(tax);
     }
+
+    //Returns true if the destruction has been approved.
+    public boolean conflictualDestructionOkCancleDialog(String message) {
+        boolean timeWasStopped = isStopped;
+        isStopped = true;
+        ConflictualDestructionDialog dialog = new ConflictualDestructionDialog(
+                this, "Destroy", message);
+        if (!timeWasStopped) {
+            isStopped = false;
+        }
+        if (OKCancelDialog.OK == dialog.getButtonCode()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
