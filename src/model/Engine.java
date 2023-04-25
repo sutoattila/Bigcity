@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import res.Assets;
 import view.BigCityJframe;
@@ -28,6 +29,7 @@ public class Engine {
     private ArrayList<Person> residents;
     private List<HighSchool> highSchools;
     private List<University> universities;
+    private List<Zone> buildings;
 
     private int width;
     private int height;
@@ -38,6 +40,10 @@ public class Engine {
     private int timeSpeed;
     private int taxPercentage;
     private String name;
+    
+    private double disasterChanse;
+    private Random rnd;
+    private int daysPassedWithoutDisaster;
 
     private static CursorSignal cursorSignal = CursorSignal.SELECT;
 
@@ -60,8 +66,12 @@ public class Engine {
         this.money = 1000;
         this.bigCityJframe = bigCityJframe;
         this.taxPercentage = 20;
+        this.disasterChanse = 0;
+        this.rnd = new Random();
+        this.daysPassedWithoutDisaster = 0;
         this.highSchools = new ArrayList<>();
         this.universities = new ArrayList<>();
+        this.buildings = new ArrayList<>();
         grid = new Zone[height][width];
         for (int column = 0; column < width; column++) {
             for (int row = 0; row < height; row++) {
@@ -141,6 +151,9 @@ public class Engine {
 
         moveEveryOne();
         
+        bigCityJframe.refreshGrid();
+        buildings.add(zone);
+        
         return true;
     }
 
@@ -195,6 +208,8 @@ public class Engine {
         if (null == target) {
             return false;
         }
+        
+        buildings.remove(target);
 
         int zoneLevel = 1;
         CursorSignal type;
@@ -251,6 +266,8 @@ public class Engine {
         //If a road has been destroyed find those people who can't get to their
         //workplace on road and decrease their happiness.
         moveEveryOne();
+        
+        bigCityJframe.refreshGrid();
         
         return true;
     }
@@ -393,7 +410,7 @@ public class Engine {
             zoneDistancePairs.addLast(new ZoneDistancePair(residence,
                     0));
 
-            while (zoneDistancePairs.size() > 0) {
+            while (!zoneDistancePairs.isEmpty()) {
                 ZoneDistancePair currentZoneDistancePair
                         = zoneDistancePairs.removeFirst();
                 int row = currentZoneDistancePair.getZone().getTopLeftY()
@@ -607,7 +624,7 @@ public class Engine {
             zoneDistancePairs.addLast(new ZoneDistancePair(residence,
                     0));
 
-            while (zoneDistancePairs.size() > 0) {
+            while (!zoneDistancePairs.isEmpty()) {
                 ZoneDistancePair currentZoneDistancePair
                         = zoneDistancePairs.removeFirst();
                 int row = currentZoneDistancePair.getZone().getTopLeftY()
@@ -729,13 +746,13 @@ public class Engine {
                     .forEach(coords -> {
                         Zone zone = grid[coords.getY()][coords.getX()];
                         if (null != zone) {
-                            if (zone instanceof Residence) {
-                                ((Residence) zone).getResidents().forEach(
+                            if (zone instanceof Residence residence) {
+                                residence.getResidents().forEach(
                                         resident -> {
                                             resident.changeHappinessBy(-1);
                                         });
-                            } else if (zone instanceof Workplace) {
-                                ((Workplace) zone).getWorkers().forEach(
+                            } else if (zone instanceof Workplace workplace) {
+                                workplace.getWorkers().forEach(
                                         worker -> {
                                             worker.changeHappinessBy(-1);
                                         });
@@ -822,15 +839,13 @@ public class Engine {
         coordsNotInPoliceRange.forEach(coords -> {
             Zone zone = grid[coords.getY()][coords.getX()];
             if (null != zone) {
-                if (zone instanceof Residence) {
-                    Residence residence = (Residence) zone;
+                if (zone instanceof Residence residence) {
                     residence.getResidents().forEach(resident -> {
                         if (residence.getCapacity() == residence.getSize()) {
                             resident.changeHappinessBy(-3);
                         }
                     });
-                } else if (zone instanceof Workplace) {
-                    Workplace workplace = (Workplace) zone;
+                } else if (zone instanceof Workplace workplace) {
                     workplace.getWorkers().forEach(worker -> {
                         if (workplace.getCapacity() == workplace.getSize()) {
                             worker.changeHappinessBy(-3);
@@ -899,15 +914,6 @@ public class Engine {
             residents.remove(resident);
         }
 
-        //Set maximum and minimum happiness.
-        residents.forEach(resident -> {
-            if (100 < resident.getHappiness()) {
-                resident.setHappiness(100);
-            } else if (resident.getHappiness() < 0) {
-                resident.setHappiness(0);
-            }
-        });
-
         //------------------------------------------------------------------
         //Pay the expenses. 
         //(high school -20$, university -30$, police -30$, stadium -$40)
@@ -932,36 +938,13 @@ public class Engine {
                 }
             }
         }
-        //TODO (Norbi's issue)
-        //Collect the taxes. Residents pay a fix amount (~1$) for the residence,
-        //and a salary tax according their education level.
-        //(+1$ primary school, +4$ high school, +8$ university) 
-        //------------------------------------------------------------------
-        //TODO (Norbi's issue)
-        //Increase education level.
-        //One high school gives education to one resident a day. 
-        //Same for the university.
-        //The maximum amount of residents with high school and university 
-        //education level depends on how many we have of these zones and how 
-        //many people lives in the city.
-        //(educated people count <= ~50% of people)
-        //+1 High school = +30 capacity for people with high school education
-        //+1 University  = +30 capacity for people with university education
         //------------------------------------------------------------------
         //Check whether the game is over or not. (average happiness < 20%)
-        int maxSumHappiness = residents.size() * 100;
-        int currentSumHappiness = 0;
-        for (Person person : residents) {
-            currentSumHappiness += person.getHappiness();
-        }
-        int averageHappiness = Math.round(
-                (float) currentSumHappiness / maxSumHappiness * 100);
-        if (0 == residents.size()) {
-            averageHappiness = 100;
-        }
-        bigCityJframe.getHappy().setText(averageHappiness + "%");
+        
+        calculateHappieness();
+        bigCityJframe.getHappy().setText(Math.round(combinedHappiness) + "%");
 
-        checkGameOver(averageHappiness);
+        checkGameOver((int)Math.round(combinedHappiness));
         //------------------------------------------------------------------
         //Increase age. Old people die and changed to new people with
         //low education level.
@@ -972,6 +955,15 @@ public class Engine {
             }
         }
         //------------------------------------------------------------------
+        
+        double tmp = rnd.nextDouble();
+        disasterChanse += (daysPassedWithoutDisaster / 1000.0) * tmp;
+        if((int)disasterChanse > 0) {
+            makeDisaster();
+        } else {
+            daysPassedWithoutDisaster++;
+        }
+        
         bigCityJframe.repaintStatPanelAndGrid();
     }
 
@@ -1045,7 +1037,7 @@ public class Engine {
 
         ArrayList<Coords> result = new ArrayList<>();
 
-        while (0 != coordsInRange.size()) {
+        while (!coordsInRange.isEmpty()) {
             coords = coordsInRange.removeFirst();
             x = coords.getX();
             y = coords.getY();
@@ -1141,16 +1133,24 @@ public class Engine {
         this.taxPercentage = taxPercentage;
     }
 
-    public int calculateHappieness() {
-        //TODO
-        return 0;
+    public double calculateHappieness() {
+        if(residents.isEmpty()) {
+            combinedHappiness = 100.0;
+            return combinedHappiness;
+        }
+        int sum = 0;
+        for (Person p : residents) {
+            sum += p.getHappiness();
+        }
+        combinedHappiness = (double)sum / residents.size();
+        return combinedHappiness;
     }
 
     public void collectTax() {
         for (Person p : residents) {
-            addMoney(Math.round(10 * taxPercentage / 100 * p.getEducationLevel().getLevel()));
+            addMoney((int)Math.round((double)(10 * taxPercentage) / 100 * p.getEducationLevel().getLevel()));
             if(null != p.getJob()) {
-                addMoney(Math.round(10 * taxPercentage / 100 * p.getEducationLevel().getLevel()));
+                addMoney((int)Math.round((double)(10 * taxPercentage) / 100 * p.getEducationLevel().getLevel()));
             }
         }
         bigCityJframe.refreshMoney();
@@ -1295,5 +1295,34 @@ public class Engine {
                 res.add(residence);
             }
         }
+    }
+
+    public int getWidth() {
+        return width;
+    }
+    
+    public int getHeight() {
+        return height;
+    }
+    
+    public int getFieldsize() {
+        return fieldSize;
+    }
+    
+    public List<Zone> getBuildingsList() {
+        return buildings;
+    }
+    
+    public void refreshHappiness() {
+        calculateHappieness();
+        bigCityJframe.setHappiness(Math.round(combinedHappiness));
+        bigCityJframe.repaintStatPanelAndGrid();
+    }
+
+    public void makeDisaster() {
+        int index = rnd.nextInt(Disaster.values().length);
+        Disaster.values()[index].activate(Engine.this);
+        daysPassedWithoutDisaster = 0;
+        disasterChanse -= 1.0;
     }
 }
