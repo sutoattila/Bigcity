@@ -5,6 +5,7 @@ import bigcity.HighSchool;
 import bigcity.Industry;
 import bigcity.Person;
 import bigcity.Police;
+import bigcity.PrivateZone;
 import bigcity.Residence;
 import bigcity.Road;
 import bigcity.Service;
@@ -140,7 +141,7 @@ public class Engine {
         }
 
         moveEveryOne();
-        
+
         return true;
     }
 
@@ -199,15 +200,73 @@ public class Engine {
         int zoneLevel = 1;
         CursorSignal type;
 
+        //TODO (Mate's issue)
+        //Conflictual destruction.
+        //If private zone has been destroyed, decrease the people's happiness
+        //who worked or lived there.
+        //If a road has been destroyed find those people who can't get to their
+        //workplace on road and decrease their happiness.
+        /*
+        if (target instanceof Residence) {
+            System.out.println(((Residence) target).getResidents().size());
+        } else if (target instanceof Workplace) {
+            System.out.println(((Workplace) target).getWorkers().size());
+        }*/
+        //
+        //Residence, Workplace: If people work or live here ask the player if
+        //they really want to destroy the zone. 
+        //Ok: decrease happiness
+        //Cancle: return false
+        //Road: Find those who don't find their jobs without the road being
+        //destoryed. If we found at least one like this, ask the player if they
+        //really want to destroy the road.
+        //Ok: decrease happiness
+        //Cancle: return false
+        //        
+        //TODO:
+        //Disaster must not call the dialog.
         if (target instanceof Residence tmp) {
             zoneLevel = tmp.getLevel();
             type = CursorSignal.RESIDENCE;
+            if (peopleOnPrivateZone((PrivateZone) target)) {
+                if (bigCityJframe.conflictualDestructionOkCancleDialog(
+                        "People live on this residence. Destroying it will "
+                        + "decrease the happiness of people living here. "
+                        + "Are you sure you want to destroy it?")) {
+                    //System.out.println("Approved");
+                } else {
+                    //System.out.println("Canceled");
+                    return false;
+                }
+            }
         } else if (target instanceof Industry tmp) {
             zoneLevel = tmp.getLevel();
             type = CursorSignal.INDUSTRY;
+            if (peopleOnPrivateZone((PrivateZone) target)) {
+                if (bigCityJframe.conflictualDestructionOkCancleDialog(
+                        "People have a job on this zone. Destroying it will "
+                        + "decrease the happiness of people working here. "
+                        + "Are you sure you want to destroy it?")) {
+                    //System.out.println("Approved");
+                } else {
+                    //System.out.println("Canceled");
+                    return false;
+                }
+            }
         } else if (target instanceof Service tmp) {
             zoneLevel = tmp.getLevel();
             type = CursorSignal.SERVICE;
+            if (peopleOnPrivateZone((PrivateZone) target)) {
+                if (bigCityJframe.conflictualDestructionOkCancleDialog(
+                        "People have a job on this zone. Destroying it will "
+                        + "decrease the happiness of people working here. "
+                        + "Are you sure you want to destroy it?")) {
+                    //System.out.println("Approved");
+                } else {
+                    //System.out.println("Canceled");
+                    return false;
+                }
+            }
         } else if (target instanceof Road) {
             type = CursorSignal.ROAD;
         } else if (target instanceof Police) {
@@ -216,10 +275,10 @@ public class Engine {
             type = CursorSignal.STADIUM;
         } else if (target instanceof HighSchool) {
             type = CursorSignal.HIGH_SCHOOL;
-            highSchools.remove((HighSchool)target);
+            highSchools.remove((HighSchool) target);
         } else {
             type = CursorSignal.UNIVERSITY;
-            universities.remove((University)target);
+            universities.remove((University) target);
         }
 
         CursorSignal targetSignal = target.getCursorSignal();
@@ -234,7 +293,7 @@ public class Engine {
                 grid[row][column] = null;
             }
         }
-        target.destroy();
+
         if (CursorSignal.ROAD == targetSignal) {
             refreshRoadImgsAround(argRow, argColumn);
         }
@@ -244,15 +303,18 @@ public class Engine {
                 + (zoneLevel > 2 ? type.getPriceL3() : 0);
         addMoney(returnMoney / 2);
 
-        //TODO (Mate's issue)
-        //Conflictual destruction.
-        //If private zone has been destroyed, decrease the people's happiness
-        //who worked or lived there.
-        //If a road has been destroyed find those people who can't get to their
-        //workplace on road and decrease their happiness.
         moveEveryOne();
-        
+
         return true;
+    }
+
+    private boolean peopleOnPrivateZone(PrivateZone zone) {
+        if (zone instanceof Residence tmp) {
+            return tmp.getResidents().size() > 0 ? true : false;
+        } else if (zone instanceof Workplace tmp) {
+            return tmp.getWorkers().size() > 0 ? true : false;
+        }
+        return false;
     }
 
     private Boolean roadAndInsideGrid(int row, int column) {
@@ -374,7 +436,7 @@ public class Engine {
         while (sumResidenceCapacity < residents.size()) {
             residents.remove(0);
         }
-        // ------------------------------------------------------------------
+
         //Find all residences.
         //Find all industries and services connected to a residence. Store every 
         //connections. Store the distances. Sort according the distances.
@@ -452,7 +514,6 @@ public class Engine {
         });
         System.out.println("----------------------------------------------");
          */
-        //------------------------------------------------------------------
         //The new residents try to take the best places.
         residents.forEach(resident -> {
             residentTriesToMoveIn(resident, distances,
@@ -575,13 +636,13 @@ public class Engine {
     }
 
     public void dayPassed() {
-        
+
         educatePeople();
-        
+
         // -------- COLLECT TAX --------
-            collectTax();
+        collectTax();
         // -----------------------------
-        
+
         //------------------------------------------------------------------
         //~10 people move in immediately if possible. They leave only if there 
         //isn't enough residence.
@@ -1149,7 +1210,7 @@ public class Engine {
     public void collectTax() {
         for (Person p : residents) {
             addMoney(Math.round(10 * taxPercentage / 100 * p.getEducationLevel().getLevel()));
-            if(null != p.getJob()) {
+            if (null != p.getJob()) {
                 addMoney(Math.round(10 * taxPercentage / 100 * p.getEducationLevel().getLevel()));
             }
         }
@@ -1176,34 +1237,35 @@ public class Engine {
         int hsd = 0;
         int ud = 0;
         for (Person p : residents) {
-            if(p.getEducationLevel() == EducationLevel.HIGH_SCHOOL)
+            if (p.getEducationLevel() == EducationLevel.HIGH_SCHOOL) {
                 hsd++;
-            else if(p.getEducationLevel() == EducationLevel.UNIVERSITY)
+            } else if (p.getEducationLevel() == EducationLevel.UNIVERSITY) {
                 ud++;
+            }
         }
-        
-        int possibeHighSchoolDegrees = Integer.min(highSchools.size()*5,    
-                (int)(Math.round(residents.size()*0.8)-hsd-ud));
-        int possibeUniversityDegrees = Integer.min(universities.size()*10,  
-                (int)(Math.round(residents.size()*0.5)-ud));
-        
+
+        int possibeHighSchoolDegrees = Integer.min(highSchools.size() * 5,
+                (int) (Math.round(residents.size() * 0.8) - hsd - ud));
+        int possibeUniversityDegrees = Integer.min(universities.size() * 10,
+                (int) (Math.round(residents.size() * 0.5) - ud));
+
         for (University u : universities) {
             int row = u.getTopLeftY() / fieldSize;
             int col = u.getTopLeftX() / fieldSize;
-            
-            Set<Residence> residences = findResidencesOnRoad(row, col, 2,2);
+
+            Set<Residence> residences = findResidencesOnRoad(row, col, 2, 2);
             List<Person> educateables = new ArrayList<>();
-            
+
             for (Residence residence : residences) {
                 for (Person p : residence.getResidents()) {
-                    if(p.getEducationLevel() == EducationLevel.HIGH_SCHOOL) {
+                    if (p.getEducationLevel() == EducationLevel.HIGH_SCHOOL) {
                         educateables.add(p);
                     }
                 }
             }
-            
+
             for (Person p : educateables) {
-                if(possibeUniversityDegrees > 0){
+                if (possibeUniversityDegrees > 0) {
                     p.educate();
                     possibeUniversityDegrees--;
                 }
@@ -1212,88 +1274,93 @@ public class Engine {
         for (HighSchool h : highSchools) {
             int row = h.getTopLeftY() / fieldSize;
             int col = h.getTopLeftX() / fieldSize;
-            
-            Set<Residence> residences = findResidencesOnRoad(row, col, 2,1);
+
+            Set<Residence> residences = findResidencesOnRoad(row, col, 2, 1);
             List<Person> educateables = new ArrayList<>();
-            
+
             for (Residence residence : residences) {
                 for (Person p : residence.getResidents()) {
-                    if(p.getEducationLevel() == EducationLevel.PRIMARY_SCHOOL) {
+                    if (p.getEducationLevel() == EducationLevel.PRIMARY_SCHOOL) {
                         educateables.add(p);
                     }
                 }
             }
-            
+
             for (Person p : educateables) {
-                if(possibeHighSchoolDegrees > 0){
+                if (possibeHighSchoolDegrees > 0) {
                     p.educate();
                     possibeHighSchoolDegrees--;
                 }
             }
         }
-        
+
         /*System.out.println("\n\n");
         for (Person p : residents) {
             System.out.println(p.getEducationLevel());
         }
         System.out.println("\n\n");*/
     }
-    
+
     public Set<Residence> findResidencesOnRoad(int row, int col, int fieldWidth, int fieldHeight) {
         Set<Residence> res = new HashSet<>();
         Set<Zone> checkedZones = new HashSet<>();
         for (int i = 0; i < fieldHeight; i++) {
-                for (int j = 0; j < fieldWidth; j++) {
-                checkZone(checkedZones, res, row+i, col+j);
+            for (int j = 0; j < fieldWidth; j++) {
+                checkZone(checkedZones, res, row + i, col + j);
             }
         }
         return res;
     }
-    
+
     private void checkZone(Set<Zone> checkedZones, Set<Residence> res, int row, int col) {
-        if(grid[row][col] != null) {
-            
-            Zone down   = null;
-            Zone up     = null;
-            Zone left   = null;
-            Zone right  = null;
-            
-            if(row+1 < height)
-                down = grid[row+1][col];
-            if(row-1 > -1)
-                up = grid[row-1][col];
-            if(col-1 > -1)
-                left = grid[row][col-1];
-            if(col+1 < width)
-                right = grid[row][col+1];
-            
-            if(down != null && down instanceof Road && !checkedZones.contains(down)) {
+        if (grid[row][col] != null) {
+
+            Zone down = null;
+            Zone up = null;
+            Zone left = null;
+            Zone right = null;
+
+            if (row + 1 < height) {
+                down = grid[row + 1][col];
+            }
+            if (row - 1 > -1) {
+                up = grid[row - 1][col];
+            }
+            if (col - 1 > -1) {
+                left = grid[row][col - 1];
+            }
+            if (col + 1 < width) {
+                right = grid[row][col + 1];
+            }
+
+            if (down != null && down instanceof Road && !checkedZones.contains(down)) {
                 checkedZones.add(down);
-                checkZone(checkedZones, res, row+1, col);
-            } else if(down != null && down instanceof Residence residence) {
+                checkZone(checkedZones, res, row + 1, col);
+            } else if (down != null && down instanceof Residence residence) {
                 res.add(residence);
             }
-            
-            if(up != null && up instanceof Road && !checkedZones.contains(up)) {
+
+            if (up != null && up instanceof Road && !checkedZones.contains(up)) {
                 checkedZones.add(up);
-                checkZone(checkedZones, res, row-1, col);
-            } else if(up != null && up instanceof Residence residence) {
+                checkZone(checkedZones, res, row - 1, col);
+            } else if (up != null && up instanceof Residence residence) {
                 res.add(residence);
             }
-            
-            if(left != null && left instanceof Road && !checkedZones.contains(left)) {
+
+            if (left != null && left instanceof Road && !checkedZones.contains(left)) {
                 checkedZones.add(left);
-                checkZone(checkedZones, res, row, col-1);
-            } else if(left != null && left instanceof Residence residence) {
+                checkZone(checkedZones, res, row, col - 1);
+            } else if (left != null && left instanceof Residence residence) {
                 res.add(residence);
             }
-            
-            if(right != null && right instanceof Road && !checkedZones.contains(right)) {
+
+            if (right != null && right instanceof Road && !checkedZones.contains(right)) {
                 checkedZones.add(right);
-                checkZone(checkedZones, res, row, col+1);
-            } else if(right != null && right instanceof Residence residence) {
+                checkZone(checkedZones, res, row, col + 1);
+            } else if (right != null && right instanceof Residence residence) {
                 res.add(residence);
             }
         }
     }
+
 }
