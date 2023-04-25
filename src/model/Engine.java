@@ -959,10 +959,7 @@ public class Engine {
         double tmp = rnd.nextDouble();
         disasterChanse += (daysPassedWithoutDisaster / 1000.0) * tmp;
         if((int)disasterChanse > 0) {
-            int index = rnd.nextInt(Disaster.values().length);
-            Disaster.values()[index].activate(Engine.this);
-            daysPassedWithoutDisaster = 0;
-            disasterChanse -= 1.0;
+            makeDisaster();
         } else {
             daysPassedWithoutDisaster++;
         }
@@ -1321,5 +1318,11 @@ public class Engine {
         bigCityJframe.setHappiness(Math.round(combinedHappiness));
         bigCityJframe.repaintStatPanelAndGrid();
     }
-    
+
+    public void makeDisaster() {
+        int index = rnd.nextInt(Disaster.values().length);
+        Disaster.values()[index].activate(Engine.this);
+        daysPassedWithoutDisaster = 0;
+        disasterChanse -= 1.0;
+    }
 }

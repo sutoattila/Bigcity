@@ -84,9 +84,7 @@ public class BigCityJframe extends JFrame {
                 new AbstractAction("Katasztrófa kérése") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Random rnd = new Random();
-                int index = rnd.nextInt(Disaster.values().length);
-                Disaster.values()[index].activate(engine);
+                engine.makeDisaster();
             }
         });
         JMenuItem settingsJMenuItem = new JMenuItem(
