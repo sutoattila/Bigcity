@@ -35,6 +35,7 @@ public class Person {
 
     public int changeHappinessBy(int value) {
         happiness += value;
+        happinessGuard();
         return happiness;
     }
 
@@ -67,6 +68,7 @@ public class Person {
         this.educationLevel = educationLevel;
         this.home = home;
         this.job = job;
+        happinessGuard();
     }
 
     public void findJob() {
@@ -112,8 +114,13 @@ public class Person {
 
     public void setHappiness(int happiness) {
         this.happiness = happiness;
+        happinessGuard();
     }
     
-    
-
+    private void happinessGuard() {
+        if(happiness > 100)
+            happiness = 100;
+        else if(happiness < 0)
+            happiness = 0;
+    }
 }
