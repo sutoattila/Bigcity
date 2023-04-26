@@ -1,5 +1,6 @@
 package rightPanel;
 
+import grid.Grid;
 import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.Color;
@@ -15,7 +16,7 @@ public class XButton extends JButton {
      *
      * @param ae - ActionListener, action that the button does on click
      */
-    public XButton(ActionListener ae) {
+    public XButton(ActionListener ae, Grid grid) {
         super();
         this.setText("X");
         this.setBackground(Color.red);
@@ -25,6 +26,7 @@ public class XButton extends JButton {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Engine.setCursorSignal(CursorSignal.SELECT);
+                grid.removeTheSelectionOfTheSelectedZone();
             }
         });
     }

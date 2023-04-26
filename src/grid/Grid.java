@@ -1,8 +1,10 @@
 package grid;
 
 import bigcity.Industry;
+import bigcity.Police;
 import bigcity.PrivateZone;
 import bigcity.Residence;
+import bigcity.Stadium;
 import bigcity.Zone;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,7 +13,9 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.ArrayList;
 import javax.swing.JPanel;
+import model.Coords;
 import model.CursorSignal;
 import model.Engine;
 import res.Assets;
@@ -41,6 +45,8 @@ public class Grid extends JPanel {
 
     private BigCityJframe bigCityJFrame;
 
+    private Zone selectedZone = null;
+
     public Grid(int fieldSize, int width, int height, Engine engine,
             BigCityJframe bifCityJFrame) {
         this.fieldSize = fieldSize;
@@ -60,12 +66,14 @@ public class Grid extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (engine.getCursorSignal() == CursorSignal.SELECT) {
-                    //TODO: stadium, industry, police -> color fields around
+                    
                     int row = mousePositionY / fieldSize;
                     int column = mousePositionX / fieldSize;
                     Zone target = engine.getCell(row, column);
                     if (null != target) {
                         bigCityJFrame.changeRightPanelToStatPanel(target);
+                        selectedZone = target;
+                        repaint();
                     }
                 } else if (engine.getCursorSignal() == CursorSignal.DESTROY) {
                     if (engine.destroyZone(mousePositionY / fieldSize,
@@ -136,8 +144,6 @@ public class Grid extends JPanel {
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < width; column++) {
                 if (null != engine.getCell(row, column)) {
-                    //TODO: Different images for each zone types. 
-                    //(level, saturation)
                     changeImageAccordingSaturationAndLevel(
                             engine.getCell(row, column));
 
@@ -152,6 +158,8 @@ public class Grid extends JPanel {
                 }
             }
         }
+
+        
         if (mousePositionX != -1 && mousePositionY != -1) {
             int rowStart = mousePositionY / fieldSize;
             int rowEnd = mousePositionY / fieldSize
@@ -166,7 +174,7 @@ public class Grid extends JPanel {
                 g2.setColor(new Color(1f, 0.647f, 0f, 0.8f));
                 paintArea(rowStart, rowEnd, columnStart, columnEnd, g2);
             } else if (engine.getCursorSignal() == CursorSignal.SELECT) {
-                ////Transparent yellow-gold for hover.
+                //Transparent yellow-gold for hover.
                 g2.setColor(new Color(0.98f, 0.843f, 0f, 0.8f));
                 paintArea(rowStart, rowEnd, columnStart, columnEnd, g2);
             } else {
@@ -182,7 +190,97 @@ public class Grid extends JPanel {
                 //Draw hover rectangle.
                 paintArea(rowStart, rowEnd, columnStart, columnEnd, g2);
             }
+
         }
+        
+        paintHoverAroundTheZoneWithRange(g2);
+    }
+
+    private void paintHoverAroundTheZoneWithRange(Graphics2D g2) {
+        ArrayList<Coords> fieldsInsideRange = new ArrayList<>();
+
+        if (null != selectedZone) {
+            if (selectedZone instanceof Industry) {
+                fieldsInsideRange = engine.findCoordsInsideRange(
+                        selectedZone, Industry.range);
+            } else if (selectedZone instanceof Police) {
+                fieldsInsideRange = engine.findCoordsInsideRange(
+                        selectedZone, Police.range);
+            } else if (selectedZone instanceof Stadium) {
+                fieldsInsideRange = engine.findCoordsInsideRange(
+                        selectedZone, Stadium.range);
+            }
+        }
+
+        //Transparent yellow for hover.
+        g2.setColor(new Color(0.98f, 0.843f, 0f, 0.5f));
+
+        if (!fieldsInsideRange.isEmpty()) {
+            for (Coords coords : fieldsInsideRange) {
+                g2.fillRect(coords.getX() * fieldSize, coords.getY() * fieldSize,
+                        fieldSize, fieldSize);
+            }
+            return;
+        }
+
+        //The mouse exited the grid.
+        if (mousePositionX == -1 || mousePositionY == -1) {
+            return;
+        }
+
+        Zone target = engine.getCell(mousePositionY / fieldSize,
+                mousePositionX / fieldSize);
+        int row = mousePositionY / fieldSize * fieldSize;
+        int column = mousePositionX / fieldSize * fieldSize;
+
+        if (engine.getCursorSignal() == CursorSignal.INDUSTRY) {
+            fieldsInsideRange = engine.findCoordsInsideRange(
+                    new Industry(column, row, -1),
+                    Industry.range);
+        } else if (engine.getCursorSignal() == CursorSignal.POLICE) {
+            fieldsInsideRange = engine.findCoordsInsideRange(
+                    new Police(column, row, -1),
+                    Police.range);
+        } else if (engine.getCursorSignal() == CursorSignal.STADIUM) {
+            fieldsInsideRange = engine.findCoordsInsideRange(
+                    new Stadium(column, row, -1),
+                    Stadium.range);
+        } else if (target != null) {
+            if (engine.getCursorSignal() == CursorSignal.SELECT
+                    || engine.getCursorSignal() == CursorSignal.DESTROY) {
+                if (target instanceof Industry) {
+                    fieldsInsideRange = engine.findCoordsInsideRange(
+                            target, Industry.range);
+                } else if (target instanceof Police) {
+                    fieldsInsideRange = engine.findCoordsInsideRange(
+                            target, Police.range);
+                } else if (target instanceof Stadium) {
+                    fieldsInsideRange = engine.findCoordsInsideRange(
+                            target, Stadium.range);
+                }
+            } else { //The target zone doesn't have range.
+                return;
+            }
+
+        } else {
+            return;
+        }
+
+        for (Coords coords : fieldsInsideRange) {
+            g2.fillRect(coords.getX() * fieldSize, coords.getY() * fieldSize,
+                    fieldSize, fieldSize);
+        }
+
+    }
+
+    /**
+     * Call this function if you want to remove the hover around (fields inside
+     * the selected zone's range painted with transparent colour) the selected
+     * zone.
+     */
+    public void removeTheSelectionOfTheSelectedZone() {
+        selectedZone = null;
+        repaint();
     }
 
     private void changeImageAccordingSaturationAndLevel(Zone zone) {

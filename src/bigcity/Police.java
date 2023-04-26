@@ -4,7 +4,7 @@ import res.Assets;
 
 public class Police extends PublicZone {
 
-    public static final int range = 4;
+    public static final int range = 3;
 
     public Police(int topLeftX, int topLeftY, int maintenanceCost) {
         this.topLeftX = topLeftX;

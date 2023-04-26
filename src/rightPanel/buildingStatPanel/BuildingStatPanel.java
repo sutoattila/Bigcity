@@ -27,6 +27,7 @@ import model.Engine;
 import rightPanel.XButton;
 import rightPanel.personsPanel.PersonsPanel;
 import view.BigCityJframe;
+import grid.Grid;
 
 public class BuildingStatPanel extends JPanel {
 
@@ -35,8 +36,11 @@ public class BuildingStatPanel extends JPanel {
     protected boolean hasCitizens;
     protected BigCityJframe bigCityJFrame;
     protected Zone zone;
-
-    public BuildingStatPanel(Zone zone, BigCityJframe bigCityJFrame) {
+    
+    protected Grid grid;
+    
+    public BuildingStatPanel(Zone zone, BigCityJframe bigCityJFrame, Grid grid) {
+        this.grid=grid;
         JLabel name = new JLabel();
         if (zone instanceof PrivateZone) {
             if (zone instanceof Residence) {
@@ -75,7 +79,7 @@ public class BuildingStatPanel extends JPanel {
                 bigCityJFrame.changeRightPanelToBuildPanel();
                 bigCityJFrame.repaint();
             }
-        }));
+        },grid));
         add(exitPanel);
 
         this.bigCityJFrame = bigCityJFrame;
@@ -199,6 +203,7 @@ public class BuildingStatPanel extends JPanel {
                 Engine.setCursorSignal(CursorSignal.SELECT);
                 bigCityJFrame.changeRightPanelToBuildPanel();
                 bigCityJFrame.repaint();
+                grid.removeTheSelectionOfTheSelectedZone();
             }
         });
         destroyButton.setBackground(Color.RED.darker());

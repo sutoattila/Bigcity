@@ -171,13 +171,15 @@ public class BigCityJframe extends JFrame {
 
         setLayout(new BorderLayout());
 
-        this.fieldSize = 100;
-        int width = 5;
-        int height = 5;
+        this.fieldSize = 50;
+        int width = 10;
+        int height = 10;
 
         new Assets();
 
         engine = new Engine(width, height, this.fieldSize, this);
+
+        grid = new Grid(fieldSize, width, height, engine, this);
 
         topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setPreferredSize(new Dimension(-1, 50));
@@ -270,7 +272,7 @@ public class BigCityJframe extends JFrame {
             }
         });
 
-        buildPanel = new BuildPanel(
+        buildPanel = new BuildPanel(grid,
                 lakohely,
                 ipariTerulet,
                 szolgaltatas,
@@ -295,8 +297,7 @@ public class BigCityJframe extends JFrame {
         buildPanel.add(destroyZone);
         // ---------------------------------------------------------------------
 
-        grid = new Grid(fieldSize, width, height, engine, this);
-
+        //grid = new Grid(fieldSize, width, height, engine, this);
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.add(topPanel);
@@ -311,26 +312,26 @@ public class BigCityJframe extends JFrame {
         setResizable(false);
         setVisible(true);
     }
-    
-    public void showExitDialog(){
+
+    public void showExitDialog() {
         timer.stop();
         JDialog d = new JDialog(BigCityJframe.this, "Kilépés", true);
         d.getContentPane().setBackground(Color.GREEN);
         d.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         d.setLayout(new FlowLayout());
-        
+
         Border border = BorderFactory.createLineBorder(Color.BLACK, 2);
         // Set the border for the dialog
         d.getRootPane().setBorder(border);
-        
+
         JButton resume = new JButton("Játék folytatása");
-        resume.setBackground(new Color(240,207,96));
+        resume.setBackground(new Color(240, 207, 96));
         JButton b = new JButton("Kilépés a főmenübe, játék mentése");
-        b.setBackground(new Color(240,207,96));
+        b.setBackground(new Color(240, 207, 96));
         JButton a = new JButton("Kilépés a főmenübe mentés nélkül");
-        a.setBackground(new Color(240,207,96));
+        a.setBackground(new Color(240, 207, 96));
         JButton c = new JButton("Kilépés mentés nélkül");
-        c.setBackground(new Color(240,207,96));
+        c.setBackground(new Color(240, 207, 96));
         resume.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -376,7 +377,7 @@ public class BigCityJframe extends JFrame {
         if (null != statPanel) {
             remove(statPanel);
         }
-        statPanel = new BuildingStatPanel(zone, this);
+        statPanel = new BuildingStatPanel(zone, this, grid);
         add(statPanel, BorderLayout.EAST);
         pack();
         setLocationRelativeTo(null);
@@ -428,11 +429,11 @@ public class BigCityJframe extends JFrame {
     public void refreshDate() {
         calendar.setText(dateFormater.format(date));
     }
-    
+
     public void setHappiness(double happiness) {
-        happy.setText(Math.round(happiness)+"%");
+        happy.setText(Math.round(happiness) + "%");
     }
-    
+
     public void refreshGrid() {
         grid.repaint();
     }
