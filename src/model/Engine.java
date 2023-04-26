@@ -211,8 +211,6 @@ public class Engine {
             return false;
         }
 
-        buildings.remove(target);
-
         int zoneLevel = 1;
         CursorSignal type;
 
@@ -333,6 +331,8 @@ public class Engine {
             type = CursorSignal.UNIVERSITY;
             universities.remove((University) target);
         }
+
+        buildings.remove(target);
 
         CursorSignal targetSignal = target.getCursorSignal();
         int rowStart = target.getTopLeftY() / fieldSize;
