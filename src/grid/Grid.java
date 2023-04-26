@@ -69,7 +69,8 @@ public class Grid extends JPanel {
                     }
                 } else if (engine.getCursorSignal() == CursorSignal.DESTROY) {
                     if (engine.destroyZone(mousePositionY / fieldSize,
-                            mousePositionX / fieldSize, fieldSize)) {
+                            mousePositionX / fieldSize, fieldSize,
+                            false)) {
                         repaint();
                     }
                 } else {

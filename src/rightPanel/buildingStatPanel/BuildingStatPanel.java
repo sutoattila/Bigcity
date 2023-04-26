@@ -179,7 +179,7 @@ public class BuildingStatPanel extends JPanel {
                         upgradeButton.setText("-");
                     }
                     bStat.updateStats();
-                    
+
                     bigCityJFrame.getEngine().moveEveryOne();
                     bigCityJFrame.repaint();
                 }
@@ -194,7 +194,8 @@ public class BuildingStatPanel extends JPanel {
                 bigCityJFrame.getEngine().destroyZone(
                         zone.getTopLeftY() / bigCityJFrame.getFieldSize(),
                         zone.getTopLeftX() / bigCityJFrame.getFieldSize(),
-                        bigCityJFrame.getFieldSize());
+                        bigCityJFrame.getFieldSize(),
+                        false);
                 Engine.setCursorSignal(CursorSignal.SELECT);
                 bigCityJFrame.changeRightPanelToBuildPanel();
                 bigCityJFrame.repaint();
@@ -226,5 +227,4 @@ public class BuildingStatPanel extends JPanel {
         return bStat;
     }
 
-    
 }
