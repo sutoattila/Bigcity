@@ -27,6 +27,7 @@ public enum Disaster {
             int index = rnd.nextInt(buildings.size());
             int row = buildings.get(index).getTopLeftY() / fieldsize;
             int col = buildings.get(index).getTopLeftX() / fieldsize;
+            changeToBuildingPanelIfNeeded(row, col, e);
             e.destroyZone(row, col, fieldsize,
                     true);
             if (dialog == null) {
@@ -60,22 +61,27 @@ public enum Disaster {
             int index = rnd.nextInt(buildings.size());
             int row = buildings.get(index).getTopLeftY() / fieldsize;
             int col = buildings.get(index).getTopLeftX() / fieldsize;
+            changeToBuildingPanelIfNeeded(row, col, e);
             e.destroyZone(row, col, fieldsize,
                     true);
-
+            
             if (row + 1 < e.getHeight()) {
+                changeToBuildingPanelIfNeeded(row + 1, col, e);
                 e.destroyZone(row + 1, col, fieldsize, true);
             }
 
             if (col + 1 < e.getWidth()) {
+                changeToBuildingPanelIfNeeded(row, col + 1, e);
                 e.destroyZone(row, col + 1, fieldsize, true);
             }
 
             if (row > 0) {
+                changeToBuildingPanelIfNeeded(row - 1, col, e);
                 e.destroyZone(row - 1, col, fieldsize, true);
             }
 
             if (col > 0) {
+                changeToBuildingPanelIfNeeded(row, col - 1, e);
                 e.destroyZone(row, col - 1, fieldsize, true);
             }
 
@@ -109,32 +115,41 @@ public enum Disaster {
             int index = rnd.nextInt(buildings.size());
             int row = buildings.get(index).getTopLeftY() / fieldsize;
             int col = buildings.get(index).getTopLeftX() / fieldsize;
+            changeToBuildingPanelIfNeeded(row, col, e);
             e.destroyZone(row, col, fieldsize, true);
 
             if (row + 1 < e.getHeight()) {
+                changeToBuildingPanelIfNeeded(row + 1, col, e);
                 e.destroyZone(row + 1, col, fieldsize, true);
                 if (col + 1 < e.getWidth()) {
+                    changeToBuildingPanelIfNeeded(row + 1, col + 1, e);
                     e.destroyZone(row + 1, col + 1, fieldsize, true);
                 }
                 if (col > 0) {
+                    changeToBuildingPanelIfNeeded(row + 1, col - 1, e);
                     e.destroyZone(row + 1, col - 1, fieldsize, true);
                 }
             }
             if (col + 1 < e.getWidth()) {
+                changeToBuildingPanelIfNeeded(row, col + 1, e);
                 e.destroyZone(row, col + 1, fieldsize, true);
             }
 
             if (row > 0) {
+                changeToBuildingPanelIfNeeded(row - 1, col, e);
                 e.destroyZone(row - 1, col, fieldsize, true);
                 if (col + 1 < e.getWidth()) {
+                    changeToBuildingPanelIfNeeded(row - 1, col + 1, e);
                     e.destroyZone(row - 1, col + 1, fieldsize, true);
                 }
                 if (col > 0) {
+                    changeToBuildingPanelIfNeeded(row - 1, col - 1, e);
                     e.destroyZone(row - 1, col - 1, fieldsize, true);
                 }
             }
 
             if (col > 0) {
+                changeToBuildingPanelIfNeeded(row, col - 1, e);
                 e.destroyZone(row, col - 1, fieldsize, true);
             }
 
@@ -168,6 +183,12 @@ public enum Disaster {
     private static void decreaseHappiness(List<Person> residents, int value) {
         for (Person resident : residents) {
             resident.changeHappinessBy(value);
+        }
+    }
+    
+    private static void changeToBuildingPanelIfNeeded(int row, int col, Engine e) {
+        if(e.isZoneSelected(row, col)) {
+            e.unselectZone();
         }
     }
 }

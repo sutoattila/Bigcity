@@ -1539,4 +1539,14 @@ public class Engine {
         daysPassedWithoutDisaster = 0;
         disasterChanse -= 1.0;
     }
+    
+    public boolean isZoneSelected(int row, int col) {
+        if(bigCityJframe.getStatPanel() != null)
+            return bigCityJframe.getStatPanel().getZone() == grid[row][col];
+        return false;
+    }
+    
+    public void unselectZone() {
+        bigCityJframe.changeRightPanelToBuildPanel();
+    }
 }
