@@ -16,7 +16,6 @@ import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -30,10 +29,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
-import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import javax.swing.border.Border;
 import model.CursorSignal;
-import model.Disaster;
 import model.Engine;
 import res.Assets;
 import rightPanel.BuildPanel;
@@ -380,6 +377,7 @@ public class BigCityJframe extends JFrame {
         add(statPanel, BorderLayout.EAST);
         pack();
         setLocationRelativeTo(null);
+        statPanel.repaint();
     }
 
     public void changeRightPanelToBuildPanel() {
@@ -389,7 +387,7 @@ public class BigCityJframe extends JFrame {
         add(buildPanel, BorderLayout.EAST);
         pack();
         setLocationRelativeTo(null);
-
+        buildPanel.repaint();
     }
 
     public void repaintStatPanelAndGrid() {
@@ -478,4 +476,7 @@ public class BigCityJframe extends JFrame {
         }
     }
 
+    public BuildingStatPanel getStatPanel () {
+        return statPanel;
+    }
 }
