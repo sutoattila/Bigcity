@@ -4,7 +4,7 @@
  */
 package model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
@@ -22,7 +22,7 @@ public class EngineTest {
      */
     @Test()
     public void testSetImg() {
-        assertEquals(1, 1);
+        assertTrue(true);
     }
 
 
