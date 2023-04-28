@@ -201,8 +201,7 @@ public class Grid extends JPanel {
 
         if (null != selectedZone) {
             if (selectedZone instanceof Industry) {
-                fieldsInsideRange = engine.findCoordsInsideRange(
-                        selectedZone, Industry.range);
+                fieldsInsideRange = engine.findCoordsInsideRange(selectedZone, Industry.range);
             } else if (selectedZone instanceof Police) {
                 fieldsInsideRange = engine.findCoordsInsideRange(
                         selectedZone, Police.range);
@@ -234,8 +233,7 @@ public class Grid extends JPanel {
         int column = mousePositionX / fieldSize * fieldSize;
 
         if (engine.getCursorSignal() == CursorSignal.INDUSTRY) {
-            fieldsInsideRange = engine.findCoordsInsideRange(
-                    new Industry(column, row, -1),
+            fieldsInsideRange = engine.findCoordsInsideRange(new Industry(column, row, -1),
                     Industry.range);
         } else if (engine.getCursorSignal() == CursorSignal.POLICE) {
             fieldsInsideRange = engine.findCoordsInsideRange(
@@ -249,8 +247,7 @@ public class Grid extends JPanel {
             if (engine.getCursorSignal() == CursorSignal.SELECT
                     || engine.getCursorSignal() == CursorSignal.DESTROY) {
                 if (target instanceof Industry) {
-                    fieldsInsideRange = engine.findCoordsInsideRange(
-                            target, Industry.range);
+                    fieldsInsideRange = engine.findCoordsInsideRange(target, Industry.range);
                 } else if (target instanceof Police) {
                     fieldsInsideRange = engine.findCoordsInsideRange(
                             target, Police.range);
@@ -284,92 +281,110 @@ public class Grid extends JPanel {
     }
 
     private void changeImageAccordingSaturationAndLevel(Zone zone) {
-        if (zone instanceof PrivateZone) {
+        if (zone instanceof PrivateZone privateZone) {
             int level = zone.getLevel();
             int capacity;
             int size;
-            if (zone instanceof Residence) {
-                capacity = ((Residence) zone).getCapacity();
-                size = ((Residence) zone).getSize();
-                if (1 == level) {
-                    if (0 == size) {
-                        zone.setImg(Assets.copperR);
-                    } else if (0 < size && size < capacity / 2) {
-                        zone.setImg(Assets.house);
-                    } else {//capacity / 2 <= size
-                        zone.setImg(Assets.houses);
+            if (zone instanceof Residence residence) {
+                capacity = residence.getCapacity();
+                size = residence.getSize();
+                switch (level) {
+                    case 1 -> {
+                        if (0 == size) {
+                            zone.setImg(Assets.copperR);
+                        } else if (0 < size && size < capacity / 2) {
+                            zone.setImg(Assets.house);
+                        } else {//capacity / 2 <= size
+                            zone.setImg(Assets.houses);
+                        }
                     }
-                } else if (2 == level) {
-                    if (0 == size) {
-                        zone.setImg(Assets.silverR);
-                    } else if (0 < size && size < capacity / 2) {
-                        zone.setImg(Assets.bigHouse);
-                    } else {//capacity / 2 <= size
-                        zone.setImg(Assets.bigHouses);
+                    case 2 -> {
+                        if (0 == size) {
+                            zone.setImg(Assets.silverR);
+                        } else if (0 < size && size < capacity / 2) {
+                            zone.setImg(Assets.bigHouse);
+                        } else {//capacity / 2 <= size
+                            zone.setImg(Assets.bigHouses);
+                        }
                     }
-                } else if (3 == level) {
-                    if (0 == size) {
-                        zone.setImg(Assets.goldR);
-                    } else if (0 < size && size < capacity / 2) {
-                        zone.setImg(Assets.panel);
-                    } else {//capacity / 2 <= size
-                        zone.setImg(Assets.panels);
+                    case 3 -> {
+                        if (0 == size) {
+                            zone.setImg(Assets.goldR);
+                        } else if (0 < size && size < capacity / 2) {
+                            zone.setImg(Assets.panel);
+                        } else {//capacity / 2 <= size
+                            zone.setImg(Assets.panels);
+                        }
+                    }
+                    default -> {
                     }
                 }
-            } else if (zone instanceof Industry) {
-                capacity = ((Industry) zone).getCapacity();
-                size = ((Industry) zone).getSize();
-                if (1 == level) {
-                    if (0 == size) {
-                        zone.setImg(Assets.copperI);
-                    } else if (0 < size && size < capacity / 2) {
-                        zone.setImg(Assets.ranch);
-                    } else {//capacity / 2 <= size
-                        zone.setImg(Assets.ranches);
+            } else if (zone instanceof Industry industry) {
+                capacity = industry.getCapacity();
+                size = industry.getSize();
+                switch (level) {
+                    case 1 -> {
+                        if (0 == size) {
+                            zone.setImg(Assets.copperI);
+                        } else if (0 < size && size < capacity / 2) {
+                            zone.setImg(Assets.ranch);
+                        } else {//capacity / 2 <= size
+                            zone.setImg(Assets.ranches);
+                        }
                     }
-                } else if (2 == level) {
-                    if (0 == size) {
-                        zone.setImg(Assets.silverI);
-                    } else if (0 < size && size < capacity / 2) {
-                        zone.setImg(Assets.mine);
-                    } else {//capacity / 2 <= size
-                        zone.setImg(Assets.mines);
+                    case 2 -> {
+                        if (0 == size) {
+                            zone.setImg(Assets.silverI);
+                        } else if (0 < size && size < capacity / 2) {
+                            zone.setImg(Assets.mine);
+                        } else {//capacity / 2 <= size
+                            zone.setImg(Assets.mines);
+                        }
                     }
-                } else if (3 == level) {
-                    if (0 == size) {
-                        zone.setImg(Assets.goldI);
-                    } else if (0 < size && size < capacity / 2) {
-                        zone.setImg(Assets.factory);
-                    } else {//capacity / 2 <= size
-                        zone.setImg(Assets.factories);
+                    case 3 -> {
+                        if (0 == size) {
+                            zone.setImg(Assets.goldI);
+                        } else if (0 < size && size < capacity / 2) {
+                            zone.setImg(Assets.factory);
+                        } else {//capacity / 2 <= size
+                            zone.setImg(Assets.factories);
+                        }
+                    }
+                    default -> {
                     }
                 }
             } else {//Service
-                capacity = ((PrivateZone) zone).getCapacity();
-                size = ((PrivateZone) zone).getSize();
-                if (1 == level) {
-                    if (0 == size) {
-                        zone.setImg(Assets.copperS);
-                    } else if (0 < size && size < capacity / 2) {
-                        zone.setImg(Assets.shop);
-                    } else {//capacity / 2 <= size
-                        zone.setImg(Assets.shops);
+                capacity = privateZone.getCapacity();
+                size = privateZone.getSize();
+                switch (level) {
+                    case 1 -> {
+                        if (0 == size) {
+                            zone.setImg(Assets.copperS);
+                        } else if (0 < size && size < capacity / 2) {
+                            zone.setImg(Assets.shop);
+                        } else {//capacity / 2 <= size
+                            zone.setImg(Assets.shops);
+                        }
                     }
-                } else if (2 == level) {
-                    if (0 == size) {
-                        zone.setImg(Assets.silverS);
-                    } else if (0 < size && size < capacity / 2) {
-                        zone.setImg(Assets.bigShop);
-                    } else {//capacity / 2 <= size
-                        zone.setImg(Assets.bigShops);
+                    case 2 -> {
+                        if (0 == size) {
+                            zone.setImg(Assets.silverS);
+                        } else if (0 < size && size < capacity / 2) {
+                            zone.setImg(Assets.bigShop);
+                        } else {//capacity / 2 <= size
+                            zone.setImg(Assets.bigShops);
+                        }
                     }
-                } else if (3 == level) {
-                    if (0 == size) {
-                        zone.setImg(Assets.goldS);
-                    } else if (0 < size && size < capacity / 2) {
-                        zone.setImg(Assets.mall);
-                    } else {//capacity / 2 <= size
-                        zone.setImg(Assets.malls);
+                    case 3 -> {
+                        if (0 == size) {
+                            zone.setImg(Assets.goldS);
+                        } else if (0 < size && size < capacity / 2) {
+                            zone.setImg(Assets.mall);
+                        } else {//capacity / 2 <= size
+                            zone.setImg(Assets.malls);
+                        }
+                    }
+                    default -> {
                     }
                 }
             }
@@ -384,7 +399,7 @@ public class Grid extends JPanel {
      * Created to test the draw performance. Every field will have an image.
      */
     public void fillGrid() {
-        engine.setCursorSignal(CursorSignal.ROAD);
+        Engine.setCursorSignal(CursorSignal.ROAD);
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < width; column++) {
                 engine.build(row, column, fieldSize);

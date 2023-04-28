@@ -20,9 +20,11 @@ public class RoundedBorder extends AbstractBorder {
     private int radii;
     private int strokePadding;
 
+    /*
     public RoundedBorder(Color color) {
         new RoundedBorder(color, 4, 8);
     }
+    */
 
     public RoundedBorder(Color color, int thickness, int radii) {
         strokePadding = thickness / 2;

@@ -1,7 +1,6 @@
 package bigcity;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import model.CursorSignal;
 
 public abstract class Zone {

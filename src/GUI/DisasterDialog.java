@@ -20,6 +20,7 @@ public class DisasterDialog extends JDialog {
         
         JButton ok = new JButton(
             new AbstractAction("OK") {
+                @Override
                 public void actionPerformed(ActionEvent e)
                 {
                     DisasterDialog.this.setVisible(false);

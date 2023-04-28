@@ -5,7 +5,7 @@ import res.Assets;
 
 public class Industry extends Workplace {
 
-    public static final int range=3;
+    public static final int range = 3;
     
     public Industry(int topLeftX, int topLeftY, int price) {
         this.topLeftX = topLeftX;

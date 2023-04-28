@@ -2,7 +2,6 @@ package GUI;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 
 public class MainMenu extends JFrame {
@@ -30,25 +29,16 @@ public class MainMenu extends JFrame {
         resumeGameBtn.setFont(new Font("Verdana", Font.BOLD, 18));
         resumeGameBtn.setBackground(new Color(99,196,102));
         exitGame.setFont(new Font("Verdana", Font.BOLD, 18));
-        exitGame.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
+        exitGame.addActionListener((ActionEvent e) -> {
+            System.exit(0);
         });
-        newGameBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new NameWindow();
-               
-                MainMenu.this.dispose();
-            }
+        newGameBtn.addActionListener((ActionEvent e) -> {
+            new NameWindow(); 
+            
+            MainMenu.this.dispose();
         });
-        resumeGameBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO
-            }
+        resumeGameBtn.addActionListener((ActionEvent e) -> {
+            //TODO
         });
         gap = new JLabel();
         

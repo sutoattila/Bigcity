@@ -73,12 +73,9 @@ public class BigCityJframe extends JFrame {
         //exit options
         ImageIcon icon = new ImageIcon("GUI/house.png");
         setIconImage(icon.getImage());
-        this.timer = new Timer(3000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!isStopped) {
-                    dayPassed();
-                }
+        this.timer = new Timer(3000, (ActionEvent e) -> {
+            if (!isStopped) {
+                dayPassed();
             }
         });
         timer.start();
@@ -205,68 +202,44 @@ public class BigCityJframe extends JFrame {
         BuildButton iskola = new BuildButton("buildPanel/images/school.png", "Iskola", CursorSignal.HIGH_SCHOOL.getPriceL1());
         BuildButton egyetem = new BuildButton("buildPanel/images/university.png", "Egyetem", CursorSignal.UNIVERSITY.getPriceL1());
 
-        lakohely.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                engine.setCursorSignal(CursorSignal.RESIDENCE);
-                engine.setImg(Assets.copperR);
-            }
+        lakohely.addActionListener((ActionEvent e) -> {
+            Engine.setCursorSignal(CursorSignal.RESIDENCE);
+            engine.setImg(Assets.copperR);
         });
 
-        ipariTerulet.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                engine.setCursorSignal(CursorSignal.INDUSTRY);
-                engine.setImg(Assets.copperI);
-            }
+        ipariTerulet.addActionListener((ActionEvent e) -> {
+            Engine.setCursorSignal(CursorSignal.INDUSTRY);
+            engine.setImg(Assets.copperI);
         });
 
-        szolgaltatas.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                engine.setCursorSignal(CursorSignal.SERVICE);
-                engine.setImg(Assets.copperS);
-            }
+        szolgaltatas.addActionListener((ActionEvent e) -> {
+            Engine.setCursorSignal(CursorSignal.SERVICE);
+            engine.setImg(Assets.copperS);
         });
 
-        ut.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                engine.setCursorSignal(CursorSignal.ROAD);
-                engine.setImg(Assets.roadNS);
-            }
+        ut.addActionListener((ActionEvent e) -> {
+            Engine.setCursorSignal(CursorSignal.ROAD);
+            engine.setImg(Assets.roadNS);
         });
 
-        rendorseg.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                engine.setCursorSignal(CursorSignal.POLICE);
-                engine.setImg(Assets.police);
-            }
+        rendorseg.addActionListener((ActionEvent e) -> {
+            Engine.setCursorSignal(CursorSignal.POLICE);
+            engine.setImg(Assets.police);
         });
 
-        stadion.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                engine.setCursorSignal(CursorSignal.STADIUM);
-                engine.setImg(Assets.stadium);
-            }
+        stadion.addActionListener((ActionEvent e) -> {
+            Engine.setCursorSignal(CursorSignal.STADIUM);
+            engine.setImg(Assets.stadium);
         });
 
-        iskola.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                engine.setCursorSignal(CursorSignal.HIGH_SCHOOL);
-                engine.setImg(Assets.highSchool);
-            }
+        iskola.addActionListener((ActionEvent e) -> {
+            Engine.setCursorSignal(CursorSignal.HIGH_SCHOOL);
+            engine.setImg(Assets.highSchool);
         });
 
-        egyetem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                engine.setCursorSignal(CursorSignal.UNIVERSITY);
-                engine.setImg(Assets.university);
-            }
+        egyetem.addActionListener((ActionEvent e) -> {
+            Engine.setCursorSignal(CursorSignal.UNIVERSITY);
+            engine.setImg(Assets.university);
         });
 
         buildPanel = new BuildPanel(grid,
@@ -285,11 +258,8 @@ public class BigCityJframe extends JFrame {
         // use) to destroy a zone with this. It makes easier to destroy multiple
         // zones.
         destroyZone = new JButton("destroyZone");
-        destroyZone.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                engine.setCursorSignal(CursorSignal.DESTROY);
-            }
+        destroyZone.addActionListener((ActionEvent e) -> {
+            Engine.setCursorSignal(CursorSignal.DESTROY);
         });
         buildPanel.add(destroyZone);
         // ---------------------------------------------------------------------
@@ -311,7 +281,8 @@ public class BigCityJframe extends JFrame {
     }
 
     public void showExitDialog() {
-        timer.stop();
+        boolean timeBefore = isStopped;
+        isStopped = true;
         JDialog d = new JDialog(BigCityJframe.this, "Kilépés", true);
         d.getContentPane().setBackground(Color.GREEN);
         d.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -333,7 +304,7 @@ public class BigCityJframe extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 d.dispose();
-                timer.restart();
+                isStopped = timeBefore;
             }
         });
         b.addActionListener(new ActionListener() {
@@ -470,11 +441,7 @@ public class BigCityJframe extends JFrame {
         if (!timeWasStopped) {
             isStopped = false;
         }
-        if (OKCancelDialog.OK == dialog.getButtonCode()) {
-            return true;
-        } else {
-            return false;
-        }
+        return OKCancelDialog.OK == dialog.getButtonCode();
     }
 
     public BuildingStatPanel getStatPanel () {
