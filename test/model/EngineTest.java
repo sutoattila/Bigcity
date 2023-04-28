@@ -4,8 +4,7 @@
  */
 package model;
 
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -20,7 +19,7 @@ public class EngineTest {
     /**
      * Test of setImg method, of class Engine.
      */
-    @Test()
+    @Test
     public void testSetImg() {
         assertTrue(true);
     }
