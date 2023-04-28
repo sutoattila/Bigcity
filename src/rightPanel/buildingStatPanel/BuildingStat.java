@@ -66,8 +66,7 @@ public class BuildingStat extends JPanel {
         } else {
             level.setText("1/"+building.getLevel());
         }
-        if(building instanceof PrivateZone) {
-            PrivateZone tmp = (PrivateZone) building;
+        if(building instanceof PrivateZone tmp) {
             size.setText(tmp.getSize() + " fő");
             capacity.setText(tmp.getCapacity()+ " fő");
         }

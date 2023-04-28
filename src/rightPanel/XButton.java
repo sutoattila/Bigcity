@@ -15,6 +15,7 @@ public class XButton extends JButton {
      * Constructor
      *
      * @param ae - ActionListener, action that the button does on click
+     * @param grid
      */
     public XButton(ActionListener ae, Grid grid) {
         super();
@@ -22,12 +23,9 @@ public class XButton extends JButton {
         this.setBackground(Color.red);
         this.setFont(new Font("Courier", Font.BOLD, 12));
         this.addActionListener(ae);
-        addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Engine.setCursorSignal(CursorSignal.SELECT);
-                grid.removeTheSelectionOfTheSelectedZone();
-            }
+        addActionListener((ActionEvent e) -> {
+            Engine.setCursorSignal(CursorSignal.SELECT);
+            grid.removeTheSelectionOfTheSelectedZone();
         });
     }
 }

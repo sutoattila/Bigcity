@@ -42,6 +42,7 @@ public class BuildPanel extends JPanel {
     /**
      * Constructor
      *
+     * @param grid
      * @param builds The BuildButtons you want to display
      */
     public BuildPanel(Grid grid, BuildButton... builds) {

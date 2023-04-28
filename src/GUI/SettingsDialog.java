@@ -36,6 +36,7 @@ public class SettingsDialog extends JDialog implements ChangeListener{
         
         JButton ok = new JButton(
             new AbstractAction("OK") {
+                @Override
                 public void actionPerformed(ActionEvent e)
                 {
                     frame.setTax(slider.getValue());
@@ -46,6 +47,7 @@ public class SettingsDialog extends JDialog implements ChangeListener{
         
         JButton cancel = new JButton(
             new AbstractAction("Cancel") {
+                @Override
                 public void actionPerformed(ActionEvent e)
                 {
                     SettingsDialog.this.setVisible(false);

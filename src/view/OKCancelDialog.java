@@ -70,6 +70,7 @@ public abstract class OKCancelDialog extends JDialog {
      * The handler of the OK button's action.
      */
     private AbstractAction actionOK = new AbstractAction("OK") {
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (processOK()) {
                 btnCode = OK;
@@ -82,6 +83,7 @@ public abstract class OKCancelDialog extends JDialog {
      * The handler of the CANCEL button's action.
      */
     private AbstractAction actionCancel = new AbstractAction("Cancel") {
+        @Override
         public void actionPerformed(ActionEvent e) {
             processCancel();
             btnCode = CANCEL;

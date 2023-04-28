@@ -49,7 +49,6 @@ public class Person {
         }
         if (EducationLevel.PRIMARY_SCHOOL == educationLevel) {
             educationLevel = EducationLevel.HIGH_SCHOOL;
-            return;
         }
     }
 

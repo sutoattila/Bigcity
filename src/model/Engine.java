@@ -42,7 +42,7 @@ public class Engine {
     private int taxPercentage;
     private String name;
 
-    private double disasterChanse;
+    private double disasterChance;
     private Random rnd;
     private int daysPassedWithoutDisaster;
 
@@ -67,7 +67,7 @@ public class Engine {
         this.money = 1000;
         this.bigCityJframe = bigCityJframe;
         this.taxPercentage = 20;
-        this.disasterChanse = 0;
+        this.disasterChance = 0;
         this.rnd = new Random();
         this.daysPassedWithoutDisaster = 0;
         this.highSchools = new ArrayList<>();
@@ -102,34 +102,33 @@ public class Engine {
         int topLeftX = columnStart * fieldSize;
         int topLeftY = rowStart * fieldSize;
 
-        if (CursorSignal.POLICE == cursorSignal) {
-            zone = new Police(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
-        } else if (CursorSignal.STADIUM == cursorSignal) {
-            zone = new Stadium(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
-        } else if (CursorSignal.HIGH_SCHOOL == cursorSignal) {
-            HighSchool tmp = new HighSchool(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
-            zone = tmp;
-            highSchools.add(tmp);
-        } else if (CursorSignal.UNIVERSITY == cursorSignal) {
-            University tmp = new University(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
-            zone = tmp;
-            universities.add(tmp);
-        } else if (CursorSignal.ROAD == cursorSignal) {
-            zone = new Road(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
-        } else if (CursorSignal.RESIDENCE == cursorSignal) {
-            zone = new Residence(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
-        } else if (CursorSignal.INDUSTRY == cursorSignal) {
-            zone = new Industry(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
-        } else if (CursorSignal.SERVICE == cursorSignal) {
-            zone = new Service(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
+        if (null != cursorSignal) switch (cursorSignal) {
+            case POLICE -> zone = new Police(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+            case STADIUM -> zone = new Stadium(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+            case HIGH_SCHOOL -> {
+                HighSchool tmp = new HighSchool(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                zone = tmp;
+                highSchools.add(tmp);
+                }
+            case UNIVERSITY -> {
+                University tmp = new University(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                zone = tmp;
+                universities.add(tmp);
+                }
+            case ROAD -> zone = new Road(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+            case RESIDENCE -> zone = new Residence(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+            case INDUSTRY -> zone = new Industry(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+            case SERVICE -> zone = new Service(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+            default -> {
+            }
         }
 
         addMoney(-cursorSignal.getPriceL1());
@@ -303,7 +302,7 @@ public class Engine {
             if (disasterHappened) {
                 angryPeople.forEach(person
                         -> person.changeHappinessBy(-1));
-            } else if (angryPeople.size() > 0) {
+            } else if (!angryPeople.isEmpty()) {
                 //System.out.println(angryPeople.size());
                 //dialog
                 if (bigCityJframe.conflictualDestructionOkCancleDialog(
@@ -324,9 +323,9 @@ public class Engine {
             type = CursorSignal.POLICE;
         } else if (target instanceof Stadium) {
             type = CursorSignal.STADIUM;
-        } else if (target instanceof HighSchool) {
+        } else if (target instanceof HighSchool highSchool) {
             type = CursorSignal.HIGH_SCHOOL;
-            highSchools.remove((HighSchool) target);
+            highSchools.remove(highSchool);
         } else {
             type = CursorSignal.UNIVERSITY;
             universities.remove((University) target);
@@ -461,9 +460,9 @@ public class Engine {
 
     private boolean peopleOnPrivateZone(PrivateZone zone) {
         if (zone instanceof Residence tmp) {
-            return tmp.getResidents().size() > 0 ? true : false;
+            return !tmp.getResidents().isEmpty();
         } else if (zone instanceof Workplace tmp) {
-            return tmp.getWorkers().size() > 0 ? true : false;
+            return !tmp.getWorkers().isEmpty();
         }
         return false;
     }
@@ -475,11 +474,7 @@ public class Engine {
         if (null == grid[row][column]) {
             return false;
         }
-        if (CursorSignal.ROAD == grid[row][column].getCursorSignal()) {
-            return true;
-        } else {
-            return false;
-        }
+        return CursorSignal.ROAD == grid[row][column].getCursorSignal();
     }
 
     private Boolean workplaceAndInsideGrid(int row, int column) {
@@ -489,11 +484,7 @@ public class Engine {
         if (null == grid[row][column]) {
             return false;
         }
-        if (grid[row][column] instanceof Workplace) {
-            return true;
-        } else {
-            return false;
-        }
+        return grid[row][column] instanceof Workplace;
     }
 
     private void refreshImgOfRoad(Zone zone, int rowStart, int columnStart) {
@@ -540,11 +531,9 @@ public class Engine {
             }
             if (false == roadOnLeft) {
                 zone.setImg(Assets.roadNES);
-                return;
             } else {
                 //if (false == roadOnRight) {
                 zone.setImg(Assets.roadSWN);
-                return;
             }
         } else {
             //if (2 == roadsAroundCount)
@@ -570,7 +559,6 @@ public class Engine {
             }
             if (roadUnder && roadOnRight) {
                 zone.setImg(Assets.roadES);
-                return;
             }
 
         }
@@ -587,12 +575,10 @@ public class Engine {
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < width; column++) {
                 if (null != grid[row][column]) {
-                    if (grid[row][column] instanceof Residence) {
-                        Residence residence = (Residence) grid[row][column];
+                    if (grid[row][column] instanceof Residence residence) {
                         sumResidenceCapacity += residence.getCapacity();
                         residence.clearResidents();
-                    } else if (grid[row][column] instanceof Workplace) {
-                        Workplace workplace = (Workplace) grid[row][column];
+                    } else if (grid[row][column] instanceof Workplace workplace) {
                         workplace.clearWorkers();
                     }
                 }
@@ -787,10 +773,10 @@ public class Engine {
                                 new ZoneDistancePair(foundZone,
                                         currentZoneDistancePair
                                                 .getDistance() + 1));
-                    } else if (foundZone instanceof Workplace) {
+                    } else if (foundZone instanceof Workplace workplace) {
                         foundWorkplacesCount++;
                         distances.add(new ResidenceWorkplaceDistance(
-                                residence, (Workplace) foundZone,
+                                residence, workplace,
                                 currentZoneDistancePair.getDistance()
                                 + 1));
                     }
@@ -986,13 +972,13 @@ public class Engine {
                          */
                         Zone zone = grid[coords.getY()][coords.getX()];
                         if (null != zone) {
-                            if (zone instanceof Residence) {
-                                ((Residence) zone).getResidents().forEach(
+                            if (zone instanceof Residence residence) {
+                                residence.getResidents().forEach(
                                         resident -> {
                                             resident.changeHappinessBy(4);
                                         });
-                            } else if (zone instanceof Workplace) {
-                                ((Workplace) zone).getWorkers().forEach(
+                            } else if (zone instanceof Workplace workplace) {
+                                workplace.getWorkers().forEach(
                                         worker -> {
                                             worker.changeHappinessBy(4);
                                         });
@@ -1030,7 +1016,7 @@ public class Engine {
                 }
             }
         }
-        ArrayList<Coords> coordsNotInPoliceRange = new ArrayList<>();
+        ArrayList<Coords> coordsNotInPoliceRange = new ArrayList<>(); // Miért kell??
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < width; column++) {
                 boolean coordsAffectedByPolice = false;
@@ -1166,8 +1152,8 @@ public class Engine {
         //------------------------------------------------------------------
 
         double tmp = rnd.nextDouble();
-        disasterChanse += (daysPassedWithoutDisaster / 1000.0) * tmp;
-        if ((int) disasterChanse > 0) {
+        disasterChance += (daysPassedWithoutDisaster / 1000.0) * tmp;
+        if ((int) disasterChance > 0) {
             makeDisaster();
         } else {
             daysPassedWithoutDisaster++;
@@ -1181,8 +1167,8 @@ public class Engine {
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < width; column++) {
                 if (null != grid[row][column]) {
-                    if (grid[row][column] instanceof Industry) {
-                        industries.add((Industry) grid[row][column]);
+                    if (grid[row][column] instanceof Industry industry) {
+                        industries.add(industry);
                     }
                 }
             }
@@ -1537,7 +1523,7 @@ public class Engine {
         int index = rnd.nextInt(Disaster.values().length);
         Disaster.values()[index].activate(Engine.this);
         daysPassedWithoutDisaster = 0;
-        disasterChanse -= 1.0;
+        disasterChance -= 1.0;
     }
     
     public boolean isZoneSelected(int row, int col) {
