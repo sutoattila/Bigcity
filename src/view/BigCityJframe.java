@@ -50,7 +50,8 @@ public class BigCityJframe extends JFrame {
     Date date;
     boolean isStopped;
     SettingsDialog settings;
-
+    String cityName;
+    
     JPanel topPanel;
     BuildPanel buildPanel;
     BuildingStatPanel statPanel;
@@ -63,6 +64,7 @@ public class BigCityJframe extends JFrame {
 
     public BigCityJframe(String cityname) {
         super(cityname);
+        this.cityName = cityname;
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -88,7 +90,7 @@ public class BigCityJframe extends JFrame {
                 new AbstractAction("Mentés") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO
+                engine.saveGame();
             }
         });
         JMenuItem disasterJMenuItem = new JMenuItem(
@@ -446,5 +448,9 @@ public class BigCityJframe extends JFrame {
 
     public BuildingStatPanel getStatPanel () {
         return statPanel;
+    }
+    
+    public String getCityName() {
+        return cityName;
     }
 }
