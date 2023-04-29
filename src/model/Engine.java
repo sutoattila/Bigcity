@@ -949,7 +949,7 @@ public class Engine {
             }
         }
         //Decrease happiness of people who work or live on a zone with no police
-        //nearby and the zone if full(capacity==size).
+        //nearby and the zone is full(capacity==size).
         ArrayList<Coords> coordsNotInPoliceRange = new ArrayList<>();
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < width; column++) {
