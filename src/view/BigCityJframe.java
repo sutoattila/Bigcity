@@ -42,27 +42,29 @@ public class BigCityJframe extends JFrame {
     public static SimpleDateFormat dateFormater
             = new SimpleDateFormat("yyyy-MM-dd");
 
-    Engine engine;
+    protected Engine engine;
 
-    JButton destroyZone;
+    protected JButton destroyZone;
 
-    Timer timer;
-    Date date;
-    boolean isStopped;
-    SettingsDialog settings;
-
-    JPanel topPanel;
-    BuildPanel buildPanel;
-    BuildingStatPanel statPanel;
-    Grid grid;
+    protected Timer timer;
+    protected Date date;
+    protected boolean isStopped;
+    protected SettingsDialog settings;
+    protected String cityName;
+    
+    protected JPanel topPanel;
+    protected BuildPanel buildPanel;
+    protected BuildingStatPanel statPanel;
+    protected Grid grid;
     private final int fieldSize;
 
-    StatElement calendar;//Attila volt
-    StatElement money;
-    StatElement happy;
+    protected StatElement calendar;//Attila volt
+    protected StatElement money;
+    protected StatElement happy;
 
     public BigCityJframe(String cityname) {
         super(cityname);
+        this.cityName = cityname;
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -88,7 +90,7 @@ public class BigCityJframe extends JFrame {
                 new AbstractAction("Mentés") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO
+                engine.saveGame();
             }
         });
         JMenuItem disasterJMenuItem = new JMenuItem(
@@ -446,5 +448,9 @@ public class BigCityJframe extends JFrame {
 
     public BuildingStatPanel getStatPanel () {
         return statPanel;
+    }
+    
+    public String getCityName() {
+        return cityName;
     }
 }
