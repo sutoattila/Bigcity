@@ -16,47 +16,30 @@ public class CitizenGenerator {
     private List<String> femaleNames;
 
     public CitizenGenerator() {
-        /*try {
-            Path path = Path.of("res/citizenNames/maleNames.txt");
-            this.maleNames = Files.lines(path).toList();
-            path = Path.of("res/citizenNames/femaleNames.txt");
-            this.femaleNames = Files.lines(path).toList();
-        } catch (IOException ex) {
-            System.err.println("Couldn't open the file.");
-        }*/
- /*
-        maleNames = ResourceLoader
-                .loadTxt("res/citizenNames/maleNames.txt")
-                .toList();
+
+        femaleNames = new ArrayList<>();
+        femaleNames.add("Olivia");
+        femaleNames.add("Emma");
+        femaleNames.add("Charlotte");
+        femaleNames.add("Amelia");
+        femaleNames.add("Ava");
+        femaleNames.add("Sophia");
+        femaleNames.add("Isabella");
+        femaleNames.add("Mia");
+        femaleNames.add("Evelyn");
+        femaleNames.add("Harper");
         
-        
-        femaleNames = ResourceLoader
-                .loadTxt("res/citizenNames/femaleNames.txt")
-                .toList();
-         */
-        maleNames = new ArrayList<>();
-        maleNames.add("Olivia");
-        maleNames.add("Emma");
-        maleNames.add("Charlotte");
-        maleNames.add("Amelia");
-        maleNames.add("Ava");
-        maleNames.add("Sophia");
-        maleNames.add("Isabella");
-        maleNames.add("Mia");
-        maleNames.add("Evelyn");
-        maleNames.add("Harper");
-        
-        femaleNames=new ArrayList<>();
-        femaleNames.add("Liam");
-        femaleNames.add("Noah");
-        femaleNames.add("Oliver");
-        femaleNames.add("Elijah");
-        femaleNames.add("James");
-        femaleNames.add("William");
-        femaleNames.add("Benjamin");
-        femaleNames.add("Lucas");
-        femaleNames.add("Henry");
-        femaleNames.add("Theodore");
+        maleNames=new ArrayList<>();
+        maleNames.add("Liam");
+        maleNames.add("Noah");
+        maleNames.add("Oliver");
+        maleNames.add("Elijah");
+        maleNames.add("James");
+        maleNames.add("William");
+        maleNames.add("Benjamin");
+        maleNames.add("Lucas");
+        maleNames.add("Henry");
+        maleNames.add("Theodore");
     }
 
     public Person createCitizen() {
