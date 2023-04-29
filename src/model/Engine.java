@@ -1531,6 +1531,8 @@ public class Engine {
         Disaster.values()[index].activate(Engine.this);
         daysPassedWithoutDisaster = 0;
         disasterChance -= 1.0;
+        if(disasterChance < 0)
+            disasterChance = 0.0;
     }
     
     public boolean isZoneSelected(int row, int col) {
@@ -1571,8 +1573,58 @@ public class Engine {
             } catch (IOException e1) {
                 System.out.println(e1.getMessage());
             }
-            return;
         }
         
+        try {
+            File thisGame = new File("savedGames/"+name+".txt");
+            thisGame.getParentFile().mkdirs();
+            thisGame.createNewFile();
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(
+                        thisGame))) {
+                writer.write(name + "\n");
+                writer.write(height + ";" + width + "\n");
+                writer.write(fieldSize + "\n");
+                writer.write(money + "\n");
+                writer.write(bigCityJframe.getDate() + "\n");
+                writer.write(taxPercentage + "\n");
+                writer.write(disasterChance + "\n");
+                writer.write(daysPassedWithoutDisaster + "\n");
+                
+                for (Zone zone : buildings) {
+                    writer.write(zone.getTopLeftX()/fieldSize + ";" +zone.getTopLeftY()/fieldSize + ";");
+                    if(zone instanceof HighSchool) {
+                        writer.write("HighSchool;1\n");
+                    } else if(zone instanceof Industry i) {
+                        writer.write("Industry;" + i.getLevel() + "\n");
+                    } else if(zone instanceof Police) {
+                        writer.write("Police;1\n");
+                    } else if(zone instanceof Residence r) {
+                        writer.write("Residence;" + r.getLevel() + "\n");
+                    } else if(zone instanceof Road) {
+                        writer.write("Road;1\n");
+                    } else if(zone instanceof Service s) {
+                        writer.write("Service;" + s.getLevel() + "\n");
+                    } else if(zone instanceof Stadium) {
+                        writer.write("Stadium;1\n");
+                    } else if(zone instanceof University) {
+                        writer.write("University;1\n");
+                    }
+                }
+                
+                for (Person p : residents) {
+                    writer.write(p.getName() + ";" + p.getAge() + ";"
+                            + p.isMale() + ";" + p.getHappiness() + ";" 
+                            + p.getEducationLevel().toString() + ";"
+                            + p.getHome().getTopLeftX()/fieldSize + ";"
+                            + p.getHome().getTopLeftY()/fieldSize + ";"
+                            + (p.getJob() == null ? "-1;-1" : (
+                                p.getJob().getTopLeftX()/fieldSize + ";"
+                                + p.getJob().getTopLeftY()/fieldSize)) + "\n");
+                }
+            }
+            
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

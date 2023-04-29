@@ -10,11 +10,14 @@ public class MainMenu extends JFrame {
     private JLabel title;
     JLabel gap;
     private ImageIcon backgroundImage;
+    protected LoadWindow load;
 
     public MainMenu() {
         // Set the title of the JFrame
         setTitle("BigCity");
 
+        this.load = new LoadWindow(this);
+        
         // Load the background image
         backgroundImage = new ImageIcon("GUI/menu.png");
 
@@ -38,7 +41,7 @@ public class MainMenu extends JFrame {
             MainMenu.this.dispose();
         });
         resumeGameBtn.addActionListener((ActionEvent e) -> {
-            //TODO
+            load.showLoadWindow(this);
         });
         gap = new JLabel();
         

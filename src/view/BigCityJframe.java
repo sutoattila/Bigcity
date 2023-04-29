@@ -302,35 +302,23 @@ public class BigCityJframe extends JFrame {
         a.setBackground(new Color(240, 207, 96));
         JButton c = new JButton("Kilépés mentés nélkül");
         c.setBackground(new Color(240, 207, 96));
-        resume.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                d.dispose();
-                isStopped = timeBefore;
-            }
+        resume.addActionListener((ActionEvent e) -> {
+            d.dispose();
+            isStopped = timeBefore;
         });
-        b.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO save
-                d.setVisible(false);
-                BigCityJframe.this.dispose();
-                new MainMenu();
-            }
+        b.addActionListener((ActionEvent e) -> {
+            engine.saveGame();
+            d.setVisible(false);
+            BigCityJframe.this.dispose();
+            new MainMenu();
         });
-        a.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                d.setVisible(false);
-                BigCityJframe.this.dispose();
-                new MainMenu();
-            }
+        a.addActionListener((ActionEvent e) -> {
+            d.setVisible(false);
+            BigCityJframe.this.dispose();
+            new MainMenu();
         });
-        c.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
+        c.addActionListener((ActionEvent e) -> {
+            System.exit(0);
         });
         d.add(resume);
         d.add(a);
@@ -355,7 +343,6 @@ public class BigCityJframe extends JFrame {
     }
 
     public void changeRightPanelToBuildPanel() {
-        //The XButton in StatPanel will call this function.
         remove(statPanel);
         statPanel = null;
         add(buildPanel, BorderLayout.EAST);
@@ -452,5 +439,9 @@ public class BigCityJframe extends JFrame {
     
     public String getCityName() {
         return cityName;
+    }
+    
+    public long getDate() {
+        return date.getTime();
     }
 }
