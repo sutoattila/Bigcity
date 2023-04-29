@@ -14,11 +14,6 @@ import bigcity.University;
 import bigcity.Workplace;
 import bigcity.Zone;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -26,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Stream;
 import res.Assets;
 import view.BigCityJframe;
 
@@ -79,7 +73,6 @@ public class Engine {
         this.highSchools = new ArrayList<>();
         this.universities = new ArrayList<>();
         this.buildings = new ArrayList<>();
-        this.name = bigCityJframe.getCityName();
         grid = new Zone[height][width];
         for (int column = 0; column < width; column++) {
             for (int row = 0; row < height; row++) {
@@ -1541,26 +1534,5 @@ public class Engine {
     
     public void unselectZone() {
         bigCityJframe.changeRightPanelToBuildPanel();
-    }
-    
-    public void saveGame() {
-        try{
-            var tmp = Files.lines(Path.of("savedGames","savedGames.txt"));
-            boolean alreadySaved = tmp
-                .anyMatch((n) -> n.equals(name));
-            
-            if(!alreadySaved) {
-                //TODO Üresen hagy egy sort, javítani
-                
-                BufferedWriter writer = new BufferedWriter(new FileWriter("savedGames/savedGames.txt", true));
-                writer.append(name);
-                writer.append('\n');
-                writer.close();
-            }
-        } catch (IOException e) {
-            System.out.println("Nem találom a filet, próbálj ne IDE-ből futtatni");
-            return;
-        }
-        
     }
 }
