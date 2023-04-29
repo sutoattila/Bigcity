@@ -14,8 +14,10 @@ import bigcity.University;
 import bigcity.Workplace;
 import bigcity.Zone;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -88,6 +90,122 @@ public class Engine {
         }
         residents = new ArrayList<>();
     }
+    
+    public Engine(String cityName, BigCityJframe bigCityJframe) {
+        try(BufferedReader reader = new BufferedReader(new FileReader("savedGames/" + cityName + ".txt"))) {
+            String line = reader.readLine();
+            if(!line.equals(cityName))
+                throw new IOException("Incorrect city name!");
+            
+            line = reader.readLine();
+            this.height = Integer.parseInt(line.split(";")[0]);
+            this.width = Integer.parseInt(line.split(";")[1]);
+            
+            line = reader.readLine();
+            this.fieldSize = Integer.parseInt(line);
+            
+            line = reader.readLine();
+            int money = Integer.parseInt(line);
+            
+            line = reader.readLine();
+            bigCityJframe.setDate(Long.parseLong(line));
+            
+            line = reader.readLine();
+            this.taxPercentage = Integer.parseInt(line);
+            
+            line = reader.readLine();
+            this.disasterChance = Double.parseDouble(line);
+            
+            line = reader.readLine();
+            this.daysPassedWithoutDisaster = Integer.parseInt(line);
+            
+            this.bigCityJframe = bigCityJframe;
+            this.rnd = new Random();
+            this.highSchools = new ArrayList<>();
+            this.universities = new ArrayList<>();
+            this.buildings = new ArrayList<>();
+            this.name = bigCityJframe.getCityName();
+            grid = new Zone[height][width];
+            for (int column = 0; column < width; column++) {
+                for (int row = 0; row < height; row++) {
+                    grid[row][column] = null;
+                }
+            }
+            residents = new ArrayList<>();
+            
+            line = reader.readLine();
+            while(line != null && line.split(";").length == 4) {
+                int col = Integer.parseInt(line.split(";")[0]);
+                int row = Integer.parseInt(line.split(";")[1]);
+                String type = line.split(";")[2];
+                int blvl = Integer.parseInt(line.split(";")[3]);
+
+                if(type.equals("Residence")) {
+                    cursorSignal = CursorSignal.RESIDENCE;
+                } else if(type.equals("Industry")) {
+                    cursorSignal = CursorSignal.INDUSTRY;
+                } else if(type.equals("Service")) {
+                    cursorSignal = CursorSignal.SERVICE;
+                } else if(type.equals("Police")) {
+                    cursorSignal = CursorSignal.POLICE;
+                } else if(type.equals("Stadium")) {
+                    cursorSignal = CursorSignal.STADIUM;
+                } else if(type.equals("HighSchool")) {
+                    cursorSignal = CursorSignal.HIGH_SCHOOL;
+                } else if(type.equals("University")) {
+                    cursorSignal = CursorSignal.UNIVERSITY;
+                } else if(type.equals("Road")) {
+                    cursorSignal = CursorSignal.ROAD;
+                }
+
+                build(row, col, fieldSize, true);
+
+                if(grid[row][col] instanceof PrivateZone zone) {
+                    while(zone.getLevel() < blvl) {
+                        zone.upgrade();
+                    }
+                }
+                line = reader.readLine();
+            }
+            
+            //Name;31;true;96;PRIMARY_SCHOOL;3;1;-1;-1
+            
+            while(line != null && line.split(";").length == 9) {
+                String splitted[] = line.split(";");
+                String pName = splitted[0];
+                int pAge = Integer.parseInt(splitted[1]);
+                boolean pMale = Boolean.parseBoolean(splitted[2]);
+                int pHappiness = Integer.parseInt(splitted[3]);
+                EducationLevel pEducation = EducationLevel.valueOf(splitted[4]);
+                int homeCol = Integer.parseInt(splitted[5]);
+                int homeRow = Integer.parseInt(splitted[6]);
+                Zone pHome = grid[homeRow][homeCol];
+                int jobCol = Integer.parseInt(splitted[7]);
+                int jobRow = Integer.parseInt(splitted[8]);
+                Zone pJob = null;
+                if(jobCol != -1) {
+                    pJob = grid[jobRow][jobCol];
+                }
+                
+                Person p = new Person(pName, pAge, pHappiness, 
+                        pMale, pEducation, pHome, pJob);
+                
+                residents.add(p);
+                
+                ((Residence)pHome).addPerson(p);
+                if(null != pJob)
+                    ((Workplace)pJob).addPerson(p);
+                
+                line = reader.readLine();
+            }
+            
+            cursorSignal = CursorSignal.SELECT;
+            this.money = money;
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            System.exit(0);
+        }
+    }
 
     public Zone getCell(int row, int column) {
         return grid[row][column];
@@ -98,7 +216,7 @@ public class Engine {
     }
 
     //Returns true if successfully built a zone.
-    public boolean build(int rowStart, int columnStart, int fieldSize) {
+    public boolean build(int rowStart, int columnStart, int fieldSize, boolean load) {
         int rowEnd = rowStart + cursorSignal.getHeight() - 1;
         int columnEnd = columnStart + cursorSignal.getWidth() - 1;
         if (false == areaInsideGridAndFree(rowStart, rowEnd, columnStart, columnEnd)) {
@@ -110,31 +228,53 @@ public class Engine {
         int topLeftY = rowStart * fieldSize;
 
         if (null != cursorSignal) switch (cursorSignal) {
-            case POLICE -> zone = new Police(topLeftX, topLeftY,
+            case POLICE -> {
+                zone = new Police(topLeftX, topLeftY,
                         cursorSignal.getPriceL1());
-            case STADIUM -> zone = new Stadium(topLeftX, topLeftY,
+                setImg(Assets.police);
+            }
+            case STADIUM -> {
+                zone = new Stadium(topLeftX, topLeftY,
                         cursorSignal.getPriceL1());
+                setImg(Assets.stadium);
+            }
             case HIGH_SCHOOL -> {
                 HighSchool tmp = new HighSchool(topLeftX, topLeftY,
                         cursorSignal.getPriceL1());
                 zone = tmp;
                 highSchools.add(tmp);
-                }
+                setImg(Assets.highSchool);
+            }
             case UNIVERSITY -> {
                 University tmp = new University(topLeftX, topLeftY,
                         cursorSignal.getPriceL1());
                 zone = tmp;
                 universities.add(tmp);
+                setImg(Assets.university);
+            }
+            case ROAD -> {
+                zone = new Road(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.roadNS);
+            }
+            case RESIDENCE -> {
+                zone = new Residence(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.copperR);
+            }
+            case INDUSTRY -> {
+                zone = new Industry(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.copperI);
+            }
+            case SERVICE -> {
+                zone = new Service(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.copperS);
                 }
-            case ROAD -> zone = new Road(topLeftX, topLeftY,
-                        cursorSignal.getPriceL1());
-            case RESIDENCE -> zone = new Residence(topLeftX, topLeftY,
-                        cursorSignal.getPriceL1());
-            case INDUSTRY -> zone = new Industry(topLeftX, topLeftY,
-                        cursorSignal.getPriceL1());
-            case SERVICE -> zone = new Service(topLeftX, topLeftY,
-                        cursorSignal.getPriceL1());
             default -> {
+                setImg(null);
+                return false;
             }
         }
 
@@ -158,7 +298,8 @@ public class Engine {
 
         moveEveryOne();
 
-        bigCityJframe.refreshGrid();
+        if(!load)
+            bigCityJframe.refreshGrid();
         buildings.add(zone);
 
         return true;

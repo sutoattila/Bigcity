@@ -10,7 +10,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
@@ -62,7 +61,7 @@ public class BigCityJframe extends JFrame {
     protected StatElement money;
     protected StatElement happy;
 
-    public BigCityJframe(String cityname) {
+    public BigCityJframe(String cityname, boolean load) {
         super(cityname);
         this.cityName = cityname;
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -81,7 +80,7 @@ public class BigCityJframe extends JFrame {
             }
         });
         timer.start();
-        isStopped = false;
+        isStopped = load;
 
         //Attila menu 
         JMenuBar menuBar = new JMenuBar();
@@ -173,10 +172,13 @@ public class BigCityJframe extends JFrame {
 
         new Assets();
 
-        engine = new Engine(width, height, this.fieldSize, this);
+        this.date = new Date(0);
+        
+        engine = load ? new Engine(cityname, this) 
+            : new Engine(width, height, this.fieldSize, this);
 
         grid = new Grid(fieldSize, width, height, engine, this);
-
+        
         topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setPreferredSize(new Dimension(-1, 50));
         topPanel.setBackground(Color.GREEN.darker().darker());
@@ -185,7 +187,6 @@ public class BigCityJframe extends JFrame {
         happy.setTextColor(Color.MAGENTA.darker());
 
         calendar = new StatElement("view/calendar.png", "2023-03-19");
-        this.date = new Date(0);
         calendar.setText(dateFormater.format(date));
 
         money = new StatElement("view/money.png", String.format("%,d", engine.getMoney()) + "$");
@@ -206,42 +207,34 @@ public class BigCityJframe extends JFrame {
 
         lakohely.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.RESIDENCE);
-            engine.setImg(Assets.copperR);
         });
 
         ipariTerulet.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.INDUSTRY);
-            engine.setImg(Assets.copperI);
         });
 
         szolgaltatas.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.SERVICE);
-            engine.setImg(Assets.copperS);
         });
 
         ut.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.ROAD);
-            engine.setImg(Assets.roadNS);
         });
 
         rendorseg.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.POLICE);
-            engine.setImg(Assets.police);
         });
 
         stadion.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.STADIUM);
-            engine.setImg(Assets.stadium);
         });
 
         iskola.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.HIGH_SCHOOL);
-            engine.setImg(Assets.highSchool);
         });
 
         egyetem.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.UNIVERSITY);
-            engine.setImg(Assets.university);
         });
 
         buildPanel = new BuildPanel(grid,
@@ -281,7 +274,7 @@ public class BigCityJframe extends JFrame {
         setResizable(false);
         setVisible(true);
     }
-
+    
     public void showExitDialog() {
         boolean timeBefore = isStopped;
         isStopped = true;
@@ -443,5 +436,17 @@ public class BigCityJframe extends JFrame {
     
     public long getDate() {
         return date.getTime();
+    }
+    
+    public void setDate(long value) {
+        this.date.setTime(value);
+    }
+    
+    public static BigCityJframe loadGame(String cityName) {
+        BigCityJframe frame = new BigCityJframe(cityName, true);
+        frame.getEngine().calculateHappieness();
+        frame.setHappiness(frame.getEngine().getCombinedHappiness());
+        frame.isStopped = false;
+        return frame;
     }
 }

@@ -70,23 +70,11 @@ public class Person {
         happinessGuard();
     }
 
-    public void findJob() {
-        //TODO
-    }
-
-    public void findHome() {
-        //TODO
-    }
-
     public void die() {
         age = 18;
         educationLevel = EducationLevel.PRIMARY_SCHOOL;
     }
-
-    public void moveFromTown() {
-        //TODO
-    }
-
+    
     public Zone getHome() {
         return home;
     }

@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import view.BigCityJframe;
 
 public class LoadWindow extends JFrame{
     protected JList<String> savedGames;
@@ -25,8 +26,8 @@ public class LoadWindow extends JFrame{
     protected LoadWindow(MainMenu menu) {
         this.menu = menu;
         menu.setVisible(false);
-        //this.setUndecorated(true);
-        this.setDefaultCloseOperation(HIDE_ON_CLOSE);
+        this.setUndecorated(true);
+        //this.setDefaultCloseOperation(HIDE_ON_CLOSE);
         this.setLayout(new BorderLayout());
         JPanel tmp = new JPanel();
         JLabel listTitle = new JLabel("Város neve:");
@@ -40,8 +41,10 @@ public class LoadWindow extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(!savedGames.isSelectionEmpty()) {
-                    System.out.println(savedGames.getSelectedValue().toString());
+                    BigCityJframe.loadGame(savedGames.getSelectedValue());
+                    LoadWindow.this.setVisible(false);
                 } else {
+                    //TODO pop-up ami írja hogy nincs semmi kiválasztva
                     System.out.println("Nincs kiválasztva semmi.");
                 }
             }
@@ -75,7 +78,7 @@ public class LoadWindow extends JFrame{
             DefaultListModel<String> options = new DefaultListModel<>();
             Files.lines(Path.of("savedGames","savedGames.txt"))
                 .forEach(n -> options.addElement(n));
-            this.savedGames = new JList<String>(options);
+            this.savedGames = new JList<>(options);
             listScroller = new JScrollPane(savedGames);
             listScroller.setPreferredSize(new Dimension(400, 200));
             add("Center",listScroller);
