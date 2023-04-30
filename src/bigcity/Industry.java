@@ -5,12 +5,11 @@ import res.Assets;
 
 public class Industry extends Workplace {
 
-    public static final int range=4;
+    public static final int range = 3;
     
     public Industry(int topLeftX, int topLeftY, int price) {
         this.topLeftX = topLeftX;
         this.topLeftY = topLeftY;
-        //this.size = 0;
         this.capacity = 16;
         this.level = 1;
         this.img = Assets.copperI;

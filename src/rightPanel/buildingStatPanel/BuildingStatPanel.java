@@ -14,7 +14,6 @@ import bigcity.Zone;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -27,6 +26,7 @@ import model.Engine;
 import rightPanel.XButton;
 import rightPanel.personsPanel.PersonsPanel;
 import view.BigCityJframe;
+import grid.Grid;
 
 public class BuildingStatPanel extends JPanel {
 
@@ -35,8 +35,11 @@ public class BuildingStatPanel extends JPanel {
     protected boolean hasCitizens;
     protected BigCityJframe bigCityJFrame;
     protected Zone zone;
-
-    public BuildingStatPanel(Zone zone, BigCityJframe bigCityJFrame) {
+    
+    protected Grid grid;
+    
+    public BuildingStatPanel(Zone zone, BigCityJframe bigCityJFrame, Grid grid) {
+        this.grid=grid;
         JLabel name = new JLabel();
         if (zone instanceof PrivateZone) {
             if (zone instanceof Residence) {
@@ -69,43 +72,34 @@ public class BuildingStatPanel extends JPanel {
         exitPanel.add(Box.createRigidArea(new Dimension(20, 0)));
         exitPanel.add(name);
         exitPanel.add(Box.createHorizontalGlue());
-        exitPanel.add(new XButton(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                bigCityJFrame.changeRightPanelToBuildPanel();
-                bigCityJFrame.repaint();
-            }
-        }));
+        exitPanel.add(new XButton((ActionEvent e) -> {
+            bigCityJFrame.changeRightPanelToBuildPanel();
+            bigCityJFrame.repaint();
+        },grid));
         add(exitPanel);
 
         this.bigCityJFrame = bigCityJFrame;
 
         JButton addPerson = new JButton("Ember hozzáadása");
-        addPerson.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (zone instanceof Residence) {
-                    Residence tmp = (Residence) zone;
-                    tmp.addPerson(new Person("Norbi", 22, 89,
-                            true, EducationLevel.UNIVERSITY,
-                            tmp, null));
-                    pPanel.updatePeople();
-                    bStat.updateStats();
-                    revalidate();
-                    repaint();
-                    bigCityJFrame.repaint();
-                } else if (zone instanceof Workplace) {
-                    Workplace tmp = (Workplace) zone;
-                    tmp.addPerson(new Person("Anna", 21, 88,
-                            false, EducationLevel.UNIVERSITY,
-                            tmp, null));
-                    pPanel.updatePeople();
-                    bStat.updateStats();
-                    revalidate();
-                    repaint();
-                    bigCityJFrame.repaint();
-                }
-
+        addPerson.addActionListener((ActionEvent e) -> {
+            if (zone instanceof Residence tmp) {
+                tmp.addPerson(new Person("Norbi", 22, 89,
+                        true, EducationLevel.UNIVERSITY,
+                        tmp, null));
+                pPanel.updatePeople();
+                bStat.updateStats();
+                revalidate();
+                repaint();
+                bigCityJFrame.repaint();
+            } else if (zone instanceof Workplace tmp) {
+                tmp.addPerson(new Person("Anna", 21, 88,
+                        false, EducationLevel.UNIVERSITY,
+                        tmp, null));
+                pPanel.updatePeople();
+                bStat.updateStats();
+                revalidate();
+                repaint();
+                bigCityJFrame.repaint();
             }
         });
         if (zone instanceof PrivateZone) {
@@ -149,57 +143,51 @@ public class BuildingStatPanel extends JPanel {
         add(Box.createRigidArea(new Dimension(0, 20)));
         JPanel upgradePanel = new JPanel();
         JButton upgradeButton = new JButton("-");
-        if (zone instanceof PrivateZone) {
-            PrivateZone tmp = (PrivateZone) zone;
+        if (zone instanceof PrivateZone tmp) {
             if (tmp.getLevel() < 3) {
                 upgradeButton.setText("upgrade");
             }
-            upgradeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (tmp.getLevel() < 3) {
-                        int price;
-                        if (tmp instanceof Residence) {
-                            price = tmp.getLevel() == 1
-                                    ? CursorSignal.RESIDENCE.getPriceL2()
-                                    : CursorSignal.RESIDENCE.getPriceL3();
-                        } else if (tmp instanceof Industry) {
-                            price = tmp.getLevel() == 1
-                                    ? CursorSignal.INDUSTRY.getPriceL2()
-                                    : CursorSignal.INDUSTRY.getPriceL3();
-                        } else {
-                            price = price = tmp.getLevel() == 1
-                                    ? CursorSignal.SERVICE.getPriceL2()
-                                    : CursorSignal.SERVICE.getPriceL3();
-                        }
-                        tmp.upgrade();
-                        bigCityJFrame.addMoney(-price);
+            upgradeButton.addActionListener((ActionEvent e) -> {
+                if (tmp.getLevel() < 3) {
+                    int price;
+                    if (tmp instanceof Residence) {
+                        price = tmp.getLevel() == 1
+                                ? CursorSignal.RESIDENCE.getPriceL2()
+                                : CursorSignal.RESIDENCE.getPriceL3();
+                    } else if (tmp instanceof Industry) {
+                        price = tmp.getLevel() == 1
+                                ? CursorSignal.INDUSTRY.getPriceL2()
+                                : CursorSignal.INDUSTRY.getPriceL3();
+                    } else {
+                        price = tmp.getLevel() == 1
+                                ? CursorSignal.SERVICE.getPriceL2()
+                                : CursorSignal.SERVICE.getPriceL3();
                     }
-                    if (tmp.getLevel() == 3) {
-                        upgradeButton.setText("-");
-                    }
-                    bStat.updateStats();
-
-                    bigCityJFrame.getEngine().moveEveryOne();
-                    bigCityJFrame.repaint();
+                    tmp.upgrade();
+                    bigCityJFrame.addMoney(-price);
                 }
+                if (tmp.getLevel() == 3) {
+                    upgradeButton.setText("-");
+                }
+                bStat.updateStats();
+                
+                bigCityJFrame.getEngine().moveEveryOne();
+                bigCityJFrame.repaint();
             });
         }
         upgradeButton.setBackground(Color.CYAN);
 
         JButton destroyButton = new JButton("destroy");
-        destroyButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                bigCityJFrame.getEngine().destroyZone(
-                        zone.getTopLeftY() / bigCityJFrame.getFieldSize(),
-                        zone.getTopLeftX() / bigCityJFrame.getFieldSize(),
-                        bigCityJFrame.getFieldSize(),
-                        false);
-                Engine.setCursorSignal(CursorSignal.SELECT);
-                bigCityJFrame.changeRightPanelToBuildPanel();
-                bigCityJFrame.repaint();
-            }
+        destroyButton.addActionListener((ActionEvent e) -> {
+            bigCityJFrame.getEngine().destroyZone(
+                    zone.getTopLeftY() / bigCityJFrame.getFieldSize(),
+                    zone.getTopLeftX() / bigCityJFrame.getFieldSize(),
+                    bigCityJFrame.getFieldSize(),
+                    false);
+            Engine.setCursorSignal(CursorSignal.SELECT);
+            bigCityJFrame.changeRightPanelToBuildPanel();
+            bigCityJFrame.repaint();
+            grid.removeTheSelectionOfTheSelectedZone();
         });
         destroyButton.setBackground(Color.RED.darker());
 

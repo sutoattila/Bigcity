@@ -14,6 +14,14 @@ import bigcity.University;
 import bigcity.Workplace;
 import bigcity.Zone;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -42,7 +50,7 @@ public class Engine {
     private int taxPercentage;
     private String name;
 
-    private double disasterChanse;
+    private double disasterChance;
     private Random rnd;
     private int daysPassedWithoutDisaster;
 
@@ -60,6 +68,8 @@ public class Engine {
 
     private final int fixGroupOfPeopleCount = 10;
 
+    private CitizenGenerator citizenGenerator;
+
     public Engine(int width, int height, int fieldSize, BigCityJframe bigCityJframe) {
         this.width = width;
         this.height = height;
@@ -67,12 +77,13 @@ public class Engine {
         this.money = 1000;
         this.bigCityJframe = bigCityJframe;
         this.taxPercentage = 20;
-        this.disasterChanse = 0;
+        this.disasterChance = 0;
         this.rnd = new Random();
         this.daysPassedWithoutDisaster = 0;
         this.highSchools = new ArrayList<>();
         this.universities = new ArrayList<>();
         this.buildings = new ArrayList<>();
+        this.name = bigCityJframe.getCityName();
         grid = new Zone[height][width];
         for (int column = 0; column < width; column++) {
             for (int row = 0; row < height; row++) {
@@ -80,6 +91,123 @@ public class Engine {
             }
         }
         residents = new ArrayList<>();
+        citizenGenerator = new CitizenGenerator();
+    }
+    
+    public Engine(String cityName, BigCityJframe bigCityJframe) {
+        try(BufferedReader reader = new BufferedReader(new FileReader("savedGames/" + cityName + ".txt"))) {
+            String line = reader.readLine();
+            if(!line.equals(cityName))
+                throw new IOException("Incorrect city name!");
+            
+            line = reader.readLine();
+            this.height = Integer.parseInt(line.split(";")[0]);
+            this.width = Integer.parseInt(line.split(";")[1]);
+            
+            line = reader.readLine();
+            this.fieldSize = Integer.parseInt(line);
+            
+            line = reader.readLine();
+            int money = Integer.parseInt(line);
+            
+            line = reader.readLine();
+            bigCityJframe.setDate(Long.parseLong(line));
+            
+            line = reader.readLine();
+            this.taxPercentage = Integer.parseInt(line);
+            
+            line = reader.readLine();
+            this.disasterChance = Double.parseDouble(line);
+            
+            line = reader.readLine();
+            this.daysPassedWithoutDisaster = Integer.parseInt(line);
+            
+            this.bigCityJframe = bigCityJframe;
+            this.rnd = new Random();
+            this.highSchools = new ArrayList<>();
+            this.universities = new ArrayList<>();
+            this.buildings = new ArrayList<>();
+            this.name = bigCityJframe.getCityName();
+            grid = new Zone[height][width];
+            for (int column = 0; column < width; column++) {
+                for (int row = 0; row < height; row++) {
+                    grid[row][column] = null;
+                }
+            }
+            residents = new ArrayList<>();
+            
+            line = reader.readLine();
+            while(line != null && line.split(";").length == 4) {
+                int col = Integer.parseInt(line.split(";")[0]);
+                int row = Integer.parseInt(line.split(";")[1]);
+                String type = line.split(";")[2];
+                int blvl = Integer.parseInt(line.split(";")[3]);
+
+                if(type.equals("Residence")) {
+                    cursorSignal = CursorSignal.RESIDENCE;
+                } else if(type.equals("Industry")) {
+                    cursorSignal = CursorSignal.INDUSTRY;
+                } else if(type.equals("Service")) {
+                    cursorSignal = CursorSignal.SERVICE;
+                } else if(type.equals("Police")) {
+                    cursorSignal = CursorSignal.POLICE;
+                } else if(type.equals("Stadium")) {
+                    cursorSignal = CursorSignal.STADIUM;
+                } else if(type.equals("HighSchool")) {
+                    cursorSignal = CursorSignal.HIGH_SCHOOL;
+                } else if(type.equals("University")) {
+                    cursorSignal = CursorSignal.UNIVERSITY;
+                } else if(type.equals("Road")) {
+                    cursorSignal = CursorSignal.ROAD;
+                }
+
+                build(row, col, fieldSize, true);
+
+                if(grid[row][col] instanceof PrivateZone zone) {
+                    while(zone.getLevel() < blvl) {
+                        zone.upgrade();
+                    }
+                }
+                line = reader.readLine();
+            }
+            
+            //Name;31;true;96;PRIMARY_SCHOOL;3;1;-1;-1
+            
+            while(line != null && line.split(";").length == 9) {
+                String splitted[] = line.split(";");
+                String pName = splitted[0];
+                int pAge = Integer.parseInt(splitted[1]);
+                boolean pMale = Boolean.parseBoolean(splitted[2]);
+                int pHappiness = Integer.parseInt(splitted[3]);
+                EducationLevel pEducation = EducationLevel.valueOf(splitted[4]);
+                int homeCol = Integer.parseInt(splitted[5]);
+                int homeRow = Integer.parseInt(splitted[6]);
+                Zone pHome = grid[homeRow][homeCol];
+                int jobCol = Integer.parseInt(splitted[7]);
+                int jobRow = Integer.parseInt(splitted[8]);
+                Zone pJob = null;
+                if(jobCol != -1) {
+                    pJob = grid[jobRow][jobCol];
+                }
+                
+                Person p = new Person(pName, pAge, pHappiness, 
+                        pMale, pEducation, pHome, pJob);
+                
+                residents.add(p);
+                
+                ((Residence)pHome).addPerson(p);
+                if(null != pJob)
+                    ((Workplace)pJob).addPerson(p);
+                
+                line = reader.readLine();
+            }
+            
+            cursorSignal = CursorSignal.SELECT;
+            this.money = money;
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            System.exit(0);
+        }
     }
 
     public Zone getCell(int row, int column) {
@@ -91,7 +219,7 @@ public class Engine {
     }
 
     //Returns true if successfully built a zone.
-    public boolean build(int rowStart, int columnStart, int fieldSize) {
+    public boolean build(int rowStart, int columnStart, int fieldSize, boolean load) {
         int rowEnd = rowStart + cursorSignal.getHeight() - 1;
         int columnEnd = columnStart + cursorSignal.getWidth() - 1;
         if (false == areaInsideGridAndFree(rowStart, rowEnd, columnStart, columnEnd)) {
@@ -102,34 +230,55 @@ public class Engine {
         int topLeftX = columnStart * fieldSize;
         int topLeftY = rowStart * fieldSize;
 
-        if (CursorSignal.POLICE == cursorSignal) {
-            zone = new Police(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
-        } else if (CursorSignal.STADIUM == cursorSignal) {
-            zone = new Stadium(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
-        } else if (CursorSignal.HIGH_SCHOOL == cursorSignal) {
-            HighSchool tmp = new HighSchool(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
-            zone = tmp;
-            highSchools.add(tmp);
-        } else if (CursorSignal.UNIVERSITY == cursorSignal) {
-            University tmp = new University(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
-            zone = tmp;
-            universities.add(tmp);
-        } else if (CursorSignal.ROAD == cursorSignal) {
-            zone = new Road(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
-        } else if (CursorSignal.RESIDENCE == cursorSignal) {
-            zone = new Residence(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
-        } else if (CursorSignal.INDUSTRY == cursorSignal) {
-            zone = new Industry(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
-        } else if (CursorSignal.SERVICE == cursorSignal) {
-            zone = new Service(topLeftX, topLeftY,
-                    cursorSignal.getPriceL1());
+        if (null != cursorSignal) switch (cursorSignal) {
+            case POLICE -> {
+                zone = new Police(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.police);
+            }
+            case STADIUM -> {
+                zone = new Stadium(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.stadium);
+            }
+            case HIGH_SCHOOL -> {
+                HighSchool tmp = new HighSchool(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                zone = tmp;
+                highSchools.add(tmp);
+                setImg(Assets.highSchool);
+            }
+            case UNIVERSITY -> {
+                University tmp = new University(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                zone = tmp;
+                universities.add(tmp);
+                setImg(Assets.university);
+            }
+            case ROAD -> {
+                zone = new Road(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.roadNS);
+            }
+            case RESIDENCE -> {
+                zone = new Residence(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.copperR);
+            }
+            case INDUSTRY -> {
+                zone = new Industry(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.copperI);
+            }
+            case SERVICE -> {
+                zone = new Service(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.copperS);
+                }
+            default -> {
+                setImg(null);
+                return false;
+            }
         }
 
         addMoney(-cursorSignal.getPriceL1());
@@ -152,7 +301,8 @@ public class Engine {
 
         moveEveryOne();
 
-        bigCityJframe.refreshGrid();
+        if(!load)
+            bigCityJframe.refreshGrid();
         buildings.add(zone);
 
         return true;
@@ -214,31 +364,6 @@ public class Engine {
         int zoneLevel = 1;
         CursorSignal type;
 
-        //TODO (Mate's issue)
-        //Conflictual destruction.
-        //If private zone has been destroyed, decrease the people's happiness
-        //who worked or lived there.
-        //If a road has been destroyed find those people who can't get to their
-        //workplace on road and decrease their happiness.
-        /*
-        if (target instanceof Residence) {
-            System.out.println(((Residence) target).getResidents().size());
-        } else if (target instanceof Workplace) {
-            System.out.println(((Workplace) target).getWorkers().size());
-        }*/
-        //
-        //Residence, Workplace: If people work or live here ask the player if
-        //they really want to destroy the zone. 
-        //Ok: decrease happiness
-        //Cancle: return false
-        //Road: Find those who don't find their jobs without the road being
-        //destoryed. If we found at least one like this, ask the player if they
-        //really want to destroy the road.
-        //Ok: decrease happiness
-        //Cancle: return false
-        //        
-        //TODO:
-        //Disaster must not call the dialog.
         if (target instanceof Residence tmp) {
             zoneLevel = tmp.getLevel();
             type = CursorSignal.RESIDENCE;
@@ -303,7 +428,7 @@ public class Engine {
             if (disasterHappened) {
                 angryPeople.forEach(person
                         -> person.changeHappinessBy(-1));
-            } else if (angryPeople.size() > 0) {
+            } else if (!angryPeople.isEmpty()) {
                 //System.out.println(angryPeople.size());
                 //dialog
                 if (bigCityJframe.conflictualDestructionOkCancleDialog(
@@ -324,9 +449,9 @@ public class Engine {
             type = CursorSignal.POLICE;
         } else if (target instanceof Stadium) {
             type = CursorSignal.STADIUM;
-        } else if (target instanceof HighSchool) {
+        } else if (target instanceof HighSchool highSchool) {
             type = CursorSignal.HIGH_SCHOOL;
-            highSchools.remove((HighSchool) target);
+            highSchools.remove(highSchool);
         } else {
             type = CursorSignal.UNIVERSITY;
             universities.remove((University) target);
@@ -461,9 +586,9 @@ public class Engine {
 
     private boolean peopleOnPrivateZone(PrivateZone zone) {
         if (zone instanceof Residence tmp) {
-            return tmp.getResidents().size() > 0 ? true : false;
+            return !tmp.getResidents().isEmpty();
         } else if (zone instanceof Workplace tmp) {
-            return tmp.getWorkers().size() > 0 ? true : false;
+            return !tmp.getWorkers().isEmpty();
         }
         return false;
     }
@@ -475,11 +600,7 @@ public class Engine {
         if (null == grid[row][column]) {
             return false;
         }
-        if (CursorSignal.ROAD == grid[row][column].getCursorSignal()) {
-            return true;
-        } else {
-            return false;
-        }
+        return CursorSignal.ROAD == grid[row][column].getCursorSignal();
     }
 
     private Boolean workplaceAndInsideGrid(int row, int column) {
@@ -489,11 +610,7 @@ public class Engine {
         if (null == grid[row][column]) {
             return false;
         }
-        if (grid[row][column] instanceof Workplace) {
-            return true;
-        } else {
-            return false;
-        }
+        return grid[row][column] instanceof Workplace;
     }
 
     private void refreshImgOfRoad(Zone zone, int rowStart, int columnStart) {
@@ -540,11 +657,9 @@ public class Engine {
             }
             if (false == roadOnLeft) {
                 zone.setImg(Assets.roadNES);
-                return;
             } else {
                 //if (false == roadOnRight) {
                 zone.setImg(Assets.roadSWN);
-                return;
             }
         } else {
             //if (2 == roadsAroundCount)
@@ -570,7 +685,6 @@ public class Engine {
             }
             if (roadUnder && roadOnRight) {
                 zone.setImg(Assets.roadES);
-                return;
             }
 
         }
@@ -587,12 +701,10 @@ public class Engine {
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < width; column++) {
                 if (null != grid[row][column]) {
-                    if (grid[row][column] instanceof Residence) {
-                        Residence residence = (Residence) grid[row][column];
+                    if (grid[row][column] instanceof Residence residence) {
                         sumResidenceCapacity += residence.getCapacity();
                         residence.clearResidents();
-                    } else if (grid[row][column] instanceof Workplace) {
-                        Workplace workplace = (Workplace) grid[row][column];
+                    } else if (grid[row][column] instanceof Workplace workplace) {
                         workplace.clearWorkers();
                     }
                 }
@@ -787,10 +899,10 @@ public class Engine {
                                 new ZoneDistancePair(foundZone,
                                         currentZoneDistancePair
                                                 .getDistance() + 1));
-                    } else if (foundZone instanceof Workplace) {
+                    } else if (foundZone instanceof Workplace workplace) {
                         foundWorkplacesCount++;
                         distances.add(new ResidenceWorkplaceDistance(
-                                residence, (Workplace) foundZone,
+                                residence, workplace,
                                 currentZoneDistancePair.getDistance()
                                 + 1));
                     }
@@ -808,13 +920,8 @@ public class Engine {
         collectTax();
         // -----------------------------
 
-        //------------------------------------------------------------------
-        //~10 people move in immediately if possible. They leave only if there 
-        //isn't enough residence.
-        //The polpulation tries to increase by ~1% everyday.
         int newResidentsCount = newResidentsCount();
-        //System.out.println("newResidentsCount: "+newResidentsCount);
-        // ------------------------------------------------------------------
+
         //Find all residences.
         //Find all industries and services connected to a residence. Store every 
         //connections. Store the distances. Sort according the distances.
@@ -865,45 +972,9 @@ public class Engine {
 
         Collections.sort(distances);
 
-        /* //For debug.
-        System.out.println("----------------------------------------------");
-        System.out.println("residences with no connections: ");
-        residencesWithNoWorkplace.forEach(residence -> {
-            System.out.print("row: " + residence.getTopLeftY() / fieldSize);
-            System.out.println("; column: " + residence.getTopLeftX() / fieldSize);
-        });
-        System.out.println("residences with connections: ");
-        distances.forEach(residenceWorkplaceDistance -> {
-            System.out.print("residence: row: "
-                    + residenceWorkplaceDistance.getResidence().getTopLeftY()
-                    / fieldSize);
-            System.out.println("; column: "
-                    + residenceWorkplaceDistance.getResidence().getTopLeftX()
-                    / fieldSize);
-            System.out.print("workplace: row: "
-                    + residenceWorkplaceDistance.getWorkplace().getTopLeftY()
-                    / fieldSize);
-            System.out.println("; column: "
-                    + residenceWorkplaceDistance.getWorkplace().getTopLeftX()
-                    / fieldSize);
-            System.out.println("distance: " + residenceWorkplaceDistance
-                    .getDistance());
-        });
-        System.out.println("----------------------------------------------");
-         */
-        //------------------------------------------------------------------
         //The new residents try to take the best places.
         while (newResidentsCount > 0) {
-            Person newPerson = new Person(
-                    "Name",
-                    30,
-                    100,
-                    true,
-                    EducationLevel.PRIMARY_SCHOOL,
-                    null,
-                    null
-            );
-            ///*
+            Person newPerson = citizenGenerator.createCitizen();
             boolean movedIn = residentTriesToMoveIn(newPerson, distances,
                     residencesWithNoWorkplace);
             if (false == movedIn) {
@@ -915,7 +986,7 @@ public class Engine {
 
             newResidentsCount--;
         }
-        //------------------------------------------------------------------
+
         //Calculate the happiness of each resident. The happiness changes with a
         //calculated value everyday.
         //has job: +1
@@ -927,7 +998,6 @@ public class Engine {
         //Happiness change according saturation(home, job). If capacity==size
         //and there is no police nearby, then -3.
         //Calculate the average happiness. Write it to the top panel.
-
         //has job: +1
         //doesn't have job: -1
         //Person objects should store the distance between house and workplace.
@@ -969,37 +1039,25 @@ public class Engine {
                         }
                     });
         });
-        /*//debug
-        findAllStadiums().forEach(stadium
-                -> System.out.println("count coords around: "
-                        + findCoordsInsideRange(stadium,
-                                Stadium.range).size()));
-         */
+
         findAllStadiums().forEach(stadium -> {
-            //System.out.println("---------------------------------");
             findCoordsInsideRange(stadium, Stadium.range)
                     .forEach(coords -> {
-                        /*
-                        System.out.println("x: " + coords.getX() + ", y: "
-                                + coords.getY() + ",step: " + coords.getStep()
-                        );
-                         */
                         Zone zone = grid[coords.getY()][coords.getX()];
                         if (null != zone) {
-                            if (zone instanceof Residence) {
-                                ((Residence) zone).getResidents().forEach(
+                            if (zone instanceof Residence residence) {
+                                residence.getResidents().forEach(
                                         resident -> {
                                             resident.changeHappinessBy(4);
                                         });
-                            } else if (zone instanceof Workplace) {
-                                ((Workplace) zone).getWorkers().forEach(
+                            } else if (zone instanceof Workplace workplace) {
+                                workplace.getWorkers().forEach(
                                         worker -> {
                                             worker.changeHappinessBy(4);
                                         });
                             }
                         }
                     });
-            //System.out.println("---------------------------------");
         });
 
         ///Happiness change according saturation(home, job). If capacity==size
@@ -1030,6 +1088,8 @@ public class Engine {
                 }
             }
         }
+        //Decrease happiness of people who work or live on a zone with no police
+        //nearby and the zone is full(capacity==size).
         ArrayList<Coords> coordsNotInPoliceRange = new ArrayList<>();
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < width; column++) {
@@ -1064,6 +1124,18 @@ public class Engine {
             }
         });
 
+        //Negative budget decrease the happiness.
+        if (money < 0) {
+            residents.forEach(person -> person.changeHappinessBy(-1));
+        }
+
+        //Happiness change according tax rate.
+        int happinessChangeAccordingTaxRate = taxPercentage / 30;
+        //System.out.println(-1 * happinessChangeAccordingTaxRate);
+        if (0 != taxPercentage) {
+            residents.forEach(person -> person.changeHappinessBy(-1 * happinessChangeAccordingTaxRate));
+        }
+
         //Big difference between industry and service workers causes negative 
         //happiness.
         int numberOfIndustryWorkers = 0;
@@ -1077,20 +1149,6 @@ public class Engine {
                 }
             }
         }
-        /*//debug
-        System.out.println("----------------------------------------------");
-        System.out.println("(double) Math.abs("
-                + "numberOfIndustryWorkers - numberOfServiceWorkers): "
-                + (double) Math.abs(
-                        numberOfIndustryWorkers - numberOfServiceWorkers));
-        System.out.println("numberOfIndustryWorkers + numberOfServiceWorkers: "
-                + (numberOfIndustryWorkers + numberOfServiceWorkers));
-        System.out.println("(double) Math.abs("
-                + "numberOfIndustryWorkers - numberOfServiceWorkers)"
-                + " / (numberOfIndustryWorkers + numberOfServiceWorkers): " + (double) Math.abs(
-                        numberOfIndustryWorkers - numberOfServiceWorkers)
-                / (numberOfIndustryWorkers + numberOfServiceWorkers));
-         */
         if (0.5 < (double) Math.abs(
                 numberOfIndustryWorkers - numberOfServiceWorkers)
                 / (numberOfIndustryWorkers + numberOfServiceWorkers)) {
@@ -1099,10 +1157,7 @@ public class Engine {
         }/* else {
             System.out.println("The difference is less than 50%.");
         }*/
-        //System.out.println("----------------------------------------------");
 
-
-        //------------------------------------------------------------------
         //Residents with low happiness move out. (<10%)
         //The starter group won't move out unless there is not enough place.
         ArrayList<Person> peopleMoveOut = new ArrayList<>();
@@ -1123,7 +1178,6 @@ public class Engine {
             residents.remove(resident);
         }
 
-        //------------------------------------------------------------------
         //Pay the expenses. 
         //(high school -20$, university -30$, police -30$, stadium -$40)
         HashSet<Zone> zonesCostMoney = new HashSet<>();
@@ -1147,14 +1201,13 @@ public class Engine {
                 }
             }
         }
-        //------------------------------------------------------------------
-        //Check whether the game is over or not. (average happiness < 20%)
 
+        //Check whether the game is over or not. (average happiness < 20%)
         calculateHappieness();
         bigCityJframe.getHappy().setText(Math.round(combinedHappiness) + "%");
 
         checkGameOver((int) Math.round(combinedHappiness));
-        //------------------------------------------------------------------
+
         //Increase age. Old people die and changed to new people with
         //low education level.
         for (Person resident : residents) {
@@ -1163,11 +1216,10 @@ public class Engine {
                 resident.die();
             }
         }
-        //------------------------------------------------------------------
 
         double tmp = rnd.nextDouble();
-        disasterChanse += (daysPassedWithoutDisaster / 1000.0) * tmp;
-        if ((int) disasterChanse > 0) {
+        disasterChance += (daysPassedWithoutDisaster / 1000.0) * tmp;
+        if ((int) disasterChance > 0) {
             makeDisaster();
         } else {
             daysPassedWithoutDisaster++;
@@ -1181,8 +1233,8 @@ public class Engine {
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < width; column++) {
                 if (null != grid[row][column]) {
-                    if (grid[row][column] instanceof Industry) {
-                        industries.add((Industry) grid[row][column]);
+                    if (grid[row][column] instanceof Industry industry) {
+                        industries.add(industry);
                     }
                 }
             }
@@ -1537,6 +1589,102 @@ public class Engine {
         int index = rnd.nextInt(Disaster.values().length);
         Disaster.values()[index].activate(Engine.this);
         daysPassedWithoutDisaster = 0;
-        disasterChanse -= 1.0;
+        disasterChance -= 1.0;
+        if(disasterChance < 0)
+            disasterChance = 0.0;
+    }
+
+    public boolean isZoneSelected(int row, int col) {
+        if (bigCityJframe.getStatPanel() != null) {
+            return bigCityJframe.getStatPanel().getZone() == grid[row][col];
+        }
+        return false;
+    }
+
+    public void unselectZone() {
+        bigCityJframe.changeRightPanelToBuildPanel();
+    }
+    
+    public void saveGame() {
+        try{
+            var tmp = Files.lines(Path.of("savedGames","savedGames.txt"));
+            boolean alreadySaved = tmp
+                .anyMatch((n) -> n.equals(name));
+            
+            if(!alreadySaved) {
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(
+                        "savedGames/savedGames.txt", true))) {
+                    writer.append(name);
+                    writer.append('\n');
+                }
+            }
+        } catch (IOException e) {
+            //System.out.println("Nem találom a filet, próbálj ne IDE-ből futtatni");
+            try {
+                File savedGames = new File("savedGames/savedGames.txt");
+                savedGames.getParentFile().mkdirs();
+                savedGames.createNewFile();
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(
+                        savedGames, true))) {
+                    writer.append(name);
+                    writer.append('\n');
+                }
+                
+            } catch (IOException e1) {
+                System.out.println(e1.getMessage());
+            }
+        }
+        
+        try {
+            File thisGame = new File("savedGames/"+name+".txt");
+            thisGame.getParentFile().mkdirs();
+            thisGame.createNewFile();
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(
+                        thisGame))) {
+                writer.write(name + "\n");
+                writer.write(height + ";" + width + "\n");
+                writer.write(fieldSize + "\n");
+                writer.write(money + "\n");
+                writer.write(bigCityJframe.getDate() + "\n");
+                writer.write(taxPercentage + "\n");
+                writer.write(disasterChance + "\n");
+                writer.write(daysPassedWithoutDisaster + "\n");
+                
+                for (Zone zone : buildings) {
+                    writer.write(zone.getTopLeftX()/fieldSize + ";" +zone.getTopLeftY()/fieldSize + ";");
+                    if(zone instanceof HighSchool) {
+                        writer.write("HighSchool;1\n");
+                    } else if(zone instanceof Industry i) {
+                        writer.write("Industry;" + i.getLevel() + "\n");
+                    } else if(zone instanceof Police) {
+                        writer.write("Police;1\n");
+                    } else if(zone instanceof Residence r) {
+                        writer.write("Residence;" + r.getLevel() + "\n");
+                    } else if(zone instanceof Road) {
+                        writer.write("Road;1\n");
+                    } else if(zone instanceof Service s) {
+                        writer.write("Service;" + s.getLevel() + "\n");
+                    } else if(zone instanceof Stadium) {
+                        writer.write("Stadium;1\n");
+                    } else if(zone instanceof University) {
+                        writer.write("University;1\n");
+                    }
+                }
+                
+                for (Person p : residents) {
+                    writer.write(p.getName() + ";" + p.getAge() + ";"
+                            + p.isMale() + ";" + p.getHappiness() + ";" 
+                            + p.getEducationLevel().toString() + ";"
+                            + p.getHome().getTopLeftX()/fieldSize + ";"
+                            + p.getHome().getTopLeftY()/fieldSize + ";"
+                            + (p.getJob() == null ? "-1;-1" : (
+                                p.getJob().getTopLeftX()/fieldSize + ";"
+                                + p.getJob().getTopLeftY()/fieldSize)) + "\n");
+                }
+            }
+            
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

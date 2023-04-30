@@ -4,14 +4,12 @@
  */
 package GUI;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,12 +35,9 @@ public class ThreeColumnLayout extends JPanel {
 
         // Add a JButton to the top of the first column
         JButton button = new JButton();
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                parent.dispose();
-                new MainMenu();
-            }
+        button.addActionListener((ActionEvent e) -> {
+            parent.dispose();
+            new MainMenu();
         });
         
         ImageIcon buttonIcon = new ImageIcon("GUI/arrow.png");
@@ -65,26 +60,23 @@ public class ThreeColumnLayout extends JPanel {
         
         //Add JButton to second column
         JButton secondButton = new JButton("Indítás");
-        secondButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(textField.getText().isEmpty()){
-                    JLabel message = new JLabel("A város nevének megadása kötelező");
+        secondButton.addActionListener((ActionEvent e) -> {
+            if(textField.getText().isEmpty()){
+                JLabel message = new JLabel("A város nevének megadása kötelező");
+                message.setFont(new Font("Verdana", Font.PLAIN, 15));
+                message.setPreferredSize(new Dimension(300, 100));
+                JOptionPane.showMessageDialog(null, message, "Üresen hagyott városnév", JOptionPane.ERROR_MESSAGE);
+            }
+            else{
+                if( textField.getText().trim().isEmpty()){
+                    JLabel message = new JLabel("A város nevének tartalmaznia kell legalább egy szót");
                     message.setFont(new Font("Verdana", Font.PLAIN, 15));
                     message.setPreferredSize(new Dimension(300, 100));
                     JOptionPane.showMessageDialog(null, message, "Üresen hagyott városnév", JOptionPane.ERROR_MESSAGE);
                 }
                 else{
-                    if( textField.getText().trim().isEmpty()){
-                        JLabel message = new JLabel("A város nevének tartalmaznia kell legalább egy szót");
-                        message.setFont(new Font("Verdana", Font.PLAIN, 15));
-                        message.setPreferredSize(new Dimension(300, 100));
-                        JOptionPane.showMessageDialog(null, message, "Üresen hagyott városnév", JOptionPane.ERROR_MESSAGE);
-                    }
-                    else{
-                        new BigCityJframe(textField.getText());
-                        parent.dispose();                    
-                    }
+                    new BigCityJframe(textField.getText(), false);
+                    parent.dispose();
                 }
             }
         });

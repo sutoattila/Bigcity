@@ -8,14 +8,14 @@ import javax.swing.JButton;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.ImageIcon;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class BuildButton extends JButton {
 
     protected JPanel btnPanel;
     protected String text;
     protected int price;
+    
+    //protected BuildPanel buildPanel;
 
     /**
      * Constructor
@@ -24,8 +24,9 @@ public class BuildButton extends JButton {
      * @param name - Name of the building
      * @param price - Price of the building
      */
-    public BuildButton(String url, String name, int price) {
+    public BuildButton(String url, String name, int price/*, BuildPanel buildPanel*/) {
         super();
+      //  this.buildPanel=buildPanel;
         this.text = name;
         this.price = price;
         this.setLayout(new BorderLayout());
@@ -45,28 +46,6 @@ public class BuildButton extends JButton {
                 new EmptyBorder(0, 0, 0, 10)));
         this.add(tmp, BorderLayout.LINE_START);
         this.add(btnPanel, BorderLayout.CENTER);
-        this.addActionListener(new changeSelected());
     }
 
-    /**
-     * Sets this instance to be the selected
-     */
-    private class changeSelected implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            BuildPanel.selectButton((BuildButton) ae.getSource());
-        }
-    }
-
-    /**
-     * Drops the selections from this instance
-     */
-    public static class deleteSelected implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            BuildPanel.deleteSelection();
-        }
-    }
 }

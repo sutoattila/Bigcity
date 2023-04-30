@@ -2,7 +2,6 @@ package GUI;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 
 public class MainMenu extends JFrame {
@@ -11,11 +10,14 @@ public class MainMenu extends JFrame {
     private JLabel title;
     JLabel gap;
     private ImageIcon backgroundImage;
+    protected LoadWindow load;
 
     public MainMenu() {
         // Set the title of the JFrame
         setTitle("BigCity");
 
+        this.load = new LoadWindow(this);
+        
         // Load the background image
         backgroundImage = new ImageIcon("GUI/menu.png");
 
@@ -30,25 +32,16 @@ public class MainMenu extends JFrame {
         resumeGameBtn.setFont(new Font("Verdana", Font.BOLD, 18));
         resumeGameBtn.setBackground(new Color(99,196,102));
         exitGame.setFont(new Font("Verdana", Font.BOLD, 18));
-        exitGame.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
+        exitGame.addActionListener((ActionEvent e) -> {
+            System.exit(0);
         });
-        newGameBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new NameWindow();
-               
-                MainMenu.this.dispose();
-            }
+        newGameBtn.addActionListener((ActionEvent e) -> {
+            new NameWindow(); 
+            
+            MainMenu.this.dispose();
         });
-        resumeGameBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO
-            }
+        resumeGameBtn.addActionListener((ActionEvent e) -> {
+            load.showLoadWindow(this);
         });
         gap = new JLabel();
         

@@ -49,7 +49,6 @@ public class Person {
         }
         if (EducationLevel.PRIMARY_SCHOOL == educationLevel) {
             educationLevel = EducationLevel.HIGH_SCHOOL;
-            return;
         }
     }
 
@@ -71,23 +70,11 @@ public class Person {
         happinessGuard();
     }
 
-    public void findJob() {
-        //TODO
-    }
-
-    public void findHome() {
-        //TODO
-    }
-
     public void die() {
         age = 18;
         educationLevel = EducationLevel.PRIMARY_SCHOOL;
     }
-
-    public void moveFromTown() {
-        //TODO
-    }
-
+    
     public Zone getHome() {
         return home;
     }
