@@ -10,7 +10,12 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import javax.swing.Box;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -65,18 +70,38 @@ public class ThreeColumnLayout extends JPanel {
                 JLabel message = new JLabel("A város nevének megadása kötelező");
                 message.setFont(new Font("Verdana", Font.PLAIN, 15));
                 message.setPreferredSize(new Dimension(300, 100));
-                JOptionPane.showMessageDialog(null, message, "Üresen hagyott városnév", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, message, 
+                "Hiba!", JOptionPane.ERROR_MESSAGE);
             }
             else{
                 if( textField.getText().trim().isEmpty()){
                     JLabel message = new JLabel("A város nevének tartalmaznia kell legalább egy szót");
                     message.setFont(new Font("Verdana", Font.PLAIN, 15));
                     message.setPreferredSize(new Dimension(300, 100));
-                    JOptionPane.showMessageDialog(null, message, "Üresen hagyott városnév", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, message, 
+                    "Hiba!", JOptionPane.ERROR_MESSAGE);
                 }
                 else{
-                    new BigCityJframe(textField.getText(), false);
-                    parent.dispose();
+                    try{
+                        File thisGame = new File("savedGames/savedGames.txt");
+                        thisGame.getParentFile().mkdirs();
+                        thisGame.createNewFile();
+                        if(Files.lines(Path.of("savedGames","savedGames.txt"))
+                            .anyMatch(n -> textField.getText().equals(n))) {
+                            
+                            JLabel message = new JLabel("Ez a város név már foglalt!");
+                            message.setFont(new Font("Verdana", Font.PLAIN, 15));
+                            message.setPreferredSize(new Dimension(300, 100));
+                            JOptionPane.showMessageDialog(null, message, 
+                            "Hiba!", JOptionPane.ERROR_MESSAGE);
+                            
+                        } else {
+                            new BigCityJframe(textField.getText(), false);
+                            parent.dispose();
+                        }
+                    } catch(IOException ex) {
+                        System.out.println(ex.getMessage());
+                    }
                 }
             }
         });
