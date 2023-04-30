@@ -90,8 +90,8 @@ public class Engine {
                 grid[row][column] = null;
             }
         }
-        residents = new ArrayList<>();
-        citizenGenerator = new CitizenGenerator();
+        this.residents = new ArrayList<>();
+        this.citizenGenerator = new CitizenGenerator();
     }
     
     public Engine(String cityName, BigCityJframe bigCityJframe) {
@@ -203,6 +203,7 @@ public class Engine {
             }
             
             cursorSignal = CursorSignal.SELECT;
+            this.citizenGenerator = new CitizenGenerator();
             this.money = money;
         } catch (IOException e) {
             System.out.println(e.getMessage());
