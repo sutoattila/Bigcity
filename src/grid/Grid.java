@@ -83,7 +83,7 @@ public class Grid extends JPanel {
                     }
                 } else {
                     if (engine.build(mousePositionY / fieldSize,
-                            mousePositionX / fieldSize, fieldSize)) {
+                            mousePositionX / fieldSize, fieldSize, false)) {
                         repaint();
                     }
                 }
@@ -402,7 +402,7 @@ public class Grid extends JPanel {
         Engine.setCursorSignal(CursorSignal.ROAD);
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < width; column++) {
-                engine.build(row, column, fieldSize);
+                engine.build(row, column, fieldSize, false);
             }
         }
         repaint();

@@ -75,7 +75,7 @@ public class ThreeColumnLayout extends JPanel {
                     JOptionPane.showMessageDialog(null, message, "Üresen hagyott városnév", JOptionPane.ERROR_MESSAGE);
                 }
                 else{
-                    new BigCityJframe(textField.getText());
+                    new BigCityJframe(textField.getText(), false);
                     parent.dispose();
                 }
             }

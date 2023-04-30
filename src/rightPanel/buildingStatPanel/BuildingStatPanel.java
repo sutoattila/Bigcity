@@ -14,7 +14,6 @@ import bigcity.Zone;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -83,8 +82,7 @@ public class BuildingStatPanel extends JPanel {
 
         JButton addPerson = new JButton("Ember hozzáadása");
         addPerson.addActionListener((ActionEvent e) -> {
-            if (zone instanceof Residence) {
-                Residence tmp = (Residence) zone;
+            if (zone instanceof Residence tmp) {
                 tmp.addPerson(new Person("Norbi", 22, 89,
                         true, EducationLevel.UNIVERSITY,
                         tmp, null));
@@ -93,8 +91,7 @@ public class BuildingStatPanel extends JPanel {
                 revalidate();
                 repaint();
                 bigCityJFrame.repaint();
-            } else if (zone instanceof Workplace) {
-                Workplace tmp = (Workplace) zone;
+            } else if (zone instanceof Workplace tmp) {
                 tmp.addPerson(new Person("Anna", 21, 88,
                         false, EducationLevel.UNIVERSITY,
                         tmp, null));

@@ -10,7 +10,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
@@ -42,27 +41,29 @@ public class BigCityJframe extends JFrame {
     public static SimpleDateFormat dateFormater
             = new SimpleDateFormat("yyyy-MM-dd");
 
-    Engine engine;
+    protected Engine engine;
 
-    JButton destroyZone;
+    protected JButton destroyZone;
 
-    Timer timer;
-    Date date;
-    boolean isStopped;
-    SettingsDialog settings;
-
-    JPanel topPanel;
-    BuildPanel buildPanel;
-    BuildingStatPanel statPanel;
-    Grid grid;
+    protected Timer timer;
+    protected Date date;
+    protected boolean isStopped;
+    protected SettingsDialog settings;
+    protected String cityName;
+    
+    protected JPanel topPanel;
+    protected BuildPanel buildPanel;
+    protected BuildingStatPanel statPanel;
+    protected Grid grid;
     private final int fieldSize;
 
-    StatElement calendar;//Attila volt
-    StatElement money;
-    StatElement happy;
+    protected StatElement calendar;//Attila volt
+    protected StatElement money;
+    protected StatElement happy;
 
-    public BigCityJframe(String cityname) {
+    public BigCityJframe(String cityname, boolean load) {
         super(cityname);
+        this.cityName = cityname;
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -79,7 +80,7 @@ public class BigCityJframe extends JFrame {
             }
         });
         timer.start();
-        isStopped = false;
+        isStopped = load;
 
         //Attila menu 
         JMenuBar menuBar = new JMenuBar();
@@ -88,7 +89,7 @@ public class BigCityJframe extends JFrame {
                 new AbstractAction("Mentés") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO
+                engine.saveGame();
             }
         });
         JMenuItem disasterJMenuItem = new JMenuItem(
@@ -171,10 +172,13 @@ public class BigCityJframe extends JFrame {
 
         new Assets();
 
-        engine = new Engine(width, height, this.fieldSize, this);
+        this.date = new Date(0);
+        
+        engine = load ? new Engine(cityname, this) 
+            : new Engine(width, height, this.fieldSize, this);
 
         grid = new Grid(fieldSize, width, height, engine, this);
-
+        
         topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setPreferredSize(new Dimension(-1, 50));
         topPanel.setBackground(Color.GREEN.darker().darker());
@@ -183,7 +187,6 @@ public class BigCityJframe extends JFrame {
         happy.setTextColor(Color.MAGENTA.darker());
 
         calendar = new StatElement("view/calendar.png", "2023-03-19");
-        this.date = new Date(0);
         calendar.setText(dateFormater.format(date));
 
         money = new StatElement("view/money.png", String.format("%,d", engine.getMoney()) + "$");
@@ -204,42 +207,34 @@ public class BigCityJframe extends JFrame {
 
         lakohely.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.RESIDENCE);
-            engine.setImg(Assets.copperR);
         });
 
         ipariTerulet.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.INDUSTRY);
-            engine.setImg(Assets.copperI);
         });
 
         szolgaltatas.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.SERVICE);
-            engine.setImg(Assets.copperS);
         });
 
         ut.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.ROAD);
-            engine.setImg(Assets.roadNS);
         });
 
         rendorseg.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.POLICE);
-            engine.setImg(Assets.police);
         });
 
         stadion.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.STADIUM);
-            engine.setImg(Assets.stadium);
         });
 
         iskola.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.HIGH_SCHOOL);
-            engine.setImg(Assets.highSchool);
         });
 
         egyetem.addActionListener((ActionEvent e) -> {
             Engine.setCursorSignal(CursorSignal.UNIVERSITY);
-            engine.setImg(Assets.university);
         });
 
         buildPanel = new BuildPanel(grid,
@@ -279,7 +274,7 @@ public class BigCityJframe extends JFrame {
         setResizable(false);
         setVisible(true);
     }
-
+    
     public void showExitDialog() {
         boolean timeBefore = isStopped;
         isStopped = true;
@@ -300,35 +295,23 @@ public class BigCityJframe extends JFrame {
         a.setBackground(new Color(240, 207, 96));
         JButton c = new JButton("Kilépés mentés nélkül");
         c.setBackground(new Color(240, 207, 96));
-        resume.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                d.dispose();
-                isStopped = timeBefore;
-            }
+        resume.addActionListener((ActionEvent e) -> {
+            d.dispose();
+            isStopped = timeBefore;
         });
-        b.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO save
-                d.setVisible(false);
-                BigCityJframe.this.dispose();
-                new MainMenu();
-            }
+        b.addActionListener((ActionEvent e) -> {
+            engine.saveGame();
+            d.setVisible(false);
+            BigCityJframe.this.dispose();
+            new MainMenu();
         });
-        a.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                d.setVisible(false);
-                BigCityJframe.this.dispose();
-                new MainMenu();
-            }
+        a.addActionListener((ActionEvent e) -> {
+            d.setVisible(false);
+            BigCityJframe.this.dispose();
+            new MainMenu();
         });
-        c.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
+        c.addActionListener((ActionEvent e) -> {
+            System.exit(0);
         });
         d.add(resume);
         d.add(a);
@@ -353,7 +336,6 @@ public class BigCityJframe extends JFrame {
     }
 
     public void changeRightPanelToBuildPanel() {
-        //The XButton in StatPanel will call this function.
         remove(statPanel);
         statPanel = null;
         add(buildPanel, BorderLayout.EAST);
@@ -446,5 +428,25 @@ public class BigCityJframe extends JFrame {
 
     public BuildingStatPanel getStatPanel () {
         return statPanel;
+    }
+    
+    public String getCityName() {
+        return cityName;
+    }
+    
+    public long getDate() {
+        return date.getTime();
+    }
+    
+    public void setDate(long value) {
+        this.date.setTime(value);
+    }
+    
+    public static BigCityJframe loadGame(String cityName) {
+        BigCityJframe frame = new BigCityJframe(cityName, true);
+        frame.getEngine().calculateHappieness();
+        frame.setHappiness(frame.getEngine().getCombinedHappiness());
+        frame.isStopped = false;
+        return frame;
     }
 }
