@@ -9,7 +9,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.swing.AbstractAction;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -22,21 +25,51 @@ public class LoadWindow extends JFrame{
     protected JList<String> savedGames;
     protected MainMenu menu;
     protected JScrollPane listScroller;
+    protected JPanel mainContent;
     
     protected LoadWindow(MainMenu menu) {
         this.menu = menu;
         menu.setVisible(false);
         this.setUndecorated(true);
-        //this.setDefaultCloseOperation(HIDE_ON_CLOSE);
-        this.setLayout(new BorderLayout());
-        JPanel tmp = new JPanel();
+        this.setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+        this.setPreferredSize(new Dimension(630, 430));
+        //this.setContentPane(new JLabel(new ImageIcon("GUI/menu.png")));
+        this.mainContent = new JPanel();
+        
+        JPanel top = new JPanel();
+        JPanel middle = new JPanel();
+        JPanel bottom = new JPanel();
+        
+        //left.setOpaque(false);
+        //center.setOpaque(true);
+        //right.setOpaque(false);
+        
+        top.setLayout(new BoxLayout(top, BoxLayout.X_AXIS));
+        middle.setLayout(new BoxLayout(middle, BoxLayout.X_AXIS));
+        
+        JButton backButton = new JButton(
+            new AbstractAction("Vissza") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LoadWindow.this.setVisible(false);
+                menu.setVisible(true);
+            }
+        });
+        backButton.setPreferredSize(new Dimension(80, 20));
+        top.add(backButton);
+        top.add(Box.createHorizontalGlue());
         JLabel listTitle = new JLabel("Város neve:");
-        tmp.add(listTitle);
-        tmp.setPreferredSize(new Dimension(400, 20));
-        tmp.setBackground(Color.white);
-        this.add("North", tmp);
+        listTitle.setOpaque(true);
+        listTitle.setBackground(Color.WHITE);
+        listTitle.setPreferredSize(new Dimension(400, 20));
+        //center.add(Box.createVerticalGlue());
+        top.add(listTitle);
+        top.add(Box.createHorizontalGlue());
+        top.add(Box.createRigidArea(new Dimension(80,20)));
+        
         refreshOptions();
-        this.add("South", new JButton(
+        middle.add(mainContent);
+        bottom.add(new JButton(
             new AbstractAction("Indítás") {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -50,14 +83,15 @@ public class LoadWindow extends JFrame{
             }
         }
         ));
-        this.add("West", new JButton(
-            new AbstractAction("Vissza") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LoadWindow.this.setVisible(false);
-                menu.setVisible(true);
-            }
-        }));
+        //center.add(Box.createVerticalGlue());
+        
+        
+        this.add(Box.createRigidArea(new Dimension(0,20)));
+        this.add(top);
+        //this.add(Box.createHorizontalGlue());
+        this.add(middle);
+        //this.add(Box.createHorizontalGlue());
+        this.add(bottom);
         this.pack();
     }
     
@@ -71,7 +105,7 @@ public class LoadWindow extends JFrame{
     protected final void refreshOptions() {
         try {
             if(null != listScroller)
-                remove(listScroller);
+                mainContent.remove(listScroller);
             File thisGame = new File("savedGames/savedGames.txt");
             thisGame.getParentFile().mkdirs();
             thisGame.createNewFile();
@@ -80,8 +114,8 @@ public class LoadWindow extends JFrame{
                 .forEach(n -> options.addElement(n));
             this.savedGames = new JList<>(options);
             listScroller = new JScrollPane(savedGames);
-            listScroller.setPreferredSize(new Dimension(400, 200));
-            add("Center",listScroller);
+            listScroller.setPreferredSize(new Dimension(400, 300));
+            mainContent.add(listScroller);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
