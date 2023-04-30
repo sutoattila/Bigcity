@@ -19,6 +19,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.OverlayLayout;
@@ -83,8 +84,9 @@ public class LoadWindow extends JFrame{
                 BigCityJframe.loadGame(savedGames.getSelectedValue());
                 LoadWindow.this.setVisible(false);
             } else {
-                //TODO pop-up ami írja hogy nincs semmi kiválasztva
-                System.out.println("Nincs kiválasztva semmi.");
+                JOptionPane.showMessageDialog(null, 
+                    new JLabel("Nincs kiválasztva egy korábbi mentés sem!"), 
+                "Hiba az indításkor", JOptionPane.ERROR_MESSAGE);
             }
         });
         startGame.setFont(new Font("Verdana", Font.BOLD, 30));

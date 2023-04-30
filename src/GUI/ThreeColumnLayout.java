@@ -65,16 +65,20 @@ public class ThreeColumnLayout extends JPanel {
                 JLabel message = new JLabel("A város nevének megadása kötelező");
                 message.setFont(new Font("Verdana", Font.PLAIN, 15));
                 message.setPreferredSize(new Dimension(300, 100));
-                JOptionPane.showMessageDialog(null, message, "Üresen hagyott városnév", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, message, 
+                "Üresen hagyott városnév", JOptionPane.ERROR_MESSAGE);
             }
             else{
                 if( textField.getText().trim().isEmpty()){
                     JLabel message = new JLabel("A város nevének tartalmaznia kell legalább egy szót");
                     message.setFont(new Font("Verdana", Font.PLAIN, 15));
                     message.setPreferredSize(new Dimension(300, 100));
-                    JOptionPane.showMessageDialog(null, message, "Üresen hagyott városnév", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, message, 
+                    "Üresen hagyott városnév", JOptionPane.ERROR_MESSAGE);
                 }
                 else{
+                    //TODO egyedi város nevek
+                    
                     new BigCityJframe(textField.getText(), false);
                     parent.dispose();
                 }
