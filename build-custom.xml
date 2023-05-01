@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="BigCity" default="jar" basedir=".">
+    <fail message="Ant 1.10.4+ is required!">
+        <condition>
+            <not>
+                <antversion atleast="1.10.4"/>
+            </not>
+        </condition>
+    </fail>
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src" destdir="build/classes" encoding="UTF-8"/>
+    </target>
+
+    <target name="compile-test" depends="compile">
+        <mkdir dir="build/test/classes"/>
+        <javac srcdir="test" destdir="build/test/classes" encoding="UTF-8">
+            <classpath location="build/classes" />
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="build/jar"/>
+        <jar destfile="build/jar/BigCity.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="GUI.MainMenu.Main"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="jar">
+        <java jar="build/jar/BigCity.jar" fork="true"/>
+    </target>
+
+    <target name="doc" depends="compile">
+      <tstamp>
+        <format property="timestamp" pattern="d.M.yyyy"
+                locale="en"/>
+      </tstamp>
+      <mkdir dir="doc"/>
+      <javadoc sourcepath="src" destdir="doc"
+               windowtitle="BigCity">
+        <header>BigCity</header>
+        <footer>Javadocs compiled ${timestamp}></footer>
+        <fileset dir="src/" includes="**/*.java" />
+      </javadoc>
+    </target>
+
+    <target name="test" depends="compile-test">
+      <mkdir dir="report"/>
+      <junitlauncher printsummary="true" haltonfailure="true">
+        <classpath location="build/classes"/>
+        <classpath location="build/test/classes" />
+        <classpath>
+            <fileset dir="${ant.home}/lib" includes="*.jar" />
+        </classpath>
+        
+        <testclasses outputdir="report">
+                <fileset dir="build/test/classes"/>
+                <listener type="legacy-xml" sendSysOut="true" sendSysErr="true"/>
+                <listener type="legacy-plain" sendSysOut="true" />
+            </testclasses>
+      </junitlauncher>
+    </target>
+
+</project>
