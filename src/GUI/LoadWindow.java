@@ -6,10 +6,16 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -72,12 +78,11 @@ public class LoadWindow extends JFrame{
         center.setPreferredSize(new Dimension(400, 430));
         center.add(Box.createRigidArea(new Dimension(0, 20)));
 
-
         this.mainContent = new JPanel();
         mainContent.setOpaque(false);
         refreshOptions();
         center.add(mainContent);
-        //center.add(Box.createRigidArea(new Dimension(0, 30)));
+        
         JButton startGame = new JButton("Indítás");
         startGame.addActionListener((ActionEvent e) -> {
             if(!savedGames.isSelectionEmpty()) {
@@ -97,8 +102,46 @@ public class LoadWindow extends JFrame{
         startButtonPanel.add(Box.createHorizontalGlue());
         startButtonPanel.add(startGame);
         startButtonPanel.add(Box.createHorizontalGlue());
-
         center.add(startButtonPanel);
+        
+        JButton deleteGame = new JButton("Törlés");
+        deleteGame.addActionListener((ActionEvent e) -> {
+            if(!savedGames.isSelectionEmpty()) {
+                try {
+                    List<String> options = new LinkedList<>();
+                    Files.lines(Path.of("savedGames","savedGames.txt"))
+                        .filter(n -> !savedGames.getSelectedValue().equals(n))
+                        .forEach(n -> options.add(n));
+                    
+                    try(BufferedWriter writer = new BufferedWriter(new FileWriter(
+                        "savedGames/savedGames.txt"))) {
+                        for (String option : options) {
+                            writer.write(option+"\n");
+                        }
+                    }
+                    refreshOptions();
+                } catch (IOException ex) {
+                    System.out.println(ex.getMessage());
+                }
+                
+            } else {
+                JOptionPane.showMessageDialog(null, 
+                    new JLabel("Nincs kiválasztva egy korábbi mentés sem!"), 
+                "Hiba az indításkor", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        deleteGame.setFont(new Font("Verdana", Font.BOLD, 15));
+        deleteGame.setBackground(new Color(130,2,0));
+        deleteGame.setForeground(Color.WHITE);
+        JPanel deleteButtonPanel = new JPanel();
+        deleteButtonPanel.setOpaque(false);
+        deleteButtonPanel.setLayout(new BoxLayout(deleteButtonPanel, BoxLayout.X_AXIS));
+        deleteButtonPanel.add(Box.createHorizontalGlue());
+        deleteButtonPanel.add(deleteGame);
+        deleteButtonPanel.add(Box.createHorizontalGlue());
+        center.add(Box.createRigidArea(new Dimension(0, 20)));
+        center.add(deleteButtonPanel);
+        
         center.add(Box.createVerticalGlue());
 
         //right
@@ -123,7 +166,6 @@ public class LoadWindow extends JFrame{
 
         pack();
         setLocationRelativeTo(null);
-        setVisible(true);
     }
     
     public void showLoadWindow(MainMenu menu) {
@@ -145,13 +187,15 @@ public class LoadWindow extends JFrame{
                 .forEach(n -> options.addElement(n));
             this.savedGames = new JList<>(options);
             listScroller = new JScrollPane(savedGames);
-            listScroller.setPreferredSize(new Dimension(300, 280));
+            listScroller.setPreferredSize(new Dimension(300, 250));
             JLabel title = new JLabel("Városnév:");
             title.setOpaque(true);
             title.setBackground(Color.white);
             title.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
             listScroller.setColumnHeaderView(title);
             mainContent.add(listScroller);
+            this.revalidate();
+            mainContent.repaint();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
