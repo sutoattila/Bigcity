@@ -22,7 +22,7 @@ test_model:
   stage: test
   script:
     - >
-      ant test -Dlibs.junit_5.classpath=/usr/share/java/junit-jupiter-api.jar:/usr/share/java/junit-jupiter-engine.jar:/usr/share/java/junit-jupiter-params.jar:/usr/share/java/junit-platform-commons.jar:/usr/share/java/junit-platform-console.jar
+      ant test -Dlibs.junit_5.classpath=/usr/share/java/junit-jupiter-api.jar:/usr/share/java/junit-jupiter-engine.jar:/usr/share/java/junit-jupiter-params.jar:/usr/share/java/junit-platform-commons.jar:/usr/share/java/junit-platform-console.jar:/usr/share/java/opentest4j.jar
       -Dlibs.hamcrest.classpath=/usr/share/java/hamcrest-core.jar
 
 # Documentation
