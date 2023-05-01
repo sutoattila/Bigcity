@@ -166,7 +166,6 @@ public class LoadWindow extends JFrame{
 
         pack();
         setLocationRelativeTo(null);
-        setVisible(true);
     }
     
     public void showLoadWindow(MainMenu menu) {
