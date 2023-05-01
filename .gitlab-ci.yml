@@ -36,6 +36,9 @@ test_model:
     - cd $CI_PROJECT_DIR
     # Finally, let Ant do its work...
     - ANT_HOME=${ant_folder} "./${ant_folder}/bin/ant" -buildfile build-custom.xml test
+  artifacts:
+    reports:
+      junit: report/TEST-*.xml
 
 # Documentation
 pages:
