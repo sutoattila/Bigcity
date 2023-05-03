@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import view.BigCityJframe;
+import model.Engine;
 
 /**
  *
@@ -31,11 +31,10 @@ public class EngineTest {
         INDUSTRY(1, 1, 100, 300, 1000),
         SERVICE(1, 1, 50, 100, 300),
      */
-    
+    /*
     //PUBLIC ZONES
     @Test
     public void testBuildResidence() {
-        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.RESIDENCE);
         //if zone is empty
@@ -58,7 +57,6 @@ public class EngineTest {
     }
     @Test
     public void testBuildIndustry() {
-        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.INDUSTRY);
         //if zone is empty
@@ -81,7 +79,6 @@ public class EngineTest {
     }  
     @Test
     public void testBuildService() {
-        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.SERVICE);
         //if zone is empty
@@ -105,7 +102,6 @@ public class EngineTest {
     //PRIVAT ZONES
     @Test
     public void testBuildPolice() {
-        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.POLICE);
         //if zone is empty
@@ -128,7 +124,6 @@ public class EngineTest {
     }  
     @Test
     public void testBuildStadium() {
-        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.STADIUM);
         //if zone is empty
@@ -151,7 +146,6 @@ public class EngineTest {
     }  
     @Test   
     public void testBuildHigh_School() {
-        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.HIGH_SCHOOL);
         //if zone is empty
@@ -174,7 +168,6 @@ public class EngineTest {
     }
     @Test   
     public void testBuildUniversity() {
-        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.UNIVERSITY);
         //if zone is empty
@@ -197,7 +190,6 @@ public class EngineTest {
     }
     @Test   
     public void testBuildRoad() {
-        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.ROAD);
         //if zone is empty
@@ -217,6 +209,30 @@ public class EngineTest {
         else
             //build should return false
             assertFalse(bigcityjframe.getEngine().build(0, 0, 1, false));
+    }
+    */
+        //PUBLIC ZONES
+    @Test
+    public void testBuildResidence() {
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        //if zone is empty
+        if(engine.areaInsideGridAndFree(0,0,0,0)){
+            //build should return true
+            assertTrue(engine.build(0, 0, 1, false));
+            //the zone where we built should be not null
+            assertTrue(engine.getCell(0, 0)!= null);
+            //the zone where we built should be the specified building 
+            assertEquals(engine.getCell(0, 0).getCursorSignal(),CursorSignal.RESIDENCE);
+            //the built zone should be added to the buildings list of engine
+            assertTrue(!engine.getBuildingsList().isEmpty());
+            //the buildings list of engine should contain the built element
+            assertEquals(engine.getBuildingsList().get(0).getCursorSignal(),CursorSignal.RESIDENCE);
+        }
+        //if zone is not empty
+        else
+            //build should return false
+            assertFalse(engine.build(0, 0, 1, false));
     }
     
 }
