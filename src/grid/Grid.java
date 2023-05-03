@@ -66,7 +66,7 @@ public class Grid extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (engine.getCursorSignal() == CursorSignal.SELECT) {
-                    
+
                     int row = mousePositionY / fieldSize;
                     int column = mousePositionX / fieldSize;
                     Zone target = engine.getCell(row, column);
@@ -135,6 +135,11 @@ public class Grid extends JPanel {
 
     }
 
+    /**
+     * Paints the built zones, range of zones and the hover of the mouse.
+     *
+     * @param g The canvas we paint on.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -159,7 +164,6 @@ public class Grid extends JPanel {
             }
         }
 
-        
         if (mousePositionX != -1 && mousePositionY != -1) {
             int rowStart = mousePositionY / fieldSize;
             int rowEnd = mousePositionY / fieldSize
@@ -192,10 +196,17 @@ public class Grid extends JPanel {
             }
 
         }
-        
+
         paintHoverAroundTheZoneWithRange(g2);
     }
 
+    /**
+     * Paints the hover around some zones when selected or the cursor is above
+     * them. Some zones(Police, Stadium, Industry) have a range affecting the
+     * happiness of people.
+     *
+     * @param g2 The canvas we paint on.
+     */
     private void paintHoverAroundTheZoneWithRange(Graphics2D g2) {
         ArrayList<Coords> fieldsInsideRange = new ArrayList<>();
 
@@ -280,6 +291,12 @@ public class Grid extends JPanel {
         repaint();
     }
 
+    /**
+     * Sets the image of a zone according its level and the number of people
+     * live or work on it.
+     *
+     * @param zone Its image will change on the grid.
+     */
     private void changeImageAccordingSaturationAndLevel(Zone zone) {
         if (zone instanceof PrivateZone privateZone) {
             int level = zone.getLevel();

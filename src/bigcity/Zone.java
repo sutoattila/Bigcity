@@ -42,12 +42,4 @@ public abstract class Zone {
         return level;
     }
 
-    public boolean isConnectedToRoad() {
-        //TODO
-        return true;
-    }
-
-    public void destroy() {
-        //TODO
-    }
 }
