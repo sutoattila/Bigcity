@@ -219,7 +219,7 @@ public class EngineTest {
         //if zone is empty
         if(engine.areaInsideGridAndFree(0,0,0,0)){
             //build should return true
-            assertTrue(engine.build(0, 0, 1, false));
+            assertTrue(engine.buildForTesting(0, 0, 1, false));
             //the zone where we built should be not null
             assertTrue(engine.getCell(0, 0)!= null);
             //the zone where we built should be the specified building 
@@ -232,7 +232,7 @@ public class EngineTest {
         //if zone is not empty
         else
             //build should return false
-            assertFalse(engine.build(0, 0, 1, false));
+            assertFalse(engine.buildForTesting(0, 0, 1, false));
     }
     
 }
