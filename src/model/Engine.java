@@ -93,7 +93,29 @@ public class Engine {
         this.residents = new ArrayList<>();
         this.citizenGenerator = new CitizenGenerator();
     }
-    
+    public Engine(int width, int height, int fieldSize, String cityName) {
+        this.width = width;
+        this.height = height;
+        this.fieldSize = fieldSize;
+        this.money = 1000;
+        //this.bigCityJframe = bigCityJframe;
+        this.taxPercentage = 20;
+        this.disasterChance = 0;
+        this.rnd = new Random();
+        this.daysPassedWithoutDisaster = 0;
+        this.highSchools = new ArrayList<>();
+        this.universities = new ArrayList<>();
+        this.buildings = new ArrayList<>();
+        this.name = cityName;
+        grid = new Zone[height][width];
+        for (int column = 0; column < width; column++) {
+            for (int row = 0; row < height; row++) {
+                grid[row][column] = null;
+            }
+        }
+        this.residents = new ArrayList<>();
+        this.citizenGenerator = new CitizenGenerator();
+    }
     public Engine(String cityName, BigCityJframe bigCityJframe) {
         try(BufferedReader reader = new BufferedReader(new FileReader("savedGames/" + cityName + ".txt"))) {
             String line = reader.readLine();
