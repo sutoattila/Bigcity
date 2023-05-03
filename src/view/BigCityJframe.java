@@ -82,7 +82,6 @@ public class BigCityJframe extends JFrame {
         timer.start();
         isStopped = load;
 
-        //Attila menu 
         JMenuBar menuBar = new JMenuBar();
         JMenu gameMenu = new JMenu("Játék");
         JMenuItem saveJMenuItem = new JMenuItem(
@@ -162,8 +161,7 @@ public class BigCityJframe extends JFrame {
         timeMenu.add(startStop);
         menuBar.add(timeMenu);
         this.setJMenuBar(menuBar);
-        //Attila menu vége
-
+        
         setLayout(new BorderLayout());
 
         this.fieldSize = 50;
