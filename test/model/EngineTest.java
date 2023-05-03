@@ -35,6 +35,7 @@ public class EngineTest {
     //PUBLIC ZONES
     @Test
     public void testBuildResidence() {
+        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.RESIDENCE);
         //if zone is empty
@@ -57,6 +58,7 @@ public class EngineTest {
     }
     @Test
     public void testBuildIndustry() {
+        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.INDUSTRY);
         //if zone is empty
@@ -79,6 +81,7 @@ public class EngineTest {
     }  
     @Test
     public void testBuildService() {
+        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.SERVICE);
         //if zone is empty
@@ -102,6 +105,7 @@ public class EngineTest {
     //PRIVAT ZONES
     @Test
     public void testBuildPolice() {
+        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.POLICE);
         //if zone is empty
@@ -124,6 +128,7 @@ public class EngineTest {
     }  
     @Test
     public void testBuildStadium() {
+        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.STADIUM);
         //if zone is empty
@@ -146,6 +151,7 @@ public class EngineTest {
     }  
     @Test   
     public void testBuildHigh_School() {
+        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.HIGH_SCHOOL);
         //if zone is empty
@@ -168,6 +174,7 @@ public class EngineTest {
     }
     @Test   
     public void testBuildUniversity() {
+        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.UNIVERSITY);
         //if zone is empty
@@ -190,6 +197,7 @@ public class EngineTest {
     }
     @Test   
     public void testBuildRoad() {
+        System.setProperty("java.awt.headless", "true");
         BigCityJframe bigcityjframe  = new BigCityJframe("bigcity", false);
         Engine.setCursorSignal(CursorSignal.ROAD);
         //if zone is empty
