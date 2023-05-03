@@ -57,7 +57,7 @@ public class BigCityJframe extends JFrame {
     protected Grid grid;
     private final int fieldSize;
 
-    protected StatElement calendar;//Attila volt
+    protected StatElement calendar;
     protected StatElement money;
     protected StatElement happy;
 
