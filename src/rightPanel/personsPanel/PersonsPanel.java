@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 public class PersonsPanel extends JPanel{
     protected Dimension preferedDimension;
     protected List<Person> people;
+    private static final int SINGLESIZE = 50;
     
     public PersonsPanel(Person... persons) {
         super();
@@ -18,7 +19,7 @@ public class PersonsPanel extends JPanel{
             add(new PersonStat(person));
             add(Box.createRigidArea(new Dimension(0,5)));
         }
-        preferedDimension = new Dimension(150, persons.length*37);
+        preferedDimension = new Dimension(150, persons.length*SINGLESIZE);
         setPreferredSize(preferedDimension);
         
     }
@@ -45,7 +46,7 @@ public class PersonsPanel extends JPanel{
             add(new PersonStat(person));
             add(Box.createRigidArea(new Dimension(0,5)));
         }
-        preferedDimension = new Dimension(130, people.size()*37);
+        preferedDimension = new Dimension(130, people.size()*SINGLESIZE);
         setPreferredSize(preferedDimension);
         revalidate();
         repaint();
