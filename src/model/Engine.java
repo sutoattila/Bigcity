@@ -93,6 +93,7 @@ public class Engine {
         this.residents = new ArrayList<>();
         this.citizenGenerator = new CitizenGenerator();
     }
+    
     public Engine(int width, int height, int fieldSize, String cityName) {
         this.width = width;
         this.height = height;
@@ -116,6 +117,8 @@ public class Engine {
         this.residents = new ArrayList<>();
         this.citizenGenerator = new CitizenGenerator();
     }
+    
+    
     public Engine(String cityName, BigCityJframe bigCityJframe) {
         try(BufferedReader reader = new BufferedReader(new FileReader("savedGames/" + cityName + ".txt"))) {
             String line = reader.readLine();
@@ -331,6 +334,93 @@ public class Engine {
         return true;
     }
 
+        public boolean buildForTesting(int rowStart, int columnStart, int fieldSize, boolean load) {
+        int rowEnd = rowStart + cursorSignal.getHeight() - 1;
+        int columnEnd = columnStart + cursorSignal.getWidth() - 1;
+        if (false == areaInsideGridAndFree(rowStart, rowEnd, columnStart, columnEnd)) {
+            return false;
+        }
+
+        Zone zone = null;
+        int topLeftX = columnStart * fieldSize;
+        int topLeftY = rowStart * fieldSize;
+
+        if (null != cursorSignal) switch (cursorSignal) {
+            case POLICE -> {
+                zone = new Police(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.police);
+            }
+            case STADIUM -> {
+                zone = new Stadium(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.stadium);
+            }
+            case HIGH_SCHOOL -> {
+                HighSchool tmp = new HighSchool(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                zone = tmp;
+                highSchools.add(tmp);
+                setImg(Assets.highSchool);
+            }
+            case UNIVERSITY -> {
+                University tmp = new University(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                zone = tmp;
+                universities.add(tmp);
+                setImg(Assets.university);
+            }
+            case ROAD -> {
+                zone = new Road(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.roadNS);
+            }
+            case RESIDENCE -> {
+                zone = new Residence(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.copperR);
+            }
+            case INDUSTRY -> {
+                zone = new Industry(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.copperI);
+            }
+            case SERVICE -> {
+                zone = new Service(topLeftX, topLeftY,
+                        cursorSignal.getPriceL1());
+                setImg(Assets.copperS);
+                }
+            default -> {
+                setImg(null);
+                return false;
+            }
+        }
+
+        addMoney(-cursorSignal.getPriceL1());
+
+        zone.setCursorSignal(cursorSignal);
+        zone.setImg(img);
+
+        for (int row = rowStart; row <= rowEnd; row++) {
+            for (int column = columnStart; column <= columnEnd; column++) {
+                grid[row][column] = zone;
+            }
+        }
+
+        if (cursorSignal == CursorSignal.ROAD) {
+            //new road
+            refreshImgOfRoad(zone, rowStart, columnStart);
+            //old roads
+            refreshRoadImgsAround(rowStart, columnStart);
+        }
+
+        moveEveryOne();
+
+        buildings.add(zone);
+
+        return true;
+    }
+    
     private void refreshRoadImgsAround(int row, int column) {
         //Up
         if (true == roadAndInsideGrid(row - 1, column)) {
