@@ -7,7 +7,6 @@ public class Service extends Workplace {
     public Service(int topLeftX, int topLeftY, int price) {
         this.topLeftX = topLeftX;
         this.topLeftY = topLeftY;
-        //this.size = 0;
         this.capacity = 8;
         this.level = 1;
         this.img = Assets.copperS;

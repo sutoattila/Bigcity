@@ -1,20 +1,22 @@
 package model;
 
+/**
+ * The indicator of the user's current activity.
+ */
 public enum CursorSignal {
-    //Private zones.----------------
+    //Private zones.
     POLICE(1, 1, 300, 0, 0),
     STADIUM(2, 2, 300, 0, 0),
     HIGH_SCHOOL(2, 1, 300, 0, 0),
     UNIVERSITY(2, 2, 500, 0, 0),
     ROAD(1, 1, 50, 0, 0),
-    //Public zones.-----------------
+    //Public zones.
     RESIDENCE(1, 1, 50, 100, 300),
     INDUSTRY(1, 1, 100, 300, 1000),
     SERVICE(1, 1, 50, 100, 300),
-    //------------------------------
-    DESTROY(1, 1,0,0,0),
-    //It's for selecting a zone.
-    SELECT(1, 1,0,0,0);
+    //User activities.
+    DESTROY(1, 1, 0, 0, 0),
+    SELECT(1, 1, 0, 0, 0);
 
     private int width;
     private int height;

@@ -8,6 +8,16 @@ import javax.swing.JTextArea;
 
 public class ConflictualDestructionDialog extends OKCancelDialog {
 
+    /**
+     * This dialog is used when the player tries to destroy a zone where people
+     * live, work. Trying to destroy a road which is the only possible path for
+     * a citizen between their home and workplace also creates this dialog.
+     *
+     * @param jframe: The owner of this dialog.
+     * @param name: The title of this dialog.
+     * @param message: Describes why this dialog was created. The description of
+     * the conflictual destruction. Information for the user.
+     */
     public ConflictualDestructionDialog(JFrame jframe, String name,
             String message) {
 

@@ -3,6 +3,9 @@ package res;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+/**
+ * Stores all images used on the grid.
+ */
 public class Assets {
 
     public static BufferedImage emptyField;
