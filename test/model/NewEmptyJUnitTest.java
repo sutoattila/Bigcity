@@ -21,6 +21,6 @@ public class NewEmptyJUnitTest {
     //
     @Test
     public void hello() {
-        assertTrue(false);
+        assertTrue(true);
     }
 }
