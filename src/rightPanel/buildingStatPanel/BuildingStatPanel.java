@@ -80,7 +80,7 @@ public class BuildingStatPanel extends JPanel {
 
         this.bigCityJFrame = bigCityJFrame;
 
-        JButton addPerson = new JButton("Ember hozzáadása");
+        /*JButton addPerson = new JButton("Ember hozzáadása");
         addPerson.addActionListener((ActionEvent e) -> {
             if (zone instanceof Residence tmp) {
                 tmp.addPerson(new Person("Norbi", 22, 89,
@@ -107,15 +107,13 @@ public class BuildingStatPanel extends JPanel {
             asd.add(addPerson);
             //add(addPerson);
             add(asd);
-        }
+        }*/
 
         this.zone = zone;
-        if (zone instanceof Residence) {
-            Residence tmp = (Residence) zone;
+        if (zone instanceof Residence tmp) {
             pPanel = new PersonsPanel(tmp.getResidents());
             hasCitizens = true;
-        } else if (zone instanceof Workplace) {
-            Workplace tmp = (Workplace) zone;
+        } else if (zone instanceof Workplace tmp) {
             pPanel = new PersonsPanel(tmp.getWorkers());
             hasCitizens = true;
         } else {
@@ -130,12 +128,6 @@ public class BuildingStatPanel extends JPanel {
         add(Box.createRigidArea(new Dimension(0, 20)));
         if (hasCitizens) {
             JScrollPane personsScroll = new JScrollPane(pPanel);
-
-            //-------- Ha nem rakom ki akkor túlcsordul a grafika, megkérdezni
-            //                                          mit lehet kedzeni vele
-            personsScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-            //---------
-
             add(personsScroll);
             add(Box.createRigidArea(new Dimension(0, 20)));
         }
