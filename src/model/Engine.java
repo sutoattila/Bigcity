@@ -477,11 +477,13 @@ public class Engine {
             refreshRoadImgsAround(argRow, argColumn);
         }
 
-        int returnMoney = type.getPriceL1()
-                + (zoneLevel > 1 ? type.getPriceL2() : 0)
-                + (zoneLevel > 2 ? type.getPriceL3() : 0);
-        addMoney(returnMoney / 2);
-
+        if (!disasterHappened) {
+            int returnMoney = type.getPriceL1()
+                    + (zoneLevel > 1 ? type.getPriceL2() : 0)
+                    + (zoneLevel > 2 ? type.getPriceL3() : 0);
+            addMoney(returnMoney / 2);
+        }
+        
         moveEveryOne();
 
         bigCityJframe.refreshGrid();
@@ -1687,6 +1689,14 @@ public class Engine {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+    
+    public void stopTime () {
+        bigCityJframe.stopTime();
+    }
+    
+    public void startTime () {
+        bigCityJframe.startTime();
     }
 }
 

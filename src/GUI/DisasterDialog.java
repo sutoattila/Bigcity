@@ -11,18 +11,22 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
+import model.Engine;
 
 public class DisasterDialog extends JDialog {
+    private Engine e;
     
-    public DisasterDialog(JLabel label) {
+    public DisasterDialog(JLabel label, Engine e) {
+        this.e = e;
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         setLocationRelativeTo(null);
         
         JButton ok = new JButton(
             new AbstractAction("OK") {
                 @Override
-                public void actionPerformed(ActionEvent e)
+                public void actionPerformed(ActionEvent ae)
                 {
+                    e.startTime();
                     DisasterDialog.this.setVisible(false);
                 }
             }
@@ -40,6 +44,7 @@ public class DisasterDialog extends JDialog {
     }
     
     public void setActive() {
+        e.stopTime();
         setLocationRelativeTo(null);
         this.setVisible(true);
     }

@@ -34,7 +34,8 @@ public enum Disaster {
                 dialog = new DisasterDialog(new JLabel("<html>"
                         + "Egy kis meteor csapódott be a városba." + "<br>"
                         + "Néhány épület megsemmisült, többen elköltöztek." + "<br>"
-                        + "A boldogsági szint kis mértékben csökkent." + "</html>"));
+                        + "A boldogsági szint kis mértékben csökkent." + "</html>"),
+                        e);
             }
 
             decreaseHappiness(e.getResidents(), -10);
@@ -89,7 +90,8 @@ public enum Disaster {
                 dialog = new DisasterDialog(new JLabel("<html>"
                         + "Egy közepes meteor csapódott be a városba." + "<br>"
                         + "Néhány épület megsemmisült, többen elköltöztek." + "<br>"
-                        + "A boldogsági szint közepes mértékben csökkent." + "</html>"));
+                        + "A boldogsági szint közepes mértékben csökkent." + "</html>"),
+                        e);
             }
 
             decreaseHappiness(e.getResidents(), -20);
@@ -157,7 +159,8 @@ public enum Disaster {
                 dialog = new DisasterDialog(new JLabel("<html>"
                         + "Egy nagy meteor csapódott be a városba." + "<br>"
                         + "Néhány épület megsemmisült, többen elköltöztek." + "<br>"
-                        + "A boldogsági szint nagy mértékben csökkent." + "</html>"));
+                        + "A boldogsági szint nagy mértékben csökkent." + "</html>"),
+                        e);
             }
 
             decreaseHappiness(e.getResidents(), -30);
@@ -165,10 +168,185 @@ public enum Disaster {
             dialog.setActive();
         }
     }
-    );
-    //, SMALL_TORNADO;
-    //, MEDIUM_TORNADO;
-    //, BIG_TORNADO;
+    )
+    , SMALL_TORNADO(
+    new Consumer<Engine>() {
+        DisasterDialog dialog;
+        Random rnd;
+
+        @Override
+        public void accept(Engine e) {
+            if (rnd == null) {
+                rnd = new Random();
+            }
+            List<Zone> buildings = e.getBuildingsList();
+            if (buildings.isEmpty()) {
+                return;
+            }
+            int fieldsize = e.getFieldsize();
+            int index = rnd.nextInt(buildings.size());
+            int row = buildings.get(index).getTopLeftY() / fieldsize;
+            int col = buildings.get(index).getTopLeftX() / fieldsize;
+            changeToBuildingPanelIfNeeded(row, col, e);
+            e.destroyZone(row, col, fieldsize, true);
+
+            if(row+1 < e.getWidth()) {
+                changeToBuildingPanelIfNeeded(row+1, col, e);
+                e.destroyZone(row+1, col, fieldsize, true);
+            } else {
+                changeToBuildingPanelIfNeeded(row-1, col, e);
+                e.destroyZone(row-1, col, fieldsize, true);
+            }
+            
+            if (dialog == null) {
+                dialog = new DisasterDialog(new JLabel("<html>"
+                        + "Egy kis tornádó söpört végig a városon." + "<br>"
+                        + "Néhány épület megsemmisült, többen elköltöztek." + "<br>"
+                        + "A boldogsági szint kis mértékben csökkent." + "</html>"),
+                        e);
+            }
+
+            decreaseHappiness(e.getResidents(), -10);
+            e.refreshHappiness();
+            dialog.setActive();
+        }
+    })
+    , MEDIUM_TORNADO(
+    new Consumer<Engine>() {
+        DisasterDialog dialog;
+        Random rnd;
+
+        @Override
+        public void accept(Engine e) {
+            if (rnd == null) {
+                rnd = new Random();
+            }
+            List<Zone> buildings = e.getBuildingsList();
+            if (buildings.isEmpty()) {
+                return;
+            }
+            int fieldsize = e.getFieldsize();
+            int index = rnd.nextInt(buildings.size());
+            int row = buildings.get(index).getTopLeftY() / fieldsize;
+            int col = buildings.get(index).getTopLeftX() / fieldsize;
+            changeToBuildingPanelIfNeeded(row, col, e);
+            e.destroyZone(row, col, fieldsize, true);
+
+            if (row+1 < e.getWidth()) {
+                changeToBuildingPanelIfNeeded(row+1, col, e);
+                e.destroyZone(row+1, col, fieldsize, true);
+                
+                if (row+2 < e.getWidth()) {
+                    changeToBuildingPanelIfNeeded(row+2, col, e);
+                    e.destroyZone(row+2, col, fieldsize, true);
+                } else if (row > 0) {
+                    changeToBuildingPanelIfNeeded(row-1, col, e);
+                    e.destroyZone(row-1, col, fieldsize, true);
+                }
+            } else if (row > 0) {
+                changeToBuildingPanelIfNeeded(row-1, col, e);
+                e.destroyZone(row-1, col, fieldsize, true);
+                
+                if (row-1 > 0) {
+                    changeToBuildingPanelIfNeeded(row-2, col, e);
+                    e.destroyZone(row-2, col, fieldsize, true);
+                } else if (row+1 < e.getWidth()) {
+                    changeToBuildingPanelIfNeeded(row+1, col, e);
+                    e.destroyZone(row+1, col, fieldsize, true);
+                }
+            }
+            
+            if (dialog == null) {
+                dialog = new DisasterDialog(new JLabel("<html>"
+                        + "Egy közepes tornádó söpört végig a városon." + "<br>"
+                        + "Néhány épület megsemmisült, többen elköltöztek." + "<br>"
+                        + "A boldogsági szint közepes mértékben csökkent." + "</html>"),
+                        e);
+            }
+
+            decreaseHappiness(e.getResidents(), -20);
+            e.refreshHappiness();
+            dialog.setActive();
+        }
+    })
+    , BIG_TORNADO(
+    new Consumer<Engine>() {
+        DisasterDialog dialog;
+        Random rnd;
+
+        @Override
+        public void accept(Engine e) {
+            if (rnd == null) {
+                rnd = new Random();
+            }
+            List<Zone> buildings = e.getBuildingsList();
+            if (buildings.isEmpty()) {
+                return;
+            }
+            int fieldsize = e.getFieldsize();
+            int index = rnd.nextInt(buildings.size());
+            int row = buildings.get(index).getTopLeftY() / fieldsize;
+            int col = buildings.get(index).getTopLeftX() / fieldsize;
+            
+            System.out.println(""+row);
+            System.out.println(""+col);
+            
+            changeToBuildingPanelIfNeeded(row, col, e);
+            e.destroyZone(row, col, fieldsize, true);
+
+            if (row+1 < e.getWidth()) {
+                changeToBuildingPanelIfNeeded(row+1, col, e);
+                e.destroyZone(row+1, col, fieldsize, true);
+                
+                if (row+2 < e.getWidth()) {
+                    changeToBuildingPanelIfNeeded(row+2, col, e);
+                    e.destroyZone(row+2, col, fieldsize, true);
+                    
+                    if (row+3 < e.getWidth()) {
+                        changeToBuildingPanelIfNeeded(row+3, col, e);
+                        e.destroyZone(row+3, col, fieldsize, true);
+                    } else if (row > 0) {
+                        changeToBuildingPanelIfNeeded(row-1, col, e);
+                        e.destroyZone(row-1, col, fieldsize, true);
+                    }
+                    
+                } else if (row > 0) {
+                    changeToBuildingPanelIfNeeded(row-1, col, e);
+                    e.destroyZone(row-1, col, fieldsize, true);
+                    
+                    if (row-1 > 0) {
+                        changeToBuildingPanelIfNeeded(row-2, col, e);
+                        e.destroyZone(row-2, col, fieldsize, true);
+                    }
+                }
+            } else if (row > 0) {
+                changeToBuildingPanelIfNeeded(row-1, col, e);
+                e.destroyZone(row-1, col, fieldsize, true);
+                
+                if (row-1 > 0) {
+                    changeToBuildingPanelIfNeeded(row-2, col, e);
+                    e.destroyZone(row-2, col, fieldsize, true);
+                    
+                    if (row-2 > 0) {
+                        changeToBuildingPanelIfNeeded(row-3, col, e);
+                        e.destroyZone(row-3, col, fieldsize, true);
+                    }
+                }
+            }
+            
+            if (dialog == null) {
+                dialog = new DisasterDialog(new JLabel("<html>"
+                        + "Egy nagy tornádó söpört végig a városon." + "<br>"
+                        + "Néhány épület megsemmisült, többen elköltöztek." + "<br>"
+                        + "A boldogsági szint nagy mértékben csökkent." + "</html>"),
+                        e);
+            }
+
+            decreaseHappiness(e.getResidents(), -30);
+            e.refreshHappiness();
+            dialog.setActive();
+        }
+    });;
 
     Consumer<Engine> action;
 
