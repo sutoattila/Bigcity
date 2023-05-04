@@ -512,4 +512,12 @@ public class BigCityJframe extends JFrame {
         frame.isStopped = false;
         return frame;
     }
+    
+    public void stopTime () {
+        isStopped = true;
+    }
+    
+    public void startTime () {
+        isStopped = false;
+    }
 }
