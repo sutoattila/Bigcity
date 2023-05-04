@@ -12,8 +12,4 @@ public abstract class PrivateZone extends Zone {
     public abstract int upgrade();
     public abstract void addPerson(Person p);
     
-    public int collectTax() {
-        //TODO
-        return 0;
-    }
 }

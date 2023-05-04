@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
@@ -26,6 +27,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.Timer;
 import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
 import javax.swing.border.Border;
@@ -50,7 +52,7 @@ public class BigCityJframe extends JFrame {
     protected boolean isStopped;
     protected SettingsDialog settings;
     protected String cityName;
-    
+
     protected JPanel topPanel;
     protected BuildPanel buildPanel;
     protected BuildingStatPanel statPanel;
@@ -161,7 +163,7 @@ public class BigCityJframe extends JFrame {
         timeMenu.add(startStop);
         menuBar.add(timeMenu);
         this.setJMenuBar(menuBar);
-        
+
         setLayout(new BorderLayout());
 
         this.fieldSize = 50;
@@ -171,12 +173,12 @@ public class BigCityJframe extends JFrame {
         new Assets();
 
         this.date = new Date(0);
-        
-        engine = load ? new Engine(cityname, this) 
-            : new Engine(width, height, this.fieldSize, this);
+
+        engine = load ? new Engine(cityname, this)
+                : new Engine(width, height, this.fieldSize, this);
 
         grid = new Grid(fieldSize, width, height, engine, this);
-        
+
         topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setPreferredSize(new Dimension(-1, 50));
         topPanel.setBackground(Color.GREEN.darker().darker());
@@ -255,9 +257,7 @@ public class BigCityJframe extends JFrame {
             Engine.setCursorSignal(CursorSignal.DESTROY);
         });
         buildPanel.add(destroyZone);
-        // ---------------------------------------------------------------------
 
-        //grid = new Grid(fieldSize, width, height, engine, this);
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.add(topPanel);
@@ -272,7 +272,7 @@ public class BigCityJframe extends JFrame {
         setResizable(false);
         setVisible(true);
     }
-    
+
     public void showExitDialog() {
         boolean timeBefore = isStopped;
         isStopped = true;
@@ -321,6 +321,11 @@ public class BigCityJframe extends JFrame {
         d.setVisible(true);
     }
 
+    /**
+     * The right JPanel will show the statistics of a zone.
+     *
+     * @param zone This zone's statistics will be shown.
+     */
     public void changeRightPanelToStatPanel(Zone zone) {
         remove(buildPanel);
         if (null != statPanel) {
@@ -333,6 +338,9 @@ public class BigCityJframe extends JFrame {
         statPanel.repaint();
     }
 
+    /**
+     * The right JPanel will show the building JPanel.
+     */
     public void changeRightPanelToBuildPanel() {
         remove(statPanel);
         statPanel = null;
@@ -344,10 +352,6 @@ public class BigCityJframe extends JFrame {
 
     public void repaintStatPanelAndGrid() {
         if (null != statPanel) {
-            //remove(statPanel);
-            //statPanel = new BuildingStatPanel(statPanel.getZone(), this);
-            //add(statPanel, BorderLayout.EAST);
-            //pack();
             if (null != statPanel.getpPanel()) {
                 statPanel.getpPanel().updatePeople();
             }
@@ -365,28 +369,44 @@ public class BigCityJframe extends JFrame {
         date = c.getTime();
         refreshDate();
         refreshMoney();
-
-        // ITT HÍVJUK MEG A NAPONTA ÚJRASZÁMOLANDÓÓ FÜGGVÉNYEKET ==> 
-        //      (elköltöznek-e, költözik-e be valaki stb)
         engine.dayPassed();
     }
 
+    /**
+     * The new balance will be displayed.
+     */
     public void refreshMoney() {
         money.setText(String.format("%,d", engine.getMoney()) + "$");
     }
 
+    /**
+     * The new date will be displayed.
+     */
     public void refreshDate() {
         calendar.setText(dateFormater.format(date));
     }
 
+    /**
+     * The new average happiness will be displayed.
+     *
+     * @param happiness The percentage value of the average happiness.
+     */
     public void setHappiness(double happiness) {
         happy.setText(Math.round(happiness) + "%");
     }
 
+    /**
+     * Repaints the grid(aka board, map).
+     */
     public void refreshGrid() {
         grid.repaint();
     }
 
+    /**
+     * Increases the balance.
+     *
+     * @param money
+     */
     public void addMoney(int money) {
         engine.addMoney(money);
         refreshMoney();
@@ -412,7 +432,13 @@ public class BigCityJframe extends JFrame {
         engine.setTaxPercentage(tax);
     }
 
-    //Returns true if the destruction has been approved.
+    /**
+     * Creates a dialog when a conflictual destruction is triggered. Asks the
+     * user if they really want to destroy the zone.
+     *
+     * @param message Description of the conflictual destruction.
+     * @return True if the destruction has been approved.
+     */
     public boolean conflictualDestructionOkCancleDialog(String message) {
         boolean timeWasStopped = isStopped;
         isStopped = true;
@@ -424,22 +450,61 @@ public class BigCityJframe extends JFrame {
         return OKCancelDialog.OK == dialog.getButtonCode();
     }
 
-    public BuildingStatPanel getStatPanel () {
+    /**
+     * Informs the user about the game over via a dialog. When this dialog
+     * disappears the user gets back to the menu.
+     *
+     * @param message The reason of the game over.
+     */
+    public void gameOver(String message) {
+        isStopped = true;
+        JDialog gameOverDialog = new JDialog(BigCityJframe.this,
+                "Game over", true);
+        gameOverDialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        gameOverDialog.setLayout(new BorderLayout());
+        gameOverDialog.setPreferredSize(new Dimension(300, 300));
+
+        JTextArea textArea = new JTextArea(message);
+
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setEditable(false);
+
+        gameOverDialog.add(textArea, BorderLayout.CENTER);
+
+        JButton ok = new JButton("OK");
+        ok.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameOverDialog.setVisible(false);
+                BigCityJframe.this.dispose();
+                new MainMenu();
+            }
+        });
+        gameOverDialog.add(ok, BorderLayout.SOUTH);
+
+        gameOverDialog.pack();
+        gameOverDialog.setLocationRelativeTo(null);
+        gameOverDialog.setResizable(false);
+        gameOverDialog.setVisible(true);
+    }
+
+    public BuildingStatPanel getStatPanel() {
         return statPanel;
     }
-    
+
     public String getCityName() {
         return cityName;
     }
-    
+
     public long getDate() {
         return date.getTime();
     }
-    
+
     public void setDate(long value) {
         this.date.setTime(value);
     }
-    
+
     public static BigCityJframe loadGame(String cityName) {
         BigCityJframe frame = new BigCityJframe(cityName, true);
         frame.getEngine().calculateHappieness();
