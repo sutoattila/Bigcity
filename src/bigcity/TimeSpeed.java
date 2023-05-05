@@ -1,5 +1,5 @@
 package bigcity;
 
 public enum TimeSpeed {
-    DAY, MONTH, YEAR;
+    DAY, DAYS, MONTH;
 }

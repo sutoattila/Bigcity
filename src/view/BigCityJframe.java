@@ -17,6 +17,7 @@ import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -128,7 +129,7 @@ public class BigCityJframe extends JFrame {
         gameMenu.add(exitJMenuItem);
         menuBar.add(gameMenu);
         JMenu timeMenu = new JMenu("Idő");
-        JMenuItem speed1 = new JMenuItem(new AbstractAction("napi") {
+        JMenuItem speed1 = new JMenuItem(new AbstractAction("1 nap") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (isStopped) {
@@ -137,22 +138,22 @@ public class BigCityJframe extends JFrame {
                 timeSpeed = TimeSpeed.DAY;
             }
         });
-        JMenuItem speed3 = new JMenuItem(new AbstractAction("havi") {
+        JMenuItem speed3 = new JMenuItem(new AbstractAction("10 nap") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (isStopped) {
+                    isStopped = false;
+                }
+                timeSpeed = TimeSpeed.DAYS;
+            }
+        });
+        JMenuItem speed5 = new JMenuItem(new AbstractAction("1 hónap") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (isStopped) {
                     isStopped = false;
                 }
                 timeSpeed = TimeSpeed.MONTH;
-            }
-        });
-        JMenuItem speed5 = new JMenuItem(new AbstractAction("évi") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (isStopped) {
-                    isStopped = false;
-                }
-                timeSpeed = TimeSpeed.YEAR;
             }
         });
         JMenuItem startStop = new JMenuItem(
@@ -377,31 +378,34 @@ public class BigCityJframe extends JFrame {
         engine.dayPassed();
     }
     
+    public void daysPassed() {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.DATE, 10);
+        date = c.getTime();
+        refreshDate();
+        refreshMoney();
+        engine.daysPassed();
+    }
+    
     public void monthPassed() {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
+        long before = date.getTime();
         c.add(Calendar.MONTH, 1);
         date = c.getTime();
+        long after = date.getTime();
+        int daysDiff = (int)TimeUnit.DAYS.convert(after-before, TimeUnit.MILLISECONDS);
         refreshDate();
         refreshMoney();
-        engine.monthPassed(31);
-    }
-    
-    public void yearPassed() {
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        c.add(Calendar.YEAR, 1);
-        date = c.getTime();
-        refreshDate();
-        refreshMoney();
-        engine.yearPassed(false);
+        engine.monthPassed(daysDiff);
     }
     
     public void timerTicked() {
         switch (timeSpeed) {
             case DAY -> dayPassed();
+            case DAYS -> daysPassed();
             case MONTH -> monthPassed();
-            case YEAR -> yearPassed();
             default -> throw new AssertionError();
         }
     }

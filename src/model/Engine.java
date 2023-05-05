@@ -1060,6 +1060,8 @@ public class Engine {
 
     private void timePassedHelper(int newResidentsCount, int daysPassed) {
         
+        double ratio = daysPassed / 30.0;
+        
         //Find all residences.
         //Find all industries and services connected to a residence. Store every 
         //connections. Store the distances. Sort according the distances.
@@ -1143,9 +1145,9 @@ public class Engine {
         //[5,...[ -> -1*2^n where n=distance/5
         residents.forEach(resident -> {
             if (null == resident.getJob()) {
-                resident.changeHappinessBy(-daysPassed);
+                resident.changeHappinessBy(-1 * ratio);                                 // MATE'S JOB
             } else {
-                resident.changeHappinessBy(daysPassed);
+                resident.changeHappinessBy(1 * ratio);                                  // MATE'S JOB
                 //distance between house and workplace:
                 //  (distance/5==0) [0;4]-> +1,
                 //  [5,...[ -> -1*2^n where n=distance/5
@@ -1154,28 +1156,30 @@ public class Engine {
                         ? 1
                         : -1 * (int) Math.pow(2,
                                 resident.getHomeJobDistance() / 5);
-                resident.changeHappinessBy(happinessChangeAccordingDistance*daysPassed);
+                resident.changeHappinessBy(happinessChangeAccordingDistance*ratio);     // MATE'S JOB
             }
         });
         //Find all industries and stadiums. Change happiness inside the range.
         findAllIndustries().forEach(industry -> {
-            findCoordsInsideRange(industry, Industry.range)
-                    .forEach(coords -> {
-                        Zone zone = grid[coords.getY()][coords.getX()];
-                        if (null != zone) {
-                            if (zone instanceof Residence residence) {
-                                residence.getResidents().forEach(
-                                        resident -> {
-                                            resident.changeHappinessBy(-daysPassed);
-                                        });
-                            } else if (zone instanceof Workplace workplace) {
-                                workplace.getWorkers().forEach(
-                                        worker -> {
-                                            worker.changeHappinessBy(-daysPassed);
-                                        });
+            if(industry.getSize() > 0) {
+                findCoordsInsideRange(industry, Industry.range)
+                        .forEach(coords -> {
+                            Zone zone = grid[coords.getY()][coords.getX()];
+                            if (null != zone) {
+                                if (zone instanceof Residence residence) {
+                                    residence.getResidents().forEach(
+                                            resident -> {
+                                                resident.changeHappinessBy(-1 * ratio); // MATE'S JOB
+                                            });
+                                } else if (zone instanceof Workplace workplace) {
+                                    workplace.getWorkers().forEach(
+                                            worker -> {
+                                                worker.changeHappinessBy(-1 * ratio);   // MATE'S JOB
+                                            });
+                                }
                             }
-                        }
-                    });
+                        });
+            }
         });
 
         findAllStadiums().forEach(stadium -> {
@@ -1186,12 +1190,12 @@ public class Engine {
                             if (zone instanceof Residence residence) {
                                 residence.getResidents().forEach(
                                         resident -> {
-                                            resident.changeHappinessBy(4*daysPassed);
+                                            resident.changeHappinessBy(4 * ratio);      // MATE'S JOB
                                         });
                             } else if (zone instanceof Workplace workplace) {
                                 workplace.getWorkers().forEach(
                                         worker -> {
-                                            worker.changeHappinessBy(4*daysPassed);
+                                            worker.changeHappinessBy(4 * ratio);        // MATE'S JOB
                                         });
                             }
                         }
@@ -1249,13 +1253,13 @@ public class Engine {
                 if (zone instanceof Residence residence) {
                     residence.getResidents().forEach(resident -> {
                         if (residence.getCapacity() == residence.getSize()) {
-                            resident.changeHappinessBy(-3*daysPassed);
+                            resident.changeHappinessBy(-3 * ratio);                     // MATE'S JOB
                         }
                     });
                 } else if (zone instanceof Workplace workplace) {
                     workplace.getWorkers().forEach(worker -> {
                         if (workplace.getCapacity() == workplace.getSize()) {
-                            worker.changeHappinessBy(-3*daysPassed);
+                            worker.changeHappinessBy(-3 * ratio);                       // MATE'S JOB
                         }
                     });
                 }
@@ -1264,14 +1268,15 @@ public class Engine {
 
         //Negative budget decrease the happiness.
         if (money < 0) {
-            residents.forEach(person -> person.changeHappinessBy(-daysPassed));
+            residents.forEach(person -> person.changeHappinessBy(-1 * ratio));          // MATE'S JOB
         }
 
         //Happiness change according tax rate.
         int happinessChangeAccordingTaxRate = taxPercentage / 30;
         //System.out.println(-1 * happinessChangeAccordingTaxRate);
         if (0 != taxPercentage) {
-            residents.forEach(person -> person.changeHappinessBy(-1 * happinessChangeAccordingTaxRate * daysPassed));
+            residents.forEach(person -> person
+                    .changeHappinessBy(-1 * happinessChangeAccordingTaxRate * ratio));  // MATE'S JOB
         }
 
         //Big difference between industry and service workers causes negative 
@@ -1291,7 +1296,7 @@ public class Engine {
                 numberOfIndustryWorkers - numberOfServiceWorkers)
                 / (numberOfIndustryWorkers + numberOfServiceWorkers)) {
             //System.out.println("The difference is greater than 50%.");
-            residents.forEach(resident -> resident.changeHappinessBy(-daysPassed));
+            residents.forEach(resident -> resident.changeHappinessBy(-1 * ratio));      // MATE'S JOB
         }/* else {
             System.out.println("The difference is less than 50%.");
         }*/
@@ -1320,36 +1325,21 @@ public class Engine {
         //(high school -20$, university -30$, police -30$, stadium -$40)
         for (Zone zone : buildings) {
             if (zone instanceof HighSchool) {
-                expenses -= Math.floor(0.06*daysPassed);
+                expenses -= Math.floor(0.06*ratio);
             } else if (zone instanceof University) {
-                expenses -= Math.floor(0.08*daysPassed);
+                expenses -= Math.floor(0.08*ratio);
             } else if (zone instanceof Police) {
-                expenses -= Math.floor(0.08*daysPassed);
+                expenses -= Math.floor(0.08*ratio);
             } else if (zone instanceof Stadium) {
-                expenses -= Math.floor(0.11*daysPassed);
+                expenses -= Math.floor(0.11*ratio);
             }
         }
         
-        
-
         //Check whether the game is over or not. (average happiness < 20%)
         calculateHappieness();
         bigCityJframe.getHappy().setText(Math.round(combinedHappiness) + "%");
-
         
-        
-        
-        
-        
-        
-        // -------- RAKD VISSZA --------------
-        //checkGameOver((int) Math.round(combinedHappiness));
-        // -----------------------------------
-        
-        
-        
-        
-        
+        checkGameOver((int) Math.round(combinedHappiness));
         
         double tmp = rnd.nextDouble();
         disasterChance += (daysPassedWithoutDisaster / 10000.0) * tmp;
@@ -1392,6 +1382,37 @@ public class Engine {
         
         collectTax(1);
     }
+    
+    public void daysPassed() {
+
+        educatePeople(10);
+
+        int newResidentsCount = newResidentsCount(10);
+
+        timePassedHelper(newResidentsCount, 10);
+        
+        
+        //Increase age. Old people die and changed to new people with
+        //low education level.
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date(bigCityJframe.getDate()));
+        int day = c.get(Calendar.DAY_OF_YEAR);
+        int month = c.get(Calendar.MONTH);
+        
+        if(day < 11 && month == 0) {
+            for (Person resident : residents) {
+                resident.growOlder();
+                if (70 == resident.getAge()) {
+                    resident.die();
+                }
+            }
+            
+            addMoney((int)Math.floor(expenses));
+            addMoney((int)Math.floor(yearlyIncome));
+        }
+        
+        collectTax(10);
+    }
 
     public void monthPassed(int daysPassed) {
     
@@ -1420,32 +1441,6 @@ public class Engine {
         }
         
         collectTax(daysPassed);
-        
-    }
-    
-    public void yearPassed(boolean isLeapYear) {
-        
-        int daysCount = isLeapYear ? 366 : 365;
-        
-        educatePeople(daysCount);
-        
-        int newResidentsCount = newResidentsCount(daysCount);
-        
-        timePassedHelper(newResidentsCount, daysCount);
-        
-        //Increase age. Old people die and changed to new people with
-        //low education level.
-        for (Person resident : residents) {
-            resident.growOlder();
-            if (70 == resident.getAge()) {
-                resident.die();
-            }
-        }
-            
-        addMoney((int)Math.floor(expenses));
-        addMoney((int)Math.floor(yearlyIncome));
-        
-        collectTax(daysCount);
         
     }
     
@@ -1666,9 +1661,9 @@ public class Engine {
 
     public void collectTax(int daysPassed) {
         for (Person p : residents) {
-            yearlyIncome += (double) (2*daysPassed * taxPercentage) / 100 * p.getEducationLevel().getLevel();
+            yearlyIncome += (double) (0.5*daysPassed * taxPercentage) / 100 * p.getEducationLevel().getLevel();
             if (null != p.getJob()) {
-                yearlyIncome += (double) (3*daysPassed * taxPercentage) / 100 * p.getEducationLevel().getLevel();
+                yearlyIncome += (double) (0.7*daysPassed * taxPercentage) / 100 * p.getEducationLevel().getLevel();
             }
         }
         bigCityJframe.refreshMoney();
