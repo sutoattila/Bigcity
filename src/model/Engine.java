@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,6 +46,8 @@ public class Engine {
     private int height;
 
     private int money;
+    private double yearlyIncome;
+    private double expenses;
     private double combinedHappiness;
     private String date;
     private int timeSpeed;
@@ -75,6 +79,8 @@ public class Engine {
         this.height = height;
         this.fieldSize = fieldSize;
         this.money = 1000;
+        this.yearlyIncome = 0;
+        this.expenses = 0;
         this.bigCityJframe = bigCityJframe;
         this.taxPercentage = 20;
         this.disasterChance = 0;
@@ -970,11 +976,11 @@ public class Engine {
      *
      * @return The number of the people who may move in.
      */
-    private int newResidentsCount() {
+    private int newResidentsCount(int daysPassed) {
 
         float percentageOfNewResidents = 0.01f;
         int newResidentsCount = (int) Math.ceil(
-                residents.size() * percentageOfNewResidents);
+                residents.size() * percentageOfNewResidents) * daysPassed;
         if (residents.size() < fixGroupOfPeopleCount) {
             newResidentsCount += fixGroupOfPeopleCount - residents.size();
         }
@@ -1052,14 +1058,8 @@ public class Engine {
         }
     }
 
-    public void dayPassed() {
-
-        educatePeople();
-
-        collectTax();
-
-        int newResidentsCount = newResidentsCount();
-
+    private void timePassedHelper(int newResidentsCount, int daysPassed) {
+        
         //Find all residences.
         //Find all industries and services connected to a residence. Store every 
         //connections. Store the distances. Sort according the distances.
@@ -1143,9 +1143,9 @@ public class Engine {
         //[5,...[ -> -1*2^n where n=distance/5
         residents.forEach(resident -> {
             if (null == resident.getJob()) {
-                resident.changeHappinessBy(-1);
+                resident.changeHappinessBy(-daysPassed);
             } else {
-                resident.changeHappinessBy(1);
+                resident.changeHappinessBy(daysPassed);
                 //distance between house and workplace:
                 //  (distance/5==0) [0;4]-> +1,
                 //  [5,...[ -> -1*2^n where n=distance/5
@@ -1154,7 +1154,7 @@ public class Engine {
                         ? 1
                         : -1 * (int) Math.pow(2,
                                 resident.getHomeJobDistance() / 5);
-                resident.changeHappinessBy(happinessChangeAccordingDistance);
+                resident.changeHappinessBy(happinessChangeAccordingDistance*daysPassed);
             }
         });
         //Find all industries and stadiums. Change happiness inside the range.
@@ -1166,12 +1166,12 @@ public class Engine {
                             if (zone instanceof Residence residence) {
                                 residence.getResidents().forEach(
                                         resident -> {
-                                            resident.changeHappinessBy(-1);
+                                            resident.changeHappinessBy(-daysPassed);
                                         });
                             } else if (zone instanceof Workplace workplace) {
                                 workplace.getWorkers().forEach(
                                         worker -> {
-                                            worker.changeHappinessBy(-1);
+                                            worker.changeHappinessBy(-daysPassed);
                                         });
                             }
                         }
@@ -1186,12 +1186,12 @@ public class Engine {
                             if (zone instanceof Residence residence) {
                                 residence.getResidents().forEach(
                                         resident -> {
-                                            resident.changeHappinessBy(4);
+                                            resident.changeHappinessBy(4*daysPassed);
                                         });
                             } else if (zone instanceof Workplace workplace) {
                                 workplace.getWorkers().forEach(
                                         worker -> {
-                                            worker.changeHappinessBy(4);
+                                            worker.changeHappinessBy(4*daysPassed);
                                         });
                             }
                         }
@@ -1238,7 +1238,7 @@ public class Engine {
                         break;
                     }
                 }
-                if (false == coordsAffectedByPolice) {
+                if (!coordsAffectedByPolice) {
                     coordsNotInPoliceRange.add(new Coords(column, row));
                 }
             }
@@ -1249,13 +1249,13 @@ public class Engine {
                 if (zone instanceof Residence residence) {
                     residence.getResidents().forEach(resident -> {
                         if (residence.getCapacity() == residence.getSize()) {
-                            resident.changeHappinessBy(-3);
+                            resident.changeHappinessBy(-3*daysPassed);
                         }
                     });
                 } else if (zone instanceof Workplace workplace) {
                     workplace.getWorkers().forEach(worker -> {
                         if (workplace.getCapacity() == workplace.getSize()) {
-                            worker.changeHappinessBy(-3);
+                            worker.changeHappinessBy(-3*daysPassed);
                         }
                     });
                 }
@@ -1264,14 +1264,14 @@ public class Engine {
 
         //Negative budget decrease the happiness.
         if (money < 0) {
-            residents.forEach(person -> person.changeHappinessBy(-1));
+            residents.forEach(person -> person.changeHappinessBy(-daysPassed));
         }
 
         //Happiness change according tax rate.
         int happinessChangeAccordingTaxRate = taxPercentage / 30;
         //System.out.println(-1 * happinessChangeAccordingTaxRate);
         if (0 != taxPercentage) {
-            residents.forEach(person -> person.changeHappinessBy(-1 * happinessChangeAccordingTaxRate));
+            residents.forEach(person -> person.changeHappinessBy(-1 * happinessChangeAccordingTaxRate * daysPassed));
         }
 
         //Big difference between industry and service workers causes negative 
@@ -1291,7 +1291,7 @@ public class Engine {
                 numberOfIndustryWorkers - numberOfServiceWorkers)
                 / (numberOfIndustryWorkers + numberOfServiceWorkers)) {
             //System.out.println("The difference is greater than 50%.");
-            residents.forEach(resident -> resident.changeHappinessBy(-1));
+            residents.forEach(resident -> resident.changeHappinessBy(-daysPassed));
         }/* else {
             System.out.println("The difference is less than 50%.");
         }*/
@@ -1318,34 +1318,121 @@ public class Engine {
 
         //Pay the expenses. 
         //(high school -20$, university -30$, police -30$, stadium -$40)
-        HashSet<Zone> zonesCostMoney = new HashSet<>();
-        for (int row = 0; row < height; row++) {
-            for (int column = 0; column < width; column++) {
-                if (null != grid[row][column]
-                        && !zonesCostMoney.contains(grid[row][column])) {
-                    if (grid[row][column] instanceof HighSchool) {
-                        money -= 20;
-                        zonesCostMoney.add(grid[row][column]);
-                    } else if (grid[row][column] instanceof University) {
-                        money -= 30;
-                        zonesCostMoney.add(grid[row][column]);
-                    } else if (grid[row][column] instanceof Police) {
-                        money -= 30;
-                        zonesCostMoney.add(grid[row][column]);
-                    } else if (grid[row][column] instanceof Stadium) {
-                        money -= 40;
-                        zonesCostMoney.add(grid[row][column]);
-                    }
-                }
+        for (Zone zone : buildings) {
+            if (zone instanceof HighSchool) {
+                expenses -= Math.floor(0.06*daysPassed);
+            } else if (zone instanceof University) {
+                expenses -= Math.floor(0.08*daysPassed);
+            } else if (zone instanceof Police) {
+                expenses -= Math.floor(0.08*daysPassed);
+            } else if (zone instanceof Stadium) {
+                expenses -= Math.floor(0.11*daysPassed);
             }
         }
+        
+        
 
         //Check whether the game is over or not. (average happiness < 20%)
         calculateHappieness();
         bigCityJframe.getHappy().setText(Math.round(combinedHappiness) + "%");
 
-        checkGameOver((int) Math.round(combinedHappiness));
+        
+        
+        
+        
+        
+        
+        // -------- RAKD VISSZA --------------
+        //checkGameOver((int) Math.round(combinedHappiness));
+        // -----------------------------------
+        
+        
+        
+        
+        
+        
+        double tmp = rnd.nextDouble();
+        disasterChance += (daysPassedWithoutDisaster / 10000.0) * tmp;
+        if ((int) disasterChance > 0) {
+            makeDisaster();
+        } else {
+            daysPassedWithoutDisaster += daysPassed;
+        }
 
+        bigCityJframe.repaintStatPanelAndGrid();
+    }
+    
+    public void dayPassed() {
+
+        educatePeople(1);
+
+        int newResidentsCount = newResidentsCount(1);
+
+        timePassedHelper(newResidentsCount, 1);
+        
+        
+        //Increase age. Old people die and changed to new people with
+        //low education level.
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date(bigCityJframe.getDate()));
+        int day = c.get(Calendar.DAY_OF_YEAR);
+        int month = c.get(Calendar.MONTH);
+        
+        if(day == 1 && month == 0) {
+            for (Person resident : residents) {
+                resident.growOlder();
+                if (70 == resident.getAge()) {
+                    resident.die();
+                }
+            }
+            
+            addMoney((int)Math.floor(expenses));
+            addMoney((int)Math.floor(yearlyIncome));
+        }
+        
+        collectTax(1);
+    }
+
+    public void monthPassed(int daysPassed) {
+    
+        educatePeople(daysPassed);
+        
+        int newResidentsCount = newResidentsCount(daysPassed);
+        
+        timePassedHelper(newResidentsCount, daysPassed);
+        
+        //Increase age. Old people die and changed to new people with
+        //low education level.
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date(bigCityJframe.getDate()));
+        int month = c.get(Calendar.MONTH);
+        
+        if(month == 0) {
+            for (Person resident : residents) {
+                resident.growOlder();
+                if (70 == resident.getAge()) {
+                    resident.die();
+                }
+            }
+            
+            addMoney((int)Math.floor(expenses));
+            addMoney((int)Math.floor(yearlyIncome));
+        }
+        
+        collectTax(daysPassed);
+        
+    }
+    
+    public void yearPassed(boolean isLeapYear) {
+        
+        int daysCount = isLeapYear ? 366 : 365;
+        
+        educatePeople(daysCount);
+        
+        int newResidentsCount = newResidentsCount(daysCount);
+        
+        timePassedHelper(newResidentsCount, daysCount);
+        
         //Increase age. Old people die and changed to new people with
         //low education level.
         for (Person resident : residents) {
@@ -1354,18 +1441,14 @@ public class Engine {
                 resident.die();
             }
         }
-
-        double tmp = rnd.nextDouble();
-        disasterChance += (daysPassedWithoutDisaster / 1000.0) * tmp;
-        if ((int) disasterChance > 0) {
-            makeDisaster();
-        } else {
-            daysPassedWithoutDisaster++;
-        }
-
-        bigCityJframe.repaintStatPanelAndGrid();
+            
+        addMoney((int)Math.floor(expenses));
+        addMoney((int)Math.floor(yearlyIncome));
+        
+        collectTax(daysCount);
+        
     }
-
+    
     /**
      * Finds all industries on the grid.
      *
@@ -1581,11 +1664,11 @@ public class Engine {
         return combinedHappiness;
     }
 
-    public void collectTax() {
+    public void collectTax(int daysPassed) {
         for (Person p : residents) {
-            addMoney((int) Math.round((double) (10 * taxPercentage) / 100 * p.getEducationLevel().getLevel()));
+            yearlyIncome += (double) (2*daysPassed * taxPercentage) / 100 * p.getEducationLevel().getLevel();
             if (null != p.getJob()) {
-                addMoney((int) Math.round((double) (10 * taxPercentage) / 100 * p.getEducationLevel().getLevel()));
+                yearlyIncome += (double) (3*daysPassed * taxPercentage) / 100 * p.getEducationLevel().getLevel();
             }
         }
         bigCityJframe.refreshMoney();
@@ -1603,7 +1686,7 @@ public class Engine {
         }
     }
 
-    public void educatePeople() {
+    public void educatePeople(int daysPassed) {
         int hsd = 0;
         int ud = 0;
         for (Person p : residents) {
@@ -1615,9 +1698,9 @@ public class Engine {
         }
 
         int possibeHighSchoolDegrees = Integer.min(highSchools.size() * 5,
-                (int) (Math.round(residents.size() * 0.8) - hsd - ud));
+                (int) (Math.round(residents.size() * 0.8) - hsd - ud)) * daysPassed;
         int possibeUniversityDegrees = Integer.min(universities.size() * 10,
-                (int) (Math.round(residents.size() * 0.5) - ud));
+                (int) (Math.round(residents.size() * 0.5) - ud)) * daysPassed;
 
         for (University u : universities) {
             int row = u.getTopLeftY() / fieldSize;
@@ -1663,12 +1746,6 @@ public class Engine {
                 }
             }
         }
-
-        /*System.out.println("\n\n");
-        for (Person p : residents) {
-            System.out.println(p.getEducationLevel());
-        }
-        System.out.println("\n\n");*/
     }
 
     public Set<Residence> findResidencesOnRoad(int row, int col, int fieldWidth, int fieldHeight) {

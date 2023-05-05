@@ -1,5 +1,11 @@
 package GUI;
 
+import bigcity.HighSchool;
+import bigcity.Person;
+import bigcity.Police;
+import bigcity.Stadium;
+import bigcity.University;
+import bigcity.Zone;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -21,6 +27,8 @@ public class SettingsDialog extends JDialog implements ChangeListener{
     protected JSlider slider;
     protected JLabel value;
     protected BigCityJframe frame;
+    protected JLabel income;
+    protected JLabel expenses;
     
     public SettingsDialog(BigCityJframe frame) {
         super(frame, "Beállítások", true);
@@ -68,7 +76,24 @@ public class SettingsDialog extends JDialog implements ChangeListener{
         btnPanel.add(cancel);
         btnPanel.add(Box.createRigidArea(new Dimension(25,0)));
         add("Center", slider);
-        add("South",btnPanel);
+        
+        JPanel stats = new JPanel();
+        stats.setLayout(new BoxLayout(stats, BoxLayout.Y_AXIS));
+        stats.add(btnPanel);
+        JPanel statPanel = new JPanel();
+        statPanel.setLayout(new BoxLayout(statPanel, BoxLayout.X_AXIS));
+        income = new JLabel("Éves bevétel: " + calculateIncome());
+        expenses = new JLabel("Éves kiadások: " + calculateExpenses());
+        statPanel.add(Box.createRigidArea(new Dimension(25,0)));
+        statPanel.add(income);
+        statPanel.add(Box.createHorizontalGlue());
+        statPanel.add(expenses);
+        statPanel.add(Box.createRigidArea(new Dimension(25,0)));
+        stats.add(statPanel);
+        
+        add("South",stats);
+        
+        
         
         setSize(new Dimension(500, 120));
     }
@@ -77,13 +102,44 @@ public class SettingsDialog extends JDialog implements ChangeListener{
     public void stateChanged(ChangeEvent e)
     {
         value.setText("Adókulcs: " + slider.getValue() + "%");
+        income.setText("Éves bevétel: " + calculateIncome());
+        expenses.setText("Éves kiadások: " + calculateExpenses());
     }
     
     public void setActive() {
         setLocationRelativeTo(null);
         int tmp = frame.getCurrentTax();
         value.setText("Adókulcs: " + tmp + "%");
+        income.setText("Éves bevétel: " + calculateIncome());
+        expenses.setText("Éves kiadások: " + calculateExpenses());
         slider.setValue(tmp);
         this.setVisible(true);
+    }
+    
+    private int calculateIncome() {
+        int yearlyIncome = 0;
+        for (Person p : frame.getEngine().getResidents()) {
+            yearlyIncome += (double) (730 * slider.getValue()) / 100 * p.getEducationLevel().getLevel();
+            if (null != p.getJob()) {
+                yearlyIncome += (double) (1095 * slider.getValue()) / 100 * p.getEducationLevel().getLevel();
+            }
+        }
+        return yearlyIncome;
+    }
+    
+    private int calculateExpenses() {
+        int yearlyExpenses = 0;
+        for (Zone zone : frame.getEngine().getBuildingsList()) {
+            if (zone instanceof HighSchool) {
+                yearlyExpenses -= 21;
+            } else if (zone instanceof University) {
+                yearlyExpenses -= 29;
+            } else if (zone instanceof Police) {
+                yearlyExpenses -= 29;
+            } else if (zone instanceof Stadium) {
+                yearlyExpenses -= 40;
+            }
+        }
+        return yearlyExpenses;
     }
 }

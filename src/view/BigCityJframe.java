@@ -384,7 +384,7 @@ public class BigCityJframe extends JFrame {
         date = c.getTime();
         refreshDate();
         refreshMoney();
-        engine.dayPassed();
+        engine.monthPassed(31);
     }
     
     public void yearPassed() {
@@ -394,7 +394,7 @@ public class BigCityJframe extends JFrame {
         date = c.getTime();
         refreshDate();
         refreshMoney();
-        engine.dayPassed();
+        engine.yearPassed(false);
     }
     
     public void timerTicked() {
