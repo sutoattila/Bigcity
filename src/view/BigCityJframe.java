@@ -3,6 +3,7 @@ package view;
 import GUI.MainMenu;
 import GUI.SettingsDialog;
 import GUI.StatElement;
+import bigcity.TimeSpeed;
 import bigcity.Zone;
 import grid.Grid;
 import java.awt.BorderLayout;
@@ -50,6 +51,7 @@ public class BigCityJframe extends JFrame {
     protected Timer timer;
     protected Date date;
     protected boolean isStopped;
+    protected TimeSpeed timeSpeed;
     protected SettingsDialog settings;
     protected String cityName;
 
@@ -76,9 +78,12 @@ public class BigCityJframe extends JFrame {
         //exit options
         ImageIcon icon = new ImageIcon("GUI/house.png");
         setIconImage(icon.getImage());
+        
+        timeSpeed = TimeSpeed.DAY;
         this.timer = new Timer(3000, (ActionEvent e) -> {
             if (!isStopped) {
-                dayPassed();
+                //dayPassed();
+                timerTicked();
             }
         });
         timer.start();
@@ -123,31 +128,31 @@ public class BigCityJframe extends JFrame {
         gameMenu.add(exitJMenuItem);
         menuBar.add(gameMenu);
         JMenu timeMenu = new JMenu("Idő");
-        JMenuItem speed1 = new JMenuItem(new AbstractAction("x1") {
+        JMenuItem speed1 = new JMenuItem(new AbstractAction("napi") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (isStopped) {
                     isStopped = false;
                 }
-                timer.setDelay(3000);
+                timeSpeed = TimeSpeed.DAY;
             }
         });
-        JMenuItem speed3 = new JMenuItem(new AbstractAction("x3") {
+        JMenuItem speed3 = new JMenuItem(new AbstractAction("havi") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (isStopped) {
                     isStopped = false;
                 }
-                timer.setDelay(1000);
+                timeSpeed = TimeSpeed.MONTH;
             }
         });
-        JMenuItem speed5 = new JMenuItem(new AbstractAction("x5") {
+        JMenuItem speed5 = new JMenuItem(new AbstractAction("évi") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (isStopped) {
                     isStopped = false;
                 }
-                timer.setDelay(600);
+                timeSpeed = TimeSpeed.YEAR;
             }
         });
         JMenuItem startStop = new JMenuItem(
@@ -370,6 +375,35 @@ public class BigCityJframe extends JFrame {
         refreshDate();
         refreshMoney();
         engine.dayPassed();
+    }
+    
+    public void monthPassed() {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.MONTH, 1);
+        date = c.getTime();
+        refreshDate();
+        refreshMoney();
+        engine.dayPassed();
+    }
+    
+    public void yearPassed() {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.YEAR, 1);
+        date = c.getTime();
+        refreshDate();
+        refreshMoney();
+        engine.dayPassed();
+    }
+    
+    public void timerTicked() {
+        switch (timeSpeed) {
+            case DAY -> dayPassed();
+            case MONTH -> monthPassed();
+            case YEAR -> yearPassed();
+            default -> throw new AssertionError();
+        }
     }
 
     /**
