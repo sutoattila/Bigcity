@@ -83,7 +83,6 @@ public class BigCityJframe extends JFrame {
         timeSpeed = TimeSpeed.DAY;
         this.timer = new Timer(3000, (ActionEvent e) -> {
             if (!isStopped) {
-                //dayPassed();
                 timerTicked();
             }
         });

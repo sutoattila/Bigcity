@@ -1358,14 +1358,19 @@ public class Engine {
         bigCityJframe.repaintStatPanelAndGrid();
     }
     
+    /**
+     * Recalculate everything like one day passed.
+     * - Educate people
+     * - Move in and out people
+     * - Grow people older if a year passed
+     * - Stores the income for the passed time
+     * - Subtracts the expenses for the passed time
+     */
     public void dayPassed() {
 
         educatePeople(1);
-
         int newResidentsCount = newResidentsCount(1);
-
         timePassedHelper(newResidentsCount, 1);
-        
         
         //Increase age. Old people die and changed to new people with
         //low education level.
@@ -1391,6 +1396,14 @@ public class Engine {
         collectTax(1);
     }
     
+    /**
+     * Recalculate everything like ten day passed.
+     * - Educate people
+     * - Move in and out people
+     * - Grow people older if a year passed
+     * - Stores the income for the passed time
+     * - Subtracts the expenses for the passed time
+     */
     public void daysPassed() {
 
         educatePeople(10);
@@ -1424,6 +1437,15 @@ public class Engine {
         collectTax(10);
     }
 
+    /**
+     * Recalculate everything like one month passed.
+     * - Educate people
+     * - Move in and out people
+     * - Grow people older if a year passed
+     * - Stores the income for the passed time
+     * - Subtracts the expenses for the passed time
+     * @param daysPassed - int, the days amount of the month
+     */
     public void monthPassed(int daysPassed) {
     
         educatePeople(daysPassed);
