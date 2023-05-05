@@ -116,6 +116,12 @@ public class Engine {
 
             line = reader.readLine();
             int money = Integer.parseInt(line);
+            
+            line = reader.readLine();
+            this.yearlyIncome = Double.parseDouble(line);
+            
+            line = reader.readLine();
+            this.expenses = Double.parseDouble(line);
 
             line = reader.readLine();
             bigCityJframe.setDate(Long.parseLong(line));
@@ -184,7 +190,7 @@ public class Engine {
                 String pName = splitted[0];
                 int pAge = Integer.parseInt(splitted[1]);
                 boolean pMale = Boolean.parseBoolean(splitted[2]);
-                int pHappiness = Integer.parseInt(splitted[3]);
+                double pHappiness = Double.parseDouble(splitted[3]);
                 EducationLevel pEducation = EducationLevel.valueOf(splitted[4]);
                 int homeCol = Integer.parseInt(splitted[5]);
                 int homeRow = Integer.parseInt(splitted[6]);
@@ -1325,13 +1331,13 @@ public class Engine {
         //(high school -20$, university -30$, police -30$, stadium -$40)
         for (Zone zone : buildings) {
             if (zone instanceof HighSchool) {
-                expenses -= Math.floor(0.06*ratio);
+                expenses -= Math.floor(20*ratio);
             } else if (zone instanceof University) {
-                expenses -= Math.floor(0.08*ratio);
+                expenses -= Math.floor(30*ratio);
             } else if (zone instanceof Police) {
-                expenses -= Math.floor(0.08*ratio);
+                expenses -= Math.floor(30*ratio);
             } else if (zone instanceof Stadium) {
-                expenses -= Math.floor(0.11*ratio);
+                expenses -= Math.floor(40*ratio);
             }
         }
         
@@ -1376,9 +1382,11 @@ public class Engine {
                 }
             }
             
-            addMoney((int)Math.floor(expenses));
             addMoney((int)Math.floor(yearlyIncome));
         }
+        
+        addMoney((int)Math.floor(expenses));
+        expenses = 0;
         
         collectTax(1);
     }
@@ -1407,9 +1415,11 @@ public class Engine {
                 }
             }
             
-            addMoney((int)Math.floor(expenses));
             addMoney((int)Math.floor(yearlyIncome));
         }
+        
+        addMoney((int)Math.floor(expenses));
+        expenses = 0;
         
         collectTax(10);
     }
@@ -1436,9 +1446,11 @@ public class Engine {
                 }
             }
             
-            addMoney((int)Math.floor(expenses));
             addMoney((int)Math.floor(yearlyIncome));
         }
+        
+        addMoney((int)Math.floor(expenses));
+        expenses = 0;
         
         collectTax(daysPassed);
         
@@ -1661,9 +1673,9 @@ public class Engine {
 
     public void collectTax(int daysPassed) {
         for (Person p : residents) {
-            yearlyIncome += (double) (0.5*daysPassed * taxPercentage) / 100 * p.getEducationLevel().getLevel();
+            yearlyIncome += (double) (0.2*daysPassed * taxPercentage) / 100 * p.getEducationLevel().getLevel();
             if (null != p.getJob()) {
-                yearlyIncome += (double) (0.7*daysPassed * taxPercentage) / 100 * p.getEducationLevel().getLevel();
+                yearlyIncome += (double) (0.3*daysPassed * taxPercentage) / 100 * p.getEducationLevel().getLevel();
             }
         }
         bigCityJframe.refreshMoney();
@@ -1888,6 +1900,8 @@ public class Engine {
                 writer.write(height + ";" + width + "\n");
                 writer.write(fieldSize + "\n");
                 writer.write(money + "\n");
+                writer.write(yearlyIncome + "\n");
+                writer.write(expenses + "\n");
                 writer.write(bigCityJframe.getDate() + "\n");
                 writer.write(taxPercentage + "\n");
                 writer.write(disasterChance + "\n");

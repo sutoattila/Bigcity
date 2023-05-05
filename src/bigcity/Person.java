@@ -24,6 +24,10 @@ public class Person {
     public double getHappiness() {
         return happiness;
     }
+    
+    public int getIntegerHappiness() {
+        return (int)Math.round(happiness);
+    }
 
     public EducationLevel getEducationLevel() {
         return educationLevel;
@@ -57,7 +61,7 @@ public class Person {
         return age;
     }
 
-    public Person(String name, int age, int happiness, boolean male,
+    public Person(String name, int age, double happiness, boolean male,
             EducationLevel educationLevel, Zone home, Zone job) {
         this.name = name;
         //Min 18.

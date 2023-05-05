@@ -66,7 +66,7 @@ public class CitizenGenerator {
         return new Person(
                 name,
                 age,
-                100,
+                100.0,
                 male,
                 EducationLevel.PRIMARY_SCHOOL,
                 null,
