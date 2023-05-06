@@ -202,4 +202,145 @@ public class EngineTest {
             //build should return false
             assertFalse(engine.buildForTesting(0, 0, 1, false));
     }
+    /**
+     * Test of destroy method, of class Engine.
+        //Private zones.----------------
+        POLICE(1, 1, 300, 0, 0),
+        STADIUM(2, 2, 300, 0, 0),
+        HIGH_SCHOOL(2, 1, 300, 0, 0),
+        UNIVERSITY(2, 2, 500, 0, 0),
+        ROAD(1, 1, 50, 0, 0),
+        //Public zones.-----------------
+        RESIDENCE(1, 1, 50, 100, 300),
+        INDUSTRY(1, 1, 100, 300, 1000),
+        SERVICE(1, 1, 50, 100, 300),
+     */
+    @Test
+    public void testDestroyResidence(){
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        //if zone is a residence
+        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        engine.buildForTesting(0, 0, 1, false);
+        //destroy should return true
+        assertTrue(engine.destroyZoneForTesting(0,0,1,false));
+        //the destroyed zone should be null
+        assertEquals(engine.getCell(0, 0), null);
+        //the destroyed zone should be removed from the building list of engine
+        assertTrue(engine.getBuildingsList().isEmpty());
+        
+        //if zone is null destroy should return false
+        assertFalse(engine.destroyZoneForTesting(0,0,1,false));
+    }
+    @Test
+    public void testDestroyIndustry(){
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        //if zone is a residence
+        Engine.setCursorSignal(CursorSignal.INDUSTRY);
+        engine.buildForTesting(0, 0, 1, false);
+        //destroy should return true
+        assertTrue(engine.destroyZoneForTesting(0,0,1,false));
+        //the destroyed zone should be null
+        assertEquals(engine.getCell(0, 0), null);
+        //the destroyed zone should be removed from the building list of engine
+        assertTrue(engine.getBuildingsList().isEmpty());
+        
+        //if zone is null destroy should return false
+        assertFalse(engine.destroyZoneForTesting(0,0,1,false));
+    }
+    @Test
+    public void testDestroyService(){
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        //if zone is a residence
+        Engine.setCursorSignal(CursorSignal.SERVICE);
+        engine.buildForTesting(0, 0, 1, false);
+        //destroy should return true
+        assertTrue(engine.destroyZoneForTesting(0,0,1,false));
+        //the destroyed zone should be null
+        assertEquals(engine.getCell(0, 0), null);
+        //the destroyed zone should be removed from the building list of engine
+        assertTrue(engine.getBuildingsList().isEmpty());
+        
+        //if zone is null destroy should return false
+        assertFalse(engine.destroyZoneForTesting(0,0,1,false));
+    }
+    @Test
+    public void testDestroyPolice(){
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        //if zone is a residence
+        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        engine.buildForTesting(0, 0, 1, false);
+        //destroy should return true
+        assertTrue(engine.destroyZoneForTesting(0,0,1,false));
+        //the destroyed zone should be null
+        assertEquals(engine.getCell(0, 0), null);
+        //the destroyed zone should be removed from the building list of engine
+        assertTrue(engine.getBuildingsList().isEmpty());
+        
+        //if zone is null destroy should return false
+        assertFalse(engine.destroyZoneForTesting(0,0,1,false));
+    }
+    @Test
+    public void testDestroyStadium(){
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        //if zone is a residence
+        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        engine.buildForTesting(0, 0, 4, false);
+        //destroy should return true
+        assertTrue(engine.destroyZoneForTesting(0,0,4,false));
+        //the destroyed zone should be null
+        assertEquals(engine.getCell(0, 0), null);
+        //the destroyed zone should be removed from the building list of engine
+        assertTrue(engine.getBuildingsList().isEmpty());
+        
+        //if zone is null destroy should return false
+        assertFalse(engine.destroyZoneForTesting(0,0,4,false));
+    }
+    @Test
+    public void testDestroyHighSchool(){
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        //if zone is a residence
+        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        engine.buildForTesting(0, 0, 2, false);
+        //destroy should return true
+        assertTrue(engine.destroyZoneForTesting(0,0,2,false));
+        //the destroyed zone should be null
+        assertEquals(engine.getCell(0, 0), null);
+        //the destroyed zone should be removed from the building list of engine
+        assertTrue(engine.getBuildingsList().isEmpty());
+        
+        //if zone is null destroy should return false
+        assertFalse(engine.destroyZoneForTesting(0,0,2,false));
+    }
+    @Test
+    public void testDestroyUniversity(){
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        //if zone is a residence
+        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        engine.buildForTesting(0, 0, 4, false);
+        //destroy should return true
+        assertTrue(engine.destroyZoneForTesting(0,0,4,false));
+        //the destroyed zone should be null
+        assertEquals(engine.getCell(0, 0), null);
+        //the destroyed zone should be removed from the building list of engine
+        assertTrue(engine.getBuildingsList().isEmpty());
+        
+        //if zone is null destroy should return false
+        assertFalse(engine.destroyZoneForTesting(0,0,4,false));
+    }
+    @Test
+    public void testDestroyRoad(){
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        //if zone is a residence
+        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        engine.buildForTesting(0, 0, 1, false);
+        //destroy should return true
+        assertTrue(engine.destroyZoneForTesting(0,0,1,false));
+        //the destroyed zone should be null
+        assertEquals(engine.getCell(0, 0), null);
+        //the destroyed zone should be removed from the building list of engine
+        assertTrue(engine.getBuildingsList().isEmpty());
+        
+        //if zone is null destroy should return false
+        assertFalse(engine.destroyZoneForTesting(0,0,1,false));
+    }
 }
