@@ -4,7 +4,7 @@ public class Person {
 
     protected String name;
     protected int age;
-    protected int happiness;
+    protected double happiness;
     protected EducationLevel educationLevel;
     protected Zone home;
     protected Zone job;
@@ -21,8 +21,12 @@ public class Person {
         return age;
     }
 
-    public int getHappiness() {
+    public double getHappiness() {
         return happiness;
+    }
+    
+    public int getIntegerHappiness() {
+        return (int)Math.round(happiness);
     }
 
     public EducationLevel getEducationLevel() {
@@ -33,7 +37,7 @@ public class Person {
         return male;
     }
 
-    public int changeHappinessBy(int value) {
+    public double changeHappinessBy(double value) {
         happiness += value;
         happinessGuard();
         return happiness;
@@ -57,7 +61,7 @@ public class Person {
         return age;
     }
 
-    public Person(String name, int age, int happiness, boolean male,
+    public Person(String name, int age, double happiness, boolean male,
             EducationLevel educationLevel, Zone home, Zone job) {
         this.name = name;
         //Min 18.
