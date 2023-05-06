@@ -54,7 +54,7 @@ public class Assets {
             emptyField = ResourceLoader.loadBufferedImage("res/png/emptyField.png");
             highSchool = ResourceLoader.loadBufferedImage("res/png/highSchool.png");
             police = ResourceLoader.loadBufferedImage("res/png/police.png");
-            stadium = ResourceLoader.loadBufferedImage("res/png/stadium.png");
+            stadium = ResourceLoader.loadBufferedImage("res/png/stadium.jpg");
             university = ResourceLoader.loadBufferedImage("res/png/university.png");
             //industrys
             copperI = ResourceLoader.loadBufferedImage("res/png/industry/copperI.png");

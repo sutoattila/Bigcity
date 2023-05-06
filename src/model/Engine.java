@@ -600,7 +600,92 @@ public class Engine {
 
         return true;
     }
+    
+    public boolean destroyZoneForTesting(int argRow, int argColumn, int fieldSize,
+            boolean disasterHappened) {
+        Zone target = grid[argRow][argColumn];
+        if (null == target) {
+            return false;
+        }
 
+        int zoneLevel = 1;
+        CursorSignal type;
+
+        if (target instanceof Residence tmp) {
+            zoneLevel = tmp.getLevel();
+            type = CursorSignal.RESIDENCE;
+            if (disasterHappened) {
+                tmp.getResidents().forEach(person
+                        -> person.changeHappinessBy(-1));
+            }
+        } else if (target instanceof Industry tmp) {
+            zoneLevel = tmp.getLevel();
+            type = CursorSignal.INDUSTRY;
+            if (disasterHappened) {
+                tmp.getWorkers().forEach(person
+                        -> person.changeHappinessBy(-1));
+            } else if (peopleOnPrivateZone((PrivateZone) target)) {
+                
+            }
+        } else if (target instanceof Service tmp) {
+            zoneLevel = tmp.getLevel();
+            type = CursorSignal.SERVICE;
+            if (disasterHappened) {
+                tmp.getWorkers().forEach(person
+                        -> person.changeHappinessBy(-1));
+            } else if (peopleOnPrivateZone((PrivateZone) target)) {
+                
+            }
+        } else if (target instanceof Road tmp) {
+            type = CursorSignal.ROAD;
+            ArrayList<Person> angryPeople
+                    = peopleWhoCantFindTheirJobAnymore(tmp);
+            if (disasterHappened) {
+                angryPeople.forEach(person
+                        -> person.changeHappinessBy(-1));
+            } else if (!angryPeople.isEmpty()) {
+               
+            }
+        } else if (target instanceof Police) {
+            type = CursorSignal.POLICE;
+        } else if (target instanceof Stadium) {
+            type = CursorSignal.STADIUM;
+        } else if (target instanceof HighSchool highSchool) {
+            type = CursorSignal.HIGH_SCHOOL;
+            highSchools.remove(highSchool);
+        } else {
+            type = CursorSignal.UNIVERSITY;
+            universities.remove((University) target);
+        }
+
+        buildings.remove(target);
+
+        CursorSignal targetSignal = target.getCursorSignal();
+        int rowStart = target.getTopLeftY() / fieldSize;
+        int rowEnd = target.getTopLeftY() / fieldSize
+                + target.getCursorSignal().getHeight() - 1;
+        int columnStart = target.getTopLeftX() / fieldSize;
+        int columnEnd = target.getTopLeftX() / fieldSize
+                + target.getCursorSignal().getWidth() - 1;
+        for (int row = rowStart; row <= rowEnd; row++) {
+            for (int column = columnStart; column <= columnEnd; column++) {
+                grid[row][column] = null;
+            }
+        }
+
+        if (CursorSignal.ROAD == targetSignal) {
+            refreshRoadImgsAround(argRow, argColumn);
+        }
+
+        int returnMoney = type.getPriceL1()
+                + (zoneLevel > 1 ? type.getPriceL2() : 0)
+                + (zoneLevel > 2 ? type.getPriceL3() : 0);
+        addMoney(returnMoney / 2);
+
+        moveEveryOne();
+        return true;
+    }
+    
     private ArrayList<Person> peopleWhoCantFindTheirJobAnymore(Road closedRoad) {
         ArrayList<Person> angryPeople = new ArrayList<>();
 
