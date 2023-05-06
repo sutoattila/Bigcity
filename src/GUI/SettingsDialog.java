@@ -3,6 +3,7 @@ package GUI;
 import bigcity.HighSchool;
 import bigcity.Person;
 import bigcity.Police;
+import bigcity.Road;
 import bigcity.Stadium;
 import bigcity.University;
 import bigcity.Zone;
@@ -131,13 +132,15 @@ public class SettingsDialog extends JDialog implements ChangeListener{
         int yearlyExpenses = 0;
         for (Zone zone : frame.getEngine().getBuildingsList()) {
             if (zone instanceof HighSchool) {
-                yearlyExpenses -= 21;
+                yearlyExpenses -= 243;
             } else if (zone instanceof University) {
-                yearlyExpenses -= 29;
+                yearlyExpenses -= 365;
             } else if (zone instanceof Police) {
-                yearlyExpenses -= 29;
+                yearlyExpenses -= 365;
             } else if (zone instanceof Stadium) {
-                yearlyExpenses -= 40;
+                yearlyExpenses -= 487;
+            } else if (zone instanceof Road) {
+                yearlyExpenses -= 61;
             }
         }
         return yearlyExpenses;
