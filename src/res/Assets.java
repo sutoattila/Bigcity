@@ -52,29 +52,29 @@ public class Assets {
     public Assets() {
         try {
             emptyField = ResourceLoader.loadBufferedImage("res/png/emptyField.png");
-            highSchool = ResourceLoader.loadBufferedImage("res/png/highSchool.png");
-            police = ResourceLoader.loadBufferedImage("res/png/police.png");
+            highSchool = ResourceLoader.loadBufferedImage("res/png/high_school.png");
+            police = ResourceLoader.loadBufferedImage("res/png/police2.png");
             stadium = ResourceLoader.loadBufferedImage("res/png/stadium.jpg");
-            university = ResourceLoader.loadBufferedImage("res/png/university.png");
+            university = ResourceLoader.loadBufferedImage("res/png/university2.png");
             //industrys
             copperI = ResourceLoader.loadBufferedImage("res/png/industry/copperI.png");
-            factories = ResourceLoader.loadBufferedImage("res/png/industry/factories.png");
-            factory = ResourceLoader.loadBufferedImage("res/png/industry/factory.png");
+            factories = ResourceLoader.loadBufferedImage("res/png/industry/factory_golds.png");
+            factory = ResourceLoader.loadBufferedImage("res/png/industry/factory_gold.png");
             goldI = ResourceLoader.loadBufferedImage("res/png/industry/goldI.png");
-            mine = ResourceLoader.loadBufferedImage("res/png/industry/mine.png");
-            mines = ResourceLoader.loadBufferedImage("res/png/industry/mines.png");
-            ranches = ResourceLoader.loadBufferedImage("res/png/industry/ranches.png");
-            ranch = ResourceLoader.loadBufferedImage("res/png/industry/ranch.png");
+            mine = ResourceLoader.loadBufferedImage("res/png/industry/mine2.jpg");
+            mines = ResourceLoader.loadBufferedImage("res/png/industry/mines2.jpg");
+            ranches = ResourceLoader.loadBufferedImage("res/png/industry/newranches.jpg");
+            ranch = ResourceLoader.loadBufferedImage("res/png/industry/newranch.jpg");
             silverI = ResourceLoader.loadBufferedImage("res/png/industry/silverI.png");
             //residence
-            bigHouse = ResourceLoader.loadBufferedImage("res/png/residence/bigHouse.png");
-            bigHouses = ResourceLoader.loadBufferedImage("res/png/residence/bigHouses.png");
+            panel = ResourceLoader.loadBufferedImage("res/png/residence/scyscrapers.png");
+            panels = ResourceLoader.loadBufferedImage("res/png/residence/scyscraper.png");
             copperR = ResourceLoader.loadBufferedImage("res/png/residence/copperR.png");
             goldR = ResourceLoader.loadBufferedImage("res/png/residence/goldR.png");
             house = ResourceLoader.loadBufferedImage("res/png/residence/house.png");
             houses = ResourceLoader.loadBufferedImage("res/png/residence/houses.png");
-            panel = ResourceLoader.loadBufferedImage("res/png/residence/panel.png");
-            panels = ResourceLoader.loadBufferedImage("res/png/residence/panels.png");
+            bigHouse = ResourceLoader.loadBufferedImage("res/png/residence/panel.png");
+            bigHouses = ResourceLoader.loadBufferedImage("res/png/residence/panels.png");
             silverR = ResourceLoader.loadBufferedImage("res/png/residence/silverR.png");
             //road
             roadES = ResourceLoader.loadBufferedImage("res/png/road/roadES.png");
@@ -88,15 +88,15 @@ public class Assets {
             roadSW = ResourceLoader.loadBufferedImage("res/png/road/roadSW.png");
             roadWNE = ResourceLoader.loadBufferedImage("res/png/road/roadWNE.png");
             roadWN = ResourceLoader.loadBufferedImage("res/png/road/roadWN.png");
-            bigShop = ResourceLoader.loadBufferedImage("res/png/service/bigShop.png");
-            bigShops = ResourceLoader.loadBufferedImage("res/png/service/bigShops.png");
             //Service
+            bigShop = ResourceLoader.loadBufferedImage("res/png/service/BIGSHOP2.png");
+            bigShops = ResourceLoader.loadBufferedImage("res/png/service/BIGSHOPS2.png");
             copperS = ResourceLoader.loadBufferedImage("res/png/service/copperS.png");
             goldS = ResourceLoader.loadBufferedImage("res/png/service/goldS.png");
-            mall = ResourceLoader.loadBufferedImage("res/png/service/mall.png");
-            malls = ResourceLoader.loadBufferedImage("res/png/service/malls.png");
-            shop = ResourceLoader.loadBufferedImage("res/png/service/shop.png");
-            shops = ResourceLoader.loadBufferedImage("res/png/service/shops.png");
+            mall = ResourceLoader.loadBufferedImage("res/png/service/malls2.png");
+            malls = ResourceLoader.loadBufferedImage("res/png/service/mall2.png");
+            shop = ResourceLoader.loadBufferedImage("res/png/service/newshop.jpg");
+            shops = ResourceLoader.loadBufferedImage("res/png/service/newshops.jpg");
             silverS = ResourceLoader.loadBufferedImage("res/png/service/silverS.png");
         } catch (IOException e) {
         }
