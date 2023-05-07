@@ -1338,6 +1338,8 @@ public class Engine {
                 expenses -= Math.floor(30*ratio);
             } else if (zone instanceof Stadium) {
                 expenses -= Math.floor(40*ratio);
+            } else if (zone instanceof Road) {
+                expenses -= Math.floor(5*ratio);
             }
         }
         
