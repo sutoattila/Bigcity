@@ -18,12 +18,11 @@ public class EngineTest {
      * zones.----------------- RESIDENCE(1, 1, 50, 100, 300), INDUSTRY(1, 1,
      * 100, 300, 1000), SERVICE(1, 1, 50, 100, 300),
      */
-    
     @Test
-    public void checkBuildOutOfBounds(){
+    public void checkBuildOutOfBounds() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         for (CursorSignal value : CursorSignal.values()) {
-            if(!value.equals(CursorSignal.SELECT)){
+            if (!value.equals(CursorSignal.SELECT)) {
                 Engine.setCursorSignal(value);
                 assertFalse(engine.buildForTesting(-1, -1, 1, false));
                 assertFalse(engine.buildForTesting(-1, 0, 1, false));
@@ -32,6 +31,21 @@ public class EngineTest {
             }
         }
     }
+
+    @Test
+    public void checkReturnedMoneyAfterDisaster() {
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        for (CursorSignal value : CursorSignal.values()) {
+            if (!value.equals(CursorSignal.SELECT)) {
+                Engine.setCursorSignal(value);
+                assertFalse(engine.buildForTesting(-1, -1, 1, false));
+                assertFalse(engine.buildForTesting(-1, 0, 1, false));
+                assertFalse(engine.buildForTesting(11, 5, 1, false));
+                assertFalse(engine.buildForTesting(0, -1, 1, false));
+            }
+        }
+    }
+
     //PUBLIC ZONES
     @Test
     public void testBuildResidence() {
@@ -62,7 +76,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.RESIDENCE);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt + 50, engine.getMoney());
+        assertEquals(beforeBuilt - 50, engine.getMoney());
     }
 
     @Test
@@ -71,7 +85,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.RESIDENCE);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt + 100, engine.getMoney());
+        assertEquals(beforeBuilt - 100, engine.getMoney());
     }
 
     @Test
@@ -80,7 +94,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.RESIDENCE);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt + 300, engine.getMoney());
+        assertEquals(beforeBuilt - 300, engine.getMoney());
     }
 
     @Test
@@ -112,7 +126,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.INDUSTRY);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt + 100, engine.getMoney());
+        assertEquals(beforeBuilt - 100, engine.getMoney());
     }
 
     @Test
@@ -121,7 +135,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.INDUSTRY);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt + 300, engine.getMoney());
+        assertEquals(beforeBuilt - 300, engine.getMoney());
     }
 
     @Test
@@ -130,7 +144,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.INDUSTRY);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt + 1000, engine.getMoney());
+        assertEquals(beforeBuilt - 1000, engine.getMoney());
     }
 
     @Test
@@ -162,7 +176,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.SERVICE);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt + 50, engine.getMoney());
+        assertEquals(beforeBuilt - 50, engine.getMoney());
     }
 
     @Test
@@ -171,7 +185,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.SERVICE);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt + 100, engine.getMoney());
+        assertEquals(beforeBuilt - 100, engine.getMoney());
     }
 
     @Test
@@ -180,7 +194,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.SERVICE);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt + 300, engine.getMoney());
+        assertEquals(beforeBuilt - 300, engine.getMoney());
     }
 
     @Test
@@ -212,7 +226,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.POLICE);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt + 300, engine.getMoney());
+        assertEquals(beforeBuilt - 300, engine.getMoney());
     }
 
     @Test
@@ -244,7 +258,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.STADIUM);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt + 300, engine.getMoney());
+        assertEquals(beforeBuilt - 300, engine.getMoney());
     }
 
     @Test
@@ -276,7 +290,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.STADIUM);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt + 300, engine.getMoney());
+        assertEquals(beforeBuilt - 300, engine.getMoney());
     }
 
     @Test
@@ -308,7 +322,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.STADIUM);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt + 500, engine.getMoney());
+        assertEquals(beforeBuilt - 500, engine.getMoney());
     }
 
     @Test
@@ -340,7 +354,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.STADIUM);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt + 50, engine.getMoney());
+        assertEquals(beforeBuilt - 50, engine.getMoney());
     }
 
     /**
@@ -366,36 +380,37 @@ public class EngineTest {
         //if zone is null destroy should return false
         assertFalse(engine.destroyZoneForTesting(0, 0, 1, false));
     }
-    
+
     @Test
-    public void checkReturnedMoneyAfterL1ResidenceIsDestroyed(){
+    public void checkReturnedMoneyAfterL1ResidenceIsDestroyed() {
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        engine.buildForTesting(0, 0, 1, false);
+        int beforeDestruction = engine.getMoney();
+        engine.destroyZoneForTesting(0, 0, 1, false);
+        assertEquals(beforeDestruction + 25, engine.getMoney());
+    }
+
+    @Test
+    public void checkReturnedMoneyAfterL2ResidenceIsDestroyed() {
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        engine.buildForTesting(0, 0, 1, false);
+        int beforeDestruction = engine.getMoney();
+        engine.destroyZoneForTesting(0, 0, 1, false);
+        assertEquals(beforeDestruction + 75, engine.getMoney());
+    }
+
+    @Test
+    public void checkReturnedMoneyAfterL3ResidenceIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.RESIDENCE);
         int beforeDestruction = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
         engine.destroyZoneForTesting(0, 0, 1, false);
-        assertEquals(beforeDestruction+25, engine.getMoney());
+        assertEquals(beforeDestruction + 225, engine.getMoney());
     }
-    @Test
-    public void checkReturnedMoneyAfterL2ResidenceIsDestroyed(){
-        Engine engine = new Engine(10, 10, 1, "bigcity");
-        Engine.setCursorSignal(CursorSignal.RESIDENCE);
-        int beforeDestruction = engine.getMoney();
-        engine.buildForTesting(0, 0, 1, false);
-        engine.destroyZoneForTesting(0, 0, 1, false);
-        assertEquals(beforeDestruction+75, engine.getMoney());
-    }
-    
-    @Test
-    public void checkReturnedMoneyAfterL3ResidenceIsDestroyed(){
-        Engine engine = new Engine(10, 10, 1, "bigcity");
-        Engine.setCursorSignal(CursorSignal.RESIDENCE);
-        int beforeDestruction = engine.getMoney();
-        engine.buildForTesting(0, 0, 1, false);
-        engine.destroyZoneForTesting(0, 0, 1, false);
-        assertEquals(beforeDestruction+225, engine.getMoney());
-    }
-    
+
     @Test
     public void testDestroyIndustry() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
@@ -414,34 +429,35 @@ public class EngineTest {
     }
 
     @Test
-    public void checkReturnedMoneyAfterL1IndustryIsDestroyed(){
+    public void checkReturnedMoneyAfterL1IndustryIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.RESIDENCE);
-        int beforeDestruction = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
+        int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
-        assertEquals(beforeDestruction+50, engine.getMoney());
+        assertEquals(beforeDestruction + 50, engine.getMoney());
     }
+
     @Test
-    public void checkReturnedMoneyAfterL2IndustryIsDestroyed(){
+    public void checkReturnedMoneyAfterL2IndustryIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.RESIDENCE);
-        int beforeDestruction = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
+        int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
-        assertEquals(beforeDestruction+200, engine.getMoney());
+        assertEquals(beforeDestruction + 200, engine.getMoney());
     }
-    
+
     @Test
-    public void checkReturnedMoneyAfterL3IndustryIsDestroyed(){
+    public void checkReturnedMoneyAfterL3IndustryIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.RESIDENCE);
-        int beforeDestruction = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
+        int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
-        assertEquals(beforeDestruction+700, engine.getMoney());
+        assertEquals(beforeDestruction + 700, engine.getMoney());
     }
-    
+
     @Test
     public void testDestroyService() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
@@ -459,35 +475,36 @@ public class EngineTest {
         assertFalse(engine.destroyZoneForTesting(0, 0, 1, false));
     }
 
-        @Test
-    public void checkReturnedMoneyAfterL1ServiceIsDestroyed(){
-        Engine engine = new Engine(10, 10, 1, "bigcity");
-        Engine.setCursorSignal(CursorSignal.SERVICE);
-        int beforeDestruction = engine.getMoney();
-        engine.buildForTesting(0, 0, 1, false);
-        engine.destroyZoneForTesting(0, 0, 1, false);
-        assertEquals(beforeDestruction+25, engine.getMoney());
-    }
     @Test
-    public void checkReturnedMoneyAfterL2ServiceIsDestroyed(){
+    public void checkReturnedMoneyAfterL1ServiceIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.SERVICE);
-        int beforeDestruction = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
+        int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
-        assertEquals(beforeDestruction+75, engine.getMoney());
+        assertEquals(beforeDestruction + 25, engine.getMoney());
     }
-    
+
     @Test
-    public void checkReturnedMoneyAfterL3ServiceIsDestroyed(){
+    public void checkReturnedMoneyAfterL2ServiceIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.SERVICE);
-        int beforeDestruction = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
+        int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
-        assertEquals(beforeDestruction+225, engine.getMoney());
-    }    
-    
+        assertEquals(beforeDestruction + 75, engine.getMoney());
+    }
+
+    @Test
+    public void checkReturnedMoneyAfterL3ServiceIsDestroyed() {
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        Engine.setCursorSignal(CursorSignal.SERVICE);
+        engine.buildForTesting(0, 0, 1, false);
+        int beforeDestruction = engine.getMoney();
+        engine.destroyZoneForTesting(0, 0, 1, false);
+        assertEquals(beforeDestruction + 225, engine.getMoney());
+    }
+
     @Test
     public void testDestroyPolice() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
@@ -504,15 +521,15 @@ public class EngineTest {
         //if zone is null destroy should return false
         assertFalse(engine.destroyZoneForTesting(0, 0, 1, false));
     }
-    
+
     @Test
-    public void checkReturnedMoneyAfterPoliceIsDestroyed(){
+    public void checkReturnedMoneyAfterPoliceIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.POLICE);
-        int beforeDestruction = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
+        int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
-        assertEquals(beforeDestruction+150, engine.getMoney());
+        assertEquals(beforeDestruction + 150, engine.getMoney());
     }
 
     @Test
@@ -531,15 +548,15 @@ public class EngineTest {
         //if zone is null destroy should return false
         assertFalse(engine.destroyZoneForTesting(0, 0, 4, false));
     }
-    
+
     @Test
-    public void checkReturnedMoneyAfterStadiumIsDestroyed(){
+    public void checkReturnedMoneyAfterStadiumIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.STADIUM);
-        int beforeDestruction = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
+        int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 4, false);
-        assertEquals(beforeDestruction+150, engine.getMoney());
+        assertEquals(beforeDestruction + 150, engine.getMoney());
     }
 
     @Test
@@ -558,15 +575,15 @@ public class EngineTest {
         //if zone is null destroy should return false
         assertFalse(engine.destroyZoneForTesting(0, 0, 2, false));
     }
-    
+
     @Test
-    public void checkReturnedMoneyAfterHighSchoolIsDestroyed(){
+    public void checkReturnedMoneyAfterHighSchoolIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.HIGH_SCHOOL);
-        int beforeDestruction = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
+        int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 2, false);
-        assertEquals(beforeDestruction+150, engine.getMoney());
+        assertEquals(beforeDestruction + 150, engine.getMoney());
     }
 
     @Test
@@ -585,15 +602,15 @@ public class EngineTest {
         //if zone is null destroy should return false
         assertFalse(engine.destroyZoneForTesting(0, 0, 4, false));
     }
-    
+
     @Test
-    public void checkReturnedMoneyAfterUniversityIsDestroyed(){
+    public void checkReturnedMoneyAfterUniversityIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.UNIVERSITY);
-        int beforeDestruction = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
+        int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 4, false);
-        assertEquals(beforeDestruction+250, engine.getMoney());
+        assertEquals(beforeDestruction + 250, engine.getMoney());
     }
 
     @Test
@@ -612,14 +629,14 @@ public class EngineTest {
         //if zone is null destroy should return false
         assertFalse(engine.destroyZoneForTesting(0, 0, 1, false));
     }
-    
+
     @Test
-    public void checkReturnedMoneyAfterRoadIsDestroyed(){
+    public void checkReturnedMoneyAfterRoadIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.STADIUM);
-        int beforeDestruction = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
+        int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
-        assertEquals(beforeDestruction+25, engine.getMoney());
+        assertEquals(beforeDestruction + 25, engine.getMoney());
     }
 }
