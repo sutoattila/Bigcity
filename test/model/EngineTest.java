@@ -186,7 +186,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.SERVICE);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt - 100, engine.getMoney());
+        assertEquals(beforeBuilt - 75, engine.getMoney());
     }
 
     @Test
@@ -195,7 +195,7 @@ public class EngineTest {
         Engine.setCursorSignal(CursorSignal.SERVICE);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt - 300, engine.getMoney());
+        assertEquals(beforeBuilt - 225, engine.getMoney());
     }
 
     @Test
@@ -397,6 +397,7 @@ public class EngineTest {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.RESIDENCE);
         engine.buildForTesting(0, 0, 1, false);
+        engine.getCell(0, 0).setLevel(2);
         int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
         assertEquals(beforeDestruction + 75, engine.getMoney());
@@ -406,8 +407,9 @@ public class EngineTest {
     public void checkReturnedMoneyAfterL3ResidenceIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.RESIDENCE);
-        int beforeDestruction = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
+        engine.getCell(0, 0).setLevel(3);
+        int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
         assertEquals(beforeDestruction + 225, engine.getMoney());
     }
