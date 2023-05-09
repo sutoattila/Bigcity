@@ -35,6 +35,7 @@ public class EngineTest {
     @Test
     public void checkReturnedMoneyAfterDisaster() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
+        int beforeDestruction = engine.getMoney();
         for (CursorSignal value : CursorSignal.values()) {
             if (!value.equals(CursorSignal.SELECT)) {
                 Engine.setCursorSignal(value);
@@ -351,7 +352,7 @@ public class EngineTest {
     @Test
     public void checkMoneyAfterRoadIsBuilt() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
-        Engine.setCursorSignal(CursorSignal.STADIUM);
+        Engine.setCursorSignal(CursorSignal.ROAD);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
         assertEquals(beforeBuilt - 50, engine.getMoney());
@@ -431,7 +432,7 @@ public class EngineTest {
     @Test
     public void checkReturnedMoneyAfterL1IndustryIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
-        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        Engine.setCursorSignal(CursorSignal.INDUSTRY);
         engine.buildForTesting(0, 0, 1, false);
         int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
@@ -441,7 +442,7 @@ public class EngineTest {
     @Test
     public void checkReturnedMoneyAfterL2IndustryIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
-        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        Engine.setCursorSignal(CursorSignal.INDUSTRY);
         engine.buildForTesting(0, 0, 1, false);
         int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
@@ -451,7 +452,7 @@ public class EngineTest {
     @Test
     public void checkReturnedMoneyAfterL3IndustryIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
-        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        Engine.setCursorSignal(CursorSignal.INDUSTRY);
         engine.buildForTesting(0, 0, 1, false);
         int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
@@ -509,7 +510,7 @@ public class EngineTest {
     public void testDestroyPolice() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         //if zone is a residence
-        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        Engine.setCursorSignal(CursorSignal.POLICE);
         engine.buildForTesting(0, 0, 1, false);
         //destroy should return true
         assertTrue(engine.destroyZoneForTesting(0, 0, 1, false));
@@ -536,7 +537,7 @@ public class EngineTest {
     public void testDestroyStadium() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         //if zone is a residence
-        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        Engine.setCursorSignal(CursorSignal.STADIUM);
         engine.buildForTesting(0, 0, 4, false);
         //destroy should return true
         assertTrue(engine.destroyZoneForTesting(0, 0, 4, false));
@@ -563,7 +564,7 @@ public class EngineTest {
     public void testDestroyHighSchool() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         //if zone is a residence
-        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        Engine.setCursorSignal(CursorSignal.HIGH_SCHOOL);
         engine.buildForTesting(0, 0, 2, false);
         //destroy should return true
         assertTrue(engine.destroyZoneForTesting(0, 0, 2, false));
@@ -590,7 +591,7 @@ public class EngineTest {
     public void testDestroyUniversity() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         //if zone is a residence
-        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        Engine.setCursorSignal(CursorSignal.UNIVERSITY);
         engine.buildForTesting(0, 0, 4, false);
         //destroy should return true
         assertTrue(engine.destroyZoneForTesting(0, 0, 4, false));
@@ -617,7 +618,7 @@ public class EngineTest {
     public void testDestroyRoad() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         //if zone is a residence
-        Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        Engine.setCursorSignal(CursorSignal.ROAD);
         engine.buildForTesting(0, 0, 1, false);
         //destroy should return true
         assertTrue(engine.destroyZoneForTesting(0, 0, 1, false));
@@ -633,7 +634,7 @@ public class EngineTest {
     @Test
     public void checkReturnedMoneyAfterRoadIsDestroyed() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
-        Engine.setCursorSignal(CursorSignal.STADIUM);
+        Engine.setCursorSignal(CursorSignal.ROAD);
         engine.buildForTesting(0, 0, 1, false);
         int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
