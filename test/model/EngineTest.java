@@ -446,6 +446,7 @@ public class EngineTest {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.INDUSTRY);
         engine.buildForTesting(0, 0, 1, false);
+        engine.getCell(0, 0).setLevel(2);
         int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
         assertEquals(beforeDestruction + 200, engine.getMoney());
@@ -456,6 +457,7 @@ public class EngineTest {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.INDUSTRY);
         engine.buildForTesting(0, 0, 1, false);
+        engine.getCell(0, 0).setLevel(3);
         int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
         assertEquals(beforeDestruction + 700, engine.getMoney());
@@ -493,6 +495,7 @@ public class EngineTest {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.SERVICE);
         engine.buildForTesting(0, 0, 1, false);
+        engine.getCell(0, 0).setLevel(2);
         int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
         assertEquals(beforeDestruction + 75, engine.getMoney());
@@ -503,6 +506,7 @@ public class EngineTest {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.SERVICE);
         engine.buildForTesting(0, 0, 1, false);
+        engine.getCell(0, 0).setLevel(3);
         int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
         assertEquals(beforeDestruction + 225, engine.getMoney());
