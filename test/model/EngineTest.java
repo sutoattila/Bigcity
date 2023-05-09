@@ -84,6 +84,7 @@ public class EngineTest {
     public void checkMoneyAfterL2ResidenceIsBuilt() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        engine.getCell(0, 0).setLevel(2);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
         assertEquals(beforeBuilt - 100, engine.getMoney());
@@ -93,6 +94,7 @@ public class EngineTest {
     public void checkMoneyAfterL3ResidenceIsBuilt() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.RESIDENCE);
+        engine.getCell(0, 0).setLevel(3);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
         assertEquals(beforeBuilt - 300, engine.getMoney());
@@ -134,6 +136,7 @@ public class EngineTest {
     public void checkMoneyAfterL2IndustryIsBuilt() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.INDUSTRY);
+        engine.getCell(0, 0).setLevel(2);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
         assertEquals(beforeBuilt - 300, engine.getMoney());
@@ -143,6 +146,7 @@ public class EngineTest {
     public void checkMoneyAfterL3IndustryIsBuilt() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.INDUSTRY);
+        engine.getCell(0, 0).setLevel(3);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
         assertEquals(beforeBuilt - 1000, engine.getMoney());
@@ -184,6 +188,7 @@ public class EngineTest {
     public void checkMoneyAfterL2ServiceIsBuilt() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.SERVICE);
+        engine.getCell(0, 0).setLevel(2);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
         assertEquals(beforeBuilt - 75, engine.getMoney());
@@ -193,6 +198,7 @@ public class EngineTest {
     public void checkMoneyAfterL3ServiceIsBuilt() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.SERVICE);
+        engine.getCell(0, 0).setLevel(3);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
         assertEquals(beforeBuilt - 225, engine.getMoney());
@@ -320,9 +326,9 @@ public class EngineTest {
     @Test
     public void checkMoneyAfterUniversityIsBuilt() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
-        Engine.setCursorSignal(CursorSignal.STADIUM);
+        Engine.setCursorSignal(CursorSignal.UNIVERSITY);
         int beforeBuilt = engine.getMoney();
-        engine.buildForTesting(0, 0, 1, false);
+        engine.buildForTesting(0, 0, 4, false);
         assertEquals(beforeBuilt - 500, engine.getMoney());
     }
 
