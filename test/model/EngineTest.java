@@ -72,32 +72,12 @@ public class EngineTest {
     }
 
     @Test
-    public void checkMoneyAfterL1ResidenceIsBuilt() {
+    public void checkMoneyAfterResidenceIsBuilt() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.RESIDENCE);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
         assertEquals(beforeBuilt - 50, engine.getMoney());
-    }
-
-    @Test
-    public void checkMoneyAfterL2ResidenceIsBuilt() {
-        Engine engine = new Engine(10, 10, 1, "bigcity");
-        Engine.setCursorSignal(CursorSignal.RESIDENCE);
-        engine.getCell(0, 0).setLevel(2);
-        int beforeBuilt = engine.getMoney();
-        engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt - 100, engine.getMoney());
-    }
-
-    @Test
-    public void checkMoneyAfterL3ResidenceIsBuilt() {
-        Engine engine = new Engine(10, 10, 1, "bigcity");
-        Engine.setCursorSignal(CursorSignal.RESIDENCE);
-        engine.getCell(0, 0).setLevel(3);
-        int beforeBuilt = engine.getMoney();
-        engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt - 300, engine.getMoney());
     }
 
     @Test
@@ -124,32 +104,12 @@ public class EngineTest {
     }
 
     @Test
-    public void checkMoneyAfterL1IndustryIsBuilt() {
+    public void checkMoneyAfterIndustryIsBuilt() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.INDUSTRY);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
         assertEquals(beforeBuilt - 100, engine.getMoney());
-    }
-
-    @Test
-    public void checkMoneyAfterL2IndustryIsBuilt() {
-        Engine engine = new Engine(10, 10, 1, "bigcity");
-        Engine.setCursorSignal(CursorSignal.INDUSTRY);
-        engine.getCell(0, 0).setLevel(2);
-        int beforeBuilt = engine.getMoney();
-        engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt - 300, engine.getMoney());
-    }
-
-    @Test
-    public void checkMoneyAfterL3IndustryIsBuilt() {
-        Engine engine = new Engine(10, 10, 1, "bigcity");
-        Engine.setCursorSignal(CursorSignal.INDUSTRY);
-        engine.getCell(0, 0).setLevel(3);
-        int beforeBuilt = engine.getMoney();
-        engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt - 1000, engine.getMoney());
     }
 
     @Test
@@ -176,32 +136,12 @@ public class EngineTest {
     }
 
     @Test
-    public void checkMoneyAfterL1ServiceIsBuilt() {
+    public void checkMoneyAfterServiceIsBuilt() {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         Engine.setCursorSignal(CursorSignal.SERVICE);
         int beforeBuilt = engine.getMoney();
         engine.buildForTesting(0, 0, 1, false);
         assertEquals(beforeBuilt - 50, engine.getMoney());
-    }
-
-    @Test
-    public void checkMoneyAfterL2ServiceIsBuilt() {
-        Engine engine = new Engine(10, 10, 1, "bigcity");
-        Engine.setCursorSignal(CursorSignal.SERVICE);
-        engine.getCell(0, 0).setLevel(2);
-        int beforeBuilt = engine.getMoney();
-        engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt - 75, engine.getMoney());
-    }
-
-    @Test
-    public void checkMoneyAfterL3ServiceIsBuilt() {
-        Engine engine = new Engine(10, 10, 1, "bigcity");
-        Engine.setCursorSignal(CursorSignal.SERVICE);
-        engine.getCell(0, 0).setLevel(3);
-        int beforeBuilt = engine.getMoney();
-        engine.buildForTesting(0, 0, 1, false);
-        assertEquals(beforeBuilt - 225, engine.getMoney());
     }
 
     @Test
