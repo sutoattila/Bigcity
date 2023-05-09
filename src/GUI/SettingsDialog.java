@@ -120,9 +120,10 @@ public class SettingsDialog extends JDialog implements ChangeListener{
     private int calculateIncome() {
         int yearlyIncome = 0;
         for (Person p : frame.getEngine().getResidents()) {
-            yearlyIncome += (double) (182.5 * slider.getValue()) / 100 * p.getEducationLevel().getLevel();
+            yearlyIncome += (double) (73 * slider.getValue()) / 100 * p.getEducationLevel().getLevel();
+            //              (double) (      * taxPercentage)     / 100 * p.getEducationLevel().getLevel();
             if (null != p.getJob()) {
-                yearlyIncome += (double) (255.5 * slider.getValue()) / 100 * p.getEducationLevel().getLevel();
+                yearlyIncome += (double) (109.5 * slider.getValue()) / 100 * p.getEducationLevel().getLevel();
             }
         }
         return yearlyIncome;
