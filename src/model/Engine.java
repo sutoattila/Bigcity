@@ -1869,6 +1869,10 @@ public class Engine {
     public void setDate(String date) {
         this.date = date;
     }
+    
+    public void setResidents(ArrayList<Person> residents){
+        this.residents=residents;
+    }
 
     public void setTaxPercentage(int taxPercentage) {
         this.taxPercentage = taxPercentage;
@@ -2048,7 +2052,23 @@ public class Engine {
     public int getFieldsize() {
         return fieldSize;
     }
+    
+    public int getDaysPassedWithoutDisaster(){
+        return daysPassedWithoutDisaster;
+    }
 
+    public double getDisasterChance(){
+        return disasterChance;
+    }
+    
+    public void setDaysPassedWithoutDisaster(int daysPassedWithoutDisaster){
+        this.daysPassedWithoutDisaster=daysPassedWithoutDisaster;
+    }
+    
+    public void setDisasterChance(double disasterChance){
+        this.disasterChance=disasterChance;
+    }
+    
     public List<Zone> getBuildingsList() {
         return buildings;
     }

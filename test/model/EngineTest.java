@@ -1,5 +1,6 @@
 package model;
 
+import bigcity.Person;
 import bigcity.Residence;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
@@ -8,8 +9,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import model.Engine;
+import model.CitizenGenerator;
 
 public class EngineTest {
+    
+    @Test
+    public void checkAreaInsideGridAndFree(){
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        assertTrue(engine.areaInsideGridAndFree(0, 0, 0, 0));
+        assertFalse(engine.areaInsideGridAndFree(-1, 0, 0, 0));
+    }
 
     /**
      * Test of build method, of class Engine. //Private zones.----------------
@@ -591,5 +600,46 @@ public class EngineTest {
         int beforeDestruction = engine.getMoney();
         engine.destroyZoneForTesting(0, 0, 1, false);
         assertEquals(beforeDestruction + 25, engine.getMoney());
+    }
+    
+    @Test 
+    public void checkAddMoney(){
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        int beforeMoneyAddition=engine.getMoney();
+        engine.addMoney(100);
+        assertEquals(engine.getMoney(), beforeMoneyAddition+100);
+    }
+    
+    @Test 
+    public void checkCalculateHappinessWhenCityIsNotEmpty(){
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        ArrayList<Person> residents= new ArrayList<Person>();
+        CitizenGenerator c = new CitizenGenerator();
+        Person p1 = c.createCitizen();
+        p1.setHappiness(50);
+        residents.add(p1);
+        Person p2 = c.createCitizen();//default happiness is 100
+        residents.add(p2);
+        engine.setResidents(residents);
+        assertEquals(engine.calculateHappieness(), 75.0);
+    }
+    
+    @Test
+    public void checkCalculateHappinessWhenCityIsEmpty(){
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        assertEquals(engine.calculateHappieness(), 100.0);
+    }
+    
+    @Test
+    public void checkMakeDisaster(){
+        Engine engine = new Engine(10, 10, 1, "bigcity");
+        engine.setDaysPassedWithoutDisaster(100);
+        engine.setDisasterChance(2.0);
+        engine.makeDisaster();
+        assertEquals(0, engine.getDaysPassedWithoutDisaster());
+        assertEquals(1.0, engine.getDisasterChance());
+        engine.setDisasterChance(0.0);
+        engine.makeDisaster();
+        assertEquals(0.0, engine.getDisasterChance());
     }
 }
