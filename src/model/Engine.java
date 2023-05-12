@@ -532,6 +532,8 @@ public class Engine {
         int zoneLevel = 1;
         CursorSignal type;
 
+        boolean approvedConflictualDestruction = false;
+
         if (target instanceof Residence tmp) {
             zoneLevel = tmp.getLevel();
             type = CursorSignal.RESIDENCE;
@@ -546,6 +548,7 @@ public class Engine {
                     //System.out.println("Approved");
                     tmp.getResidents().forEach(person
                             -> person.changeHappinessBy(-1));
+                    approvedConflictualDestruction = true;
                 } else {
                     //System.out.println("Canceled");
                     return false;
@@ -565,6 +568,7 @@ public class Engine {
                     //System.out.println("Approved");
                     tmp.getWorkers().forEach(person
                             -> person.changeHappinessBy(-1));
+                    approvedConflictualDestruction = true;
                 } else {
                     //System.out.println("Canceled");
                     return false;
@@ -584,6 +588,7 @@ public class Engine {
                     //System.out.println("Approved");
                     tmp.getWorkers().forEach(person
                             -> person.changeHappinessBy(-1));
+                    approvedConflictualDestruction = true;
                 } else {
                     //System.out.println("Canceled");
                     return false;
@@ -608,6 +613,7 @@ public class Engine {
                     //System.out.println("Approved");
                     angryPeople.forEach(person
                             -> person.changeHappinessBy(-1));
+                    approvedConflictualDestruction = true;
                 } else {
                     //System.out.println("Canceled");
                     return false;
@@ -644,11 +650,18 @@ public class Engine {
             refreshRoadImgsAround(argRow, argColumn);
         }
 
-        if (!disasterHappened) {
+        if (!disasterHappened && !approvedConflictualDestruction) {
             int returnMoney = type.getPriceL1()
                     + (zoneLevel > 1 ? type.getPriceL2() : 0)
                     + (zoneLevel > 2 ? type.getPriceL3() : 0);
             addMoney(returnMoney / 2);
+
+        }
+        if (approvedConflictualDestruction) {
+            int compensationMoney = type.getPriceL1()
+                    + (zoneLevel > 1 ? type.getPriceL2() : 0)
+                    + (zoneLevel > 2 ? type.getPriceL3() : 0);
+            addMoney(-1 * compensationMoney / 2);
         }
 
         moveEveryOne();
