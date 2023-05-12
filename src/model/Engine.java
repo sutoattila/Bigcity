@@ -77,6 +77,10 @@ public class Engine {
     private int industryWorkersCount = 0;
     private int serviceWorkersCount = 0;
 
+    private int yearsWithNegativeBudgetCount = 0;
+    private int negativeBudgetStartYear = 0;
+    private int negativeBudgetCurrentYear = 0;
+
     public Engine(int width, int height, int fieldSize, BigCityJframe bigCityJframe) {
         this.width = width;
         this.height = height;
@@ -1590,7 +1594,33 @@ public class Engine {
 
         //Negative budget decrease the happiness.
         if (money < 0) {
-            residents.forEach(person -> person.changeHappinessBy(-1 * ratio));          // MATE'S JOB
+
+            Date currentDate = new Date(0);
+            currentDate.setTime(bigCityJframe.getDate());
+            Calendar c = Calendar.getInstance();
+            c.setTime(currentDate);
+            negativeBudgetCurrentYear = c.get(Calendar.YEAR);
+            //System.out.println(negativeBudgetCurrentYear);
+            if (0 == negativeBudgetStartYear) {
+                negativeBudgetStartYear = negativeBudgetCurrentYear;
+            }
+            int yearsWithNegativeBudgetCount = negativeBudgetCurrentYear
+                    - negativeBudgetStartYear;
+            if (0 == yearsWithNegativeBudgetCount) {
+                yearsWithNegativeBudgetCount = 1;
+            }
+            int happinessChange = -1 + money / 1000;
+
+            for (Person resident : residents) {
+                resident.changeHappinessBy(
+                        yearsWithNegativeBudgetCount
+                        * happinessChange
+                        * ratio);
+
+            }
+        } else {
+            yearsWithNegativeBudgetCount = 0;
+            negativeBudgetStartYear = 0;
         }
 
         //Happiness change according tax rate.

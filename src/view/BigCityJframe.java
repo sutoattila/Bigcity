@@ -79,7 +79,7 @@ public class BigCityJframe extends JFrame {
         //exit options
         ImageIcon icon = new ImageIcon("GUI/house.png");
         setIconImage(icon.getImage());
-        
+
         timeSpeed = TimeSpeed.DAY;
         this.timer = new Timer(3000, (ActionEvent e) -> {
             if (!isStopped) {
@@ -376,7 +376,7 @@ public class BigCityJframe extends JFrame {
         refreshMoney();
         engine.dayPassed();
     }
-    
+
     public void daysPassed() {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -386,7 +386,7 @@ public class BigCityJframe extends JFrame {
         refreshMoney();
         engine.daysPassed();
     }
-    
+
     public void monthPassed() {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -394,18 +394,22 @@ public class BigCityJframe extends JFrame {
         c.add(Calendar.MONTH, 1);
         date = c.getTime();
         long after = date.getTime();
-        int daysDiff = (int)TimeUnit.DAYS.convert(after-before, TimeUnit.MILLISECONDS);
+        int daysDiff = (int) TimeUnit.DAYS.convert(after - before, TimeUnit.MILLISECONDS);
         refreshDate();
         refreshMoney();
         engine.monthPassed(daysDiff);
     }
-    
+
     public void timerTicked() {
         switch (timeSpeed) {
-            case DAY -> dayPassed();
-            case DAYS -> daysPassed();
-            case MONTH -> monthPassed();
-            default -> throw new AssertionError();
+            case DAY ->
+                dayPassed();
+            case DAYS ->
+                daysPassed();
+            case MONTH ->
+                monthPassed();
+            default ->
+                throw new AssertionError();
         }
     }
 
@@ -549,12 +553,12 @@ public class BigCityJframe extends JFrame {
         frame.isStopped = false;
         return frame;
     }
-    
-    public void stopTime () {
+
+    public void stopTime() {
         isStopped = true;
     }
-    
-    public void startTime () {
+
+    public void startTime() {
         isStopped = false;
     }
 }
