@@ -1481,9 +1481,9 @@ public class Engine {
         //[5,...[ -> -1*2^n where n=distance/5
         residents.forEach(resident -> {
             if (null == resident.getJob()) {
-                resident.changeHappinessBy(-1 * ratio);                                 // MATE'S JOB
+                resident.changeHappinessBy(-1 * ratio);                                 
             } else {
-                resident.changeHappinessBy(1 * ratio);                                  // MATE'S JOB
+                resident.changeHappinessBy(1 * ratio);                                  
                 //distance between house and workplace:
                 //  (distance/5==0) [0;4]-> +1,
                 //  [5,...[ -> -1*2^n where n=distance/5
@@ -1492,7 +1492,7 @@ public class Engine {
                         ? 1
                         : -1 * (int) Math.pow(2,
                                 resident.getHomeJobDistance() / 5);
-                resident.changeHappinessBy(happinessChangeAccordingDistance * ratio);     // MATE'S JOB
+                resident.changeHappinessBy(happinessChangeAccordingDistance * ratio);     
             }
         });
         //Find all industries and stadiums. Change happiness inside the range.
@@ -1505,12 +1505,12 @@ public class Engine {
                                 if (zone instanceof Residence residence) {
                                     residence.getResidents().forEach(
                                             resident -> {
-                                                resident.changeHappinessBy(-1 * ratio); // MATE'S JOB
+                                                resident.changeHappinessBy(-1 * ratio); 
                                             });
                                 } else if (zone instanceof Workplace workplace) {
                                     workplace.getWorkers().forEach(
                                             worker -> {
-                                                worker.changeHappinessBy(-1 * ratio);   // MATE'S JOB
+                                                worker.changeHappinessBy(-1 * ratio);  
                                             });
                                 }
                             }
@@ -1526,12 +1526,12 @@ public class Engine {
                             if (zone instanceof Residence residence) {
                                 residence.getResidents().forEach(
                                         resident -> {
-                                            resident.changeHappinessBy(4 * ratio);      // MATE'S JOB
+                                            resident.changeHappinessBy(4 * ratio);  
                                         });
                             } else if (zone instanceof Workplace workplace) {
                                 workplace.getWorkers().forEach(
                                         worker -> {
-                                            worker.changeHappinessBy(4 * ratio);        // MATE'S JOB
+                                            worker.changeHappinessBy(4 * ratio);     
                                         });
                             }
                         }
@@ -1589,13 +1589,13 @@ public class Engine {
                 if (zone instanceof Residence residence) {
                     residence.getResidents().forEach(resident -> {
                         if (residence.getCapacity() == residence.getSize()) {
-                            resident.changeHappinessBy(-4 * ratio);                     // MATE'S JOB
+                            resident.changeHappinessBy(-4 * ratio);             
                         }
                     });
                 } else if (zone instanceof Workplace workplace) {
                     workplace.getWorkers().forEach(worker -> {
                         if (workplace.getCapacity() == workplace.getSize()) {
-                            worker.changeHappinessBy(-4 * ratio);                       // MATE'S JOB
+                            worker.changeHappinessBy(-4 * ratio);                    
                         }
                     });
                 }
@@ -1638,7 +1638,7 @@ public class Engine {
         //System.out.println(-1 * happinessChangeAccordingTaxRate);
         if (0 != taxPercentage) {
             residents.forEach(person -> person
-                    .changeHappinessBy(-1 * happinessChangeAccordingTaxRate * ratio));  // MATE'S JOB
+                    .changeHappinessBy(-1 * happinessChangeAccordingTaxRate * ratio)); 
         }
 
         //Big difference between industry and service workers causes negative 
@@ -1658,7 +1658,7 @@ public class Engine {
                 numberOfIndustryWorkers - numberOfServiceWorkers)
                 / (numberOfIndustryWorkers + numberOfServiceWorkers)) {
             //System.out.println("The difference is greater than 50%.");
-            residents.forEach(resident -> resident.changeHappinessBy(-1 * ratio));      // MATE'S JOB
+            residents.forEach(resident -> resident.changeHappinessBy(-1 * ratio));    
         }/* else {
             System.out.println("The difference is less than 50%.");
         }*/
