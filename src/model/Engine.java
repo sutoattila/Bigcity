@@ -1094,7 +1094,14 @@ public class Engine {
 
         industryWorkersCount = 0;
         serviceWorkersCount = 0;
-
+        /*
+        for (ResidenceWorkplaceDistance distance : distances) {
+            System.out.println(
+                    "distance.getDistance(): " + distance.getDistance()
+                    + ", distance.getResidence(): " + distance.getResidence()
+                    + ", distance.getWorkplace(): " + distance.getWorkplace());
+        }
+         */
         //The new residents try to take the best places.
         residents.forEach(resident -> {
             residentTriesToMoveIn(resident, distances,
@@ -1119,7 +1126,9 @@ public class Engine {
             ArrayList<Residence> residencesWithNoWorkplace) {
         boolean movedIn = false;
         for (ResidenceWorkplaceDistance distance : distances) {
-
+            if (movedIn) {
+                break;
+            }
             //Find all industries and services with the same distance,
             //not those that are full.
             //The citizen will take the job according the industry/service 
@@ -1128,7 +1137,6 @@ public class Engine {
                     = new ArrayList<>();
             ArrayList<ResidenceWorkplaceDistance> servicesWithSameDistance
                     = new ArrayList<>();
-
             for (ResidenceWorkplaceDistance equalDistance : distances) {
                 if (distance.getDistance() == equalDistance.getDistance()) {
                     Residence residence = equalDistance.getResidence();
@@ -1235,6 +1243,8 @@ public class Engine {
                         break;
                     }
                 }
+            }
+            if (!movedIn) {
                 for (ResidenceWorkplaceDistance residenceWorkplaceDistance
                         : servicesWithSameDistance) {
                     Residence residence = residenceWorkplaceDistance
@@ -1579,13 +1589,13 @@ public class Engine {
                 if (zone instanceof Residence residence) {
                     residence.getResidents().forEach(resident -> {
                         if (residence.getCapacity() == residence.getSize()) {
-                            resident.changeHappinessBy(-3 * ratio);                     // MATE'S JOB
+                            resident.changeHappinessBy(-4 * ratio);                     // MATE'S JOB
                         }
                     });
                 } else if (zone instanceof Workplace workplace) {
                     workplace.getWorkers().forEach(worker -> {
                         if (workplace.getCapacity() == workplace.getSize()) {
-                            worker.changeHappinessBy(-3 * ratio);                       // MATE'S JOB
+                            worker.changeHappinessBy(-4 * ratio);                       // MATE'S JOB
                         }
                     });
                 }
