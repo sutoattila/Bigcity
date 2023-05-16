@@ -27,6 +27,16 @@ import rightPanel.XButton;
 import rightPanel.personsPanel.PersonsPanel;
 import view.BigCityJframe;
 import grid.Grid;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Image;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.border.EmptyBorder;
+import res.ResourceLoader;
 
 public class BuildingStatPanel extends JPanel {
 
@@ -35,6 +45,7 @@ public class BuildingStatPanel extends JPanel {
     protected boolean hasCitizens;
     protected BigCityJframe bigCityJFrame;
     protected Zone zone;
+    private JLabel textLabel;
     
     protected Grid grid;
     
@@ -134,13 +145,33 @@ public class BuildingStatPanel extends JPanel {
         add(bStat);
         add(Box.createRigidArea(new Dimension(0, 20)));
         JPanel upgradePanel = new JPanel();
-        JButton upgradeButton = new JButton("-");
+        JButton upgradeButton = new JButton();
+        upgradeButton.setLayout(new BoxLayout(upgradeButton, BoxLayout.X_AXIS));
+        upgradeButton.setPreferredSize(new Dimension(80,40));
+        int padding = 5;
+        int spaceWidth=10;
+        upgradeButton.setBorder(new EmptyBorder(padding, padding, padding, padding));
+               
+
+        textLabel = new JLabel("-");
+        //label.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        Image img = null;
+        try {
+            img = ResourceLoader.loadBufferedImage("GUI/update_arrow.png");
+        } catch (IOException ex) {
+            Logger.getLogger(BuildingStatPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        ImageIcon arrowIcon = new ImageIcon(img);
+        //upgradeButton.add(label);
+        JLabel imgLabel = new JLabel(arrowIcon);
+        imgLabel.setPreferredSize(new Dimension(40,40));
+        upgradeButton.add(imgLabel);
+        upgradePanel.add(Box.createHorizontalGlue());
+        upgradeButton.add(Box.createRigidArea(new Dimension(spaceWidth/2, 0)));
+        upgradeButton.add(textLabel);
         if (zone instanceof PrivateZone tmp) {
             if (tmp.getLevel() < 3) {
-                upgradeButton.setText("upgrade");
-            }
-            upgradeButton.addActionListener((ActionEvent e) -> {
-                if (tmp.getLevel() < 3) {
+                
                     int price;
                     if (tmp instanceof Residence) {
                         price = tmp.getLevel() == 1
@@ -155,11 +186,45 @@ public class BuildingStatPanel extends JPanel {
                                 ? CursorSignal.SERVICE.getPriceL2()
                                 : CursorSignal.SERVICE.getPriceL3();
                     }
+                    //tmp.upgrade();
+                    //bigCityJFrame.addMoney(-price);
+                
+                textLabel.setText(String.valueOf(price)+"$");
+            }
+            upgradeButton.addActionListener((ActionEvent e) -> {
+                if (tmp.getLevel() < 3) {
+                    int price;
+                    int nextPrice=0;
+                    if (tmp instanceof Residence) {
+                        if(tmp.getLevel() == 1){nextPrice=CursorSignal.RESIDENCE.getPriceL3();}
+                        //if(tmp.getLevel() == 2){nextPrice=CursorSignal.RESIDENCE.getPriceL3();}
+                        price = tmp.getLevel() == 1
+                                ? CursorSignal.RESIDENCE.getPriceL2()
+                                : CursorSignal.RESIDENCE.getPriceL3();
+                    } else if (tmp instanceof Industry) {
+                        if(tmp.getLevel() == 1){nextPrice=CursorSignal.INDUSTRY.getPriceL3();}
+                        //if(tmp.getLevel() == 2){nextPrice=CursorSignal.INDUSTRY.getPriceL3();}
+                        price = tmp.getLevel() == 1
+                                ? CursorSignal.INDUSTRY.getPriceL2()
+                                : CursorSignal.INDUSTRY.getPriceL3();
+                    } else {
+                        if(tmp.getLevel() == 1){nextPrice=CursorSignal.SERVICE.getPriceL3();}
+                        //if(tmp.getLevel() == 2){nextPrice=CursorSignal.SERVICE.getPriceL3();}
+                        price = tmp.getLevel() == 1
+                                ? CursorSignal.SERVICE.getPriceL2()
+                                : CursorSignal.SERVICE.getPriceL3();
+                    }
                     tmp.upgrade();
                     bigCityJFrame.addMoney(-price);
+                    
+                    textLabel.setText(String.valueOf(nextPrice)+"$");
+                    System.out.println(nextPrice);
+                    bigCityJFrame.validate();
+                    bigCityJFrame.repaint();
+                    bStat.updateStats();
                 }
                 if (tmp.getLevel() == 3) {
-                    upgradeButton.setText("-");
+                    textLabel.setText("-");
                 }
                 bStat.updateStats();
                 
@@ -169,7 +234,18 @@ public class BuildingStatPanel extends JPanel {
         }
         upgradeButton.setBackground(Color.CYAN);
 
-        JButton destroyButton = new JButton("destroy");
+        JButton destroyButton = new JButton();
+        Image destroyImg = null;
+        try {
+            destroyImg = ResourceLoader.loadBufferedImage("GUI/destroy.png");
+        } catch (IOException ex) {
+            Logger.getLogger(BuildingStatPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        ImageIcon destroyIcon = new ImageIcon(destroyImg);
+        //upgradeButton.add(label);
+        JLabel destroyLabel = new JLabel(destroyIcon);
+        destroyButton.add(destroyLabel);
+        destroyButton.setPreferredSize(new Dimension(80,40));
         destroyButton.addActionListener((ActionEvent e) -> {
             bigCityJFrame.getEngine().destroyZone(
                     zone.getTopLeftY() / bigCityJFrame.getFieldSize(),
@@ -181,7 +257,10 @@ public class BuildingStatPanel extends JPanel {
             bigCityJFrame.repaint();
             grid.removeTheSelectionOfTheSelectedZone();
         });
-        destroyButton.setBackground(Color.RED.darker());
+        destroyButton.setBackground(new Color(233, 78, 61));
+         destroyButton.setOpaque(false); // Set the button to be transparent
+        destroyButton.setContentAreaFilled(false); // Set the content area to be transparent
+        destroyButton.setBorderPainted(false); // Remove the button border
 
         upgradePanel.setLayout(new BoxLayout(upgradePanel, BoxLayout.X_AXIS));
         upgradePanel.setBackground(Color.GREEN.brighter());
