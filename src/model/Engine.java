@@ -137,6 +137,12 @@ public class Engine {
         this.citizenGenerator = new CitizenGenerator();
     }
 
+    public void setImg(int row, int column, BufferedImage image){
+        bigCityJframe.getGrid().placeImage(row,column,image);
+    }
+    public void removeImg(int row, int column){
+        bigCityJframe.getGrid().removeImage(row,column);
+    }
     
     /**
      * Constructor used for load an existing city
@@ -2398,5 +2404,9 @@ public class Engine {
      */
     public void startTime() {
         bigCityJframe.startTime();
+    }
+    
+    public BigCityJframe getBigCityJframe(){
+        return bigCityJframe;
     }
 }

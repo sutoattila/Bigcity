@@ -3,6 +3,12 @@ package GUI;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -12,6 +18,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import model.Engine;
+import res.ResourceLoader;
+import rightPanel.buildingStatPanel.BuildingStatPanel;
 
 public class DisasterDialog extends JDialog {
     private Engine e;
@@ -21,7 +29,7 @@ public class DisasterDialog extends JDialog {
      * @param label - JLabel, this contains the visible text
      * @param e     - Engine, owner of this dialog
      */
-    public DisasterDialog(JLabel label, Engine e) {
+    public DisasterDialog(JLabel label, Engine e, int row, int col) {
         this.e = e;
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -30,9 +38,20 @@ public class DisasterDialog extends JDialog {
             new AbstractAction("OK") {
                 @Override
                 public void actionPerformed(ActionEvent ae)
-                {
-                    e.startTime();
+                {                   
                     DisasterDialog.this.setVisible(false);
+
+                    Timer timer = new Timer();
+                    TimerTask task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        e.removeImg(row,col);
+                        e.getBigCityJframe().refreshGrid();
+                    }
+                    };
+
+                    timer.schedule(task, 2000); // Schedule the task to run after 2 seconds
+                    e.startTime();
                 }
             }
         );
@@ -46,6 +65,7 @@ public class DisasterDialog extends JDialog {
         add(textPanel);
         add("South",ok);
         this.pack();
+        setModal(true);
     }
     
     /**
