@@ -14,10 +14,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -36,6 +40,7 @@ import javax.swing.border.Border;
 import model.CursorSignal;
 import model.Engine;
 import res.Assets;
+import res.ResourceLoader;
 import rightPanel.BuildPanel;
 import rightPanel.BuildButton;
 import rightPanel.buildingStatPanel.BuildingStatPanel;
@@ -68,8 +73,9 @@ public class BigCityJframe extends JFrame {
 
     /**
      * Constructor
-     * @param cityname  - String, name of the city
-     * @param load      - boolean, loading an existing city or not
+     *
+     * @param cityname - String, name of the city
+     * @param load - boolean, loading an existing city or not
      */
     public BigCityJframe(String cityname, boolean load) {
         super(cityname);
@@ -267,6 +273,25 @@ public class BigCityJframe extends JFrame {
             Engine.setCursorSignal(CursorSignal.DESTROY);
         });
         buildPanel.add(destroyZone);
+
+        //For testing placeImage method of grid.
+        JButton placeImage = new JButton("placeImage");
+        placeImage.addActionListener((e) -> {
+            try {
+                grid.placeImage(3, 3,
+                        ResourceLoader.loadBufferedImage(
+                                "rightPanel/images/woman.png"));
+            } catch (IOException ex) {
+
+            }
+        });
+        buildPanel.add(placeImage);
+        //For testing removeImage method of grid.
+        JButton removeImage = new JButton("removeImage");
+        removeImage.addActionListener((e) -> {
+            grid.removeImage(3, 3);
+        });
+        buildPanel.add(removeImage);
 
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
@@ -568,8 +593,9 @@ public class BigCityJframe extends JFrame {
 
     /**
      * Loads the city with the given name
-     * @param cityName  - String, name of the city
-     * @return          - BigCityJframe, the corrent city jframe
+     *
+     * @param cityName - String, name of the city
+     * @return - BigCityJframe, the corrent city jframe
      */
     public static BigCityJframe loadGame(String cityName) {
         BigCityJframe frame = new BigCityJframe(cityName, true);

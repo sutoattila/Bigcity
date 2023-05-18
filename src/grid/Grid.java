@@ -13,6 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 import model.Coords;
@@ -47,6 +48,8 @@ public class Grid extends JPanel {
 
     private Zone selectedZone = null;
 
+    private ArrayList<ImagesWithCoords> images;
+
     public Grid(int fieldSize, int width, int height, Engine engine,
             BigCityJframe bifCityJFrame) {
         this.fieldSize = fieldSize;
@@ -57,6 +60,8 @@ public class Grid extends JPanel {
 
         mousePositionX = -1;
         mousePositionY = -1;
+
+        images = new ArrayList<>();
 
         setPreferredSize(new Dimension(width * fieldSize, height * fieldSize));
         setBackground(new Color(34, 177, 77));
@@ -163,6 +168,14 @@ public class Grid extends JPanel {
                 }
             }
         }
+
+        images.forEach(image -> g2.drawImage(image.getImage(),
+                image.getCoords().getX() * fieldSize,
+                image.getCoords().getY() * fieldSize,
+                fieldSize,
+                fieldSize,
+                null)
+        );
 
         if (mousePositionX != -1 && mousePositionY != -1) {
             int rowStart = mousePositionY / fieldSize;
@@ -459,6 +472,17 @@ public class Grid extends JPanel {
                 }
             }
         }
+    }
+
+    public void placeImage(int row, int column, BufferedImage image) {
+        images.add(new ImagesWithCoords(image, new Coords(column, row)));
+        this.repaint();
+    }
+
+    public void removeImage(int row, int column) {
+        images.removeIf(image -> image.getCoords().getX() == column
+                && image.getCoords().getY() == row);
+        this.repaint();
     }
 
 }
