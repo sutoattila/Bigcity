@@ -66,6 +66,11 @@ public class BigCityJframe extends JFrame {
     protected StatElement money;
     protected StatElement happy;
 
+    /**
+     * Constructor
+     * @param cityname  - String, name of the city
+     * @param load      - boolean, loading an existing city or not
+     */
     public BigCityJframe(String cityname, boolean load) {
         super(cityname);
         this.cityName = cityname;
@@ -355,6 +360,9 @@ public class BigCityJframe extends JFrame {
         buildPanel.repaint();
     }
 
+    /**
+     * Repaints the statistics panel and the grid
+     */
     public void repaintStatPanelAndGrid() {
         if (null != statPanel) {
             if (null != statPanel.getpPanel()) {
@@ -367,6 +375,9 @@ public class BigCityJframe extends JFrame {
         grid.repaint();
     }
 
+    /**
+     * Simulates like a day passes
+     */
     public void dayPassed() {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -377,6 +388,9 @@ public class BigCityJframe extends JFrame {
         engine.dayPassed();
     }
 
+    /**
+     * Simulates like 10 days passed
+     */
     public void daysPassed() {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -387,6 +401,9 @@ public class BigCityJframe extends JFrame {
         engine.daysPassed();
     }
 
+    /**
+     * Simulates like a month passed
+     */
     public void monthPassed() {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -400,6 +417,9 @@ public class BigCityJframe extends JFrame {
         engine.monthPassed(daysDiff);
     }
 
+    /**
+     * Calls the proper time manipulation function
+     */
     public void timerTicked() {
         switch (timeSpeed) {
             case DAY ->
@@ -546,6 +566,11 @@ public class BigCityJframe extends JFrame {
         this.date.setTime(value);
     }
 
+    /**
+     * Loads the city with the given name
+     * @param cityName  - String, name of the city
+     * @return          - BigCityJframe, the corrent city jframe
+     */
     public static BigCityJframe loadGame(String cityName) {
         BigCityJframe frame = new BigCityJframe(cityName, true);
         frame.getEngine().calculateHappieness();
@@ -554,10 +579,16 @@ public class BigCityJframe extends JFrame {
         return frame;
     }
 
+    /**
+     * Stops the time
+     */
     public void stopTime() {
         isStopped = true;
     }
 
+    /**
+     * Starts the time
+     */
     public void startTime() {
         isStopped = false;
     }

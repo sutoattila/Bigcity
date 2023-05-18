@@ -43,6 +43,9 @@ public class Person {
         return happiness;
     }
 
+    /**
+     * Increases the education level if possible
+     */
     public void educate() {
         if (EducationLevel.UNIVERSITY == educationLevel) {
             return;
@@ -74,6 +77,9 @@ public class Person {
         happinessGuard();
     }
 
+    /**
+     * Simulates the death of the person as setting their age to 18
+     */
     public void die() {
         age = 18;
         educationLevel = EducationLevel.PRIMARY_SCHOOL;

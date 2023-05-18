@@ -12,6 +12,10 @@ public class PersonsPanel extends JPanel{
     protected List<Person> people;
     private static final int SINGLESIZE = 50;
     
+    /**
+     * Constructor
+     * @param persons - Person collection, persons that the statistic panel is about
+     */
     public PersonsPanel(Person... persons) {
         super();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -24,6 +28,10 @@ public class PersonsPanel extends JPanel{
         
     }
     
+    /**
+     * Constructor
+     * @param persons - List, persons that the statistic panel is about
+     */
     public PersonsPanel(List<Person> persons) {
         super();
         people = persons;
@@ -40,6 +48,9 @@ public class PersonsPanel extends JPanel{
         preferedDimension = d;
     }
     
+    /**
+     * Updates the displayed people
+     */
     public void updatePeople() {
         removeAll();
         for (Person person : people) {

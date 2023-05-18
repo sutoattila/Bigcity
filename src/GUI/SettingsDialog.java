@@ -31,6 +31,10 @@ public class SettingsDialog extends JDialog implements ChangeListener{
     protected JLabel income;
     protected JLabel expenses;
     
+    /**
+     * Constructor
+     * @param frame - BigCityJframe the owner of this dialog
+     */
     public SettingsDialog(BigCityJframe frame) {
         super(frame, "Beállítások", true);
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -107,6 +111,9 @@ public class SettingsDialog extends JDialog implements ChangeListener{
         expenses.setText("Éves kiadások: " + calculateExpenses());
     }
     
+    /**
+     * Sets this SettingsDialog visible
+     */
     public void setActive() {
         setLocationRelativeTo(null);
         int tmp = frame.getCurrentTax();

@@ -354,6 +354,10 @@ public enum Disaster {
         this.action = action;
     }
 
+    /**
+     * Activates the action of the diasester
+     * @param e - Engine, the game engine this disaster is attached to
+     */
     public void activate(Engine e) {
         action.accept(e);
     }

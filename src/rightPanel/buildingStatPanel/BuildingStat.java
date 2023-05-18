@@ -10,16 +10,15 @@ import javax.swing.JPanel;
 import roundPanel.RoundedBorder;
 
 public class BuildingStat extends JPanel {
-    // TODO hatékonyságnövelés: Mind a BuildStatPanel, mind a PersonPanel egyke
-    //      osztály és csak beállítom hogy éppen mit mutatson
-    //      Vagy minden épület eltárolja a saját stat paneljét és csak azt
-    //      jeleníti meg, ha nincs még, létrehozza
-    
     private Zone building;
     private final JLabel level;
     private JLabel size;
     private JLabel capacity;
     
+    /**
+     * Constructor
+     * @param building - Zone, the zone about which the statistics are created
+     */
     public BuildingStat(Zone building) {
         super();
         setBackground(Color.WHITE);
@@ -60,6 +59,9 @@ public class BuildingStat extends JPanel {
         setMaximumSize(new Dimension(150, 1000));
     }
     
+    /**
+     * Update the statistic of the zone
+     */
     public void updateStats() {
         if(building instanceof PrivateZone){
             level.setText("3/"+building.getLevel());

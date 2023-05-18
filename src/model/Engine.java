@@ -81,6 +81,13 @@ public class Engine {
     private int negativeBudgetStartYear = 0;
     private int negativeBudgetCurrentYear = 0;
 
+    /**
+     * Constructor
+     * @param width         - int, width of the field
+     * @param height        - int, heigh of the field
+     * @param fieldSize     - int, the pixel count of a single zone square
+     * @param bigCityJframe - bigCityJframe, the owner of this engine
+     */
     public Engine(int width, int height, int fieldSize, BigCityJframe bigCityJframe) {
         this.width = width;
         this.height = height;
@@ -112,7 +119,6 @@ public class Engine {
         this.height = height;
         this.fieldSize = fieldSize;
         this.money = 1000;
-        //this.bigCityJframe = bigCityJframe;
         this.taxPercentage = 20;
         this.disasterChance = 0;
         this.rnd = new Random();
@@ -131,6 +137,12 @@ public class Engine {
         this.citizenGenerator = new CitizenGenerator();
     }
 
+    
+    /**
+     * Constructor used for load an existing city
+     * @param cityName      - Stirng, the name of the city
+     * @param bigCityJframe - BigCityJframe, owner of this engine
+     */
     public Engine(String cityName, BigCityJframe bigCityJframe) {
         try ( BufferedReader reader = new BufferedReader(new FileReader("savedGames/" + cityName + ".txt"))) {
             String line = reader.readLine();
@@ -215,7 +227,6 @@ public class Engine {
                 line = reader.readLine();
             }
 
-            //Name;31;true;96;PRIMARY_SCHOOL;3;1;-1;-1
             while (line != null && line.split(";").length == 9) {
                 String splitted[] = line.split(";");
                 String pName = splitted[0];
@@ -2012,6 +2023,11 @@ public class Engine {
         return name;
     }
 
+    /**
+     * Add x amout of money to the savings of the city
+     * @param value - int, the amout you want to add
+     * @return      - int, the new amout of money
+     */
     public int addMoney(int value) {
         money += value;
         return money;
@@ -2046,6 +2062,10 @@ public class Engine {
         return combinedHappiness;
     }
 
+    /**
+     * Collect the right amout of money from residents
+     * @param daysPassed - how many days passed sience last call
+     */
     public void collectTax(int daysPassed) {
         for (Person p : residents) {
             yearlyIncome += (double) (0.2 * daysPassed * taxPercentage) / 100 * p.getEducationLevel().getLevel();
@@ -2068,6 +2088,10 @@ public class Engine {
         }
     }
 
+    /**
+     * Educate the right amount of residents
+     * @param daysPassed - how many days passed sience last call
+     */
     public void educatePeople(int daysPassed) {
         int hsd = 0;
         int ud = 0;
@@ -2130,6 +2154,14 @@ public class Engine {
         }
     }
 
+    /**
+     * Finds all accessible residences
+     * @param row           - int, row of the starting coordinates
+     * @param col           - int, col of the starting coordinates
+     * @param fieldWidth    - int, the width in zones of the starting zone
+     * @param fieldHeight   - int, the height in zones of the starting zone
+     * @return              - Set of residences that are accessible
+     */
     public Set<Residence> findResidencesOnRoad(int row, int col, int fieldWidth, int fieldHeight) {
         Set<Residence> res = new HashSet<>();
         Set<Zone> checkedZones = new HashSet<>();
@@ -2224,12 +2256,18 @@ public class Engine {
         return buildings;
     }
 
+    /**
+     * Refreshes the happiness
+     */
     public void refreshHappiness() {
         calculateHappieness();
         bigCityJframe.setHappiness(Math.round(combinedHappiness));
         bigCityJframe.repaintStatPanelAndGrid();
     }
 
+    /**
+     * Generates a random disaster
+     */
     public void makeDisaster() {
         int index = rnd.nextInt(Disaster.values().length);
         Disaster.values()[index].activate(Engine.this);
@@ -2240,17 +2278,30 @@ public class Engine {
         }
     }
 
-    public boolean isZoneSelected(int row, int col) {
+    /**
+     * Returns if a zone is selected and if the coordinates are equal with the givens
+     * @param row   - int, row index
+     * @param col   - int, column index
+     * @return      - boolean, false if there is no selected zone or the coordinates
+     * dont match, true if there is a selected zone with matching coordinates
+     */
+   public boolean isZoneSelected(int row, int col) {
         if (bigCityJframe.getStatPanel() != null) {
             return bigCityJframe.getStatPanel().getZone() == grid[row][col];
         }
         return false;
     }
 
+    /**
+    * Uncelect the selected zone
+    */
     public void unselectZone() {
         bigCityJframe.changeRightPanelToBuildPanel();
     }
 
+    /**
+     * Saves the current game
+     */
     public void saveGame() {
         try {
             var tmp = Files.lines(Path.of("savedGames", "savedGames.txt"));
@@ -2335,10 +2386,16 @@ public class Engine {
         }
     }
 
+    /**
+     * Stops the time
+     */
     public void stopTime() {
         bigCityJframe.stopTime();
     }
 
+    /**
+     * starts the time
+     */
     public void startTime() {
         bigCityJframe.startTime();
     }

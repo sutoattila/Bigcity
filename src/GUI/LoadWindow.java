@@ -12,8 +12,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -37,6 +35,10 @@ public class LoadWindow extends JFrame{
     protected JScrollPane listScroller;
     protected JPanel mainContent;
     
+    /**
+     * Constructor
+     * @param menu - MainMenu, the menu that called this LoadWindow attached to
+     */
     protected LoadWindow(MainMenu menu) {
         super();
         this.menu = menu;
@@ -168,6 +170,10 @@ public class LoadWindow extends JFrame{
         setLocationRelativeTo(null);
     }
     
+    /**
+     * Set LoadWindow visible
+     * @param menu - MainMenu, the menu that called this LoadWindow attached to
+     */
     public void showLoadWindow(MainMenu menu) {
         setLocationRelativeTo(null);
         refreshOptions();
@@ -175,6 +181,9 @@ public class LoadWindow extends JFrame{
         setVisible(true);
     }
     
+    /**
+     * Refreshes the loadble options
+     */
     protected final void refreshOptions() {
         try {
             if(null != listScroller)
