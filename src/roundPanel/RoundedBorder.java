@@ -26,6 +26,12 @@ public class RoundedBorder extends AbstractBorder {
     }
     */
 
+    /**
+     * Constructor
+     * @param color     - Color, color of the graphics context
+     * @param thickness - int, thickness of the border
+     * @param radii     - int, rounding value
+     */
     public RoundedBorder(Color color, int thickness, int radii) {
         strokePadding = thickness / 2;
         int padding = radii + strokePadding;
