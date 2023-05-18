@@ -18,7 +18,11 @@ public class PersonStat extends JPanel{
     private static BufferedImage male = scaleImage(14, 32, "rightPanel/images/man.png");
     private static BufferedImage female = scaleImage(14, 32, "rightPanel/images/woman.png");
     
-    PersonStat(Person p){
+    /**
+     * Constructor
+     * @param p - Person, the person about which the statistics are created
+     */
+    public PersonStat(Person p){
         setBackground(p.isMale() ? Color.CYAN : Color.PINK);
         person = p;
         JPanel panel = new JPanel();

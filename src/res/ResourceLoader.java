@@ -26,6 +26,13 @@ public class ResourceLoader {
         return ImageIO.read(url);
     }
 
+    /**
+     * Opens a picture with the gives sizes
+     * @param WIDTH     - int, width in pixels
+     * @param HEIGHT    - int, height in pixels
+     * @param filename  - String, the file name of the picture
+     * @return          - BufferedImage, the opened and resized image
+     */
     public static BufferedImage scaleImage(int WIDTH, int HEIGHT, String filename) {
         BufferedImage bi;
         try {

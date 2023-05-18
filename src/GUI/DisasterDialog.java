@@ -16,6 +16,11 @@ import model.Engine;
 public class DisasterDialog extends JDialog {
     private Engine e;
     
+    /**
+     * Constructor
+     * @param label - JLabel, this contains the visible text
+     * @param e     - Engine, owner of this dialog
+     */
     public DisasterDialog(JLabel label, Engine e) {
         this.e = e;
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -43,6 +48,9 @@ public class DisasterDialog extends JDialog {
         this.pack();
     }
     
+    /**
+     * Set DisasterDialog visible
+     */
     public void setActive() {
         e.stopTime();
         setLocationRelativeTo(null);

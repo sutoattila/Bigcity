@@ -44,6 +44,9 @@ public class Residence extends PrivateZone {
         return level;
     }
 
+    /**
+     * Removes all residents
+     */
     public void clearResidents() {
         residents.clear();
     }
