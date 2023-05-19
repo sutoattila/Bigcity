@@ -635,11 +635,11 @@ public class EngineTest {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         engine.setDaysPassedWithoutDisaster(100);
         engine.setDisasterChance(2.0);
-        engine.makeDisaster();
+        engine.makeDisasterForTesting();
         assertEquals(0, engine.getDaysPassedWithoutDisaster());
         assertEquals(1.0, engine.getDisasterChance());
         engine.setDisasterChance(0.0);
-        engine.makeDisaster();
+        engine.makeDisasterForTesting();
         assertEquals(0.0, engine.getDisasterChance());
     }
 }

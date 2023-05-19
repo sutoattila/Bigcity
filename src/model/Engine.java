@@ -2392,7 +2392,16 @@ public class Engine {
             System.out.println(e.getMessage());
         }
     }
-
+    /**
+     * Implements disaster without JFrame using
+     */
+    public void makeDisasterForTesting(){
+        daysPassedWithoutDisaster = 0;
+        disasterChance -= 1.0;
+        if (disasterChance < 0) {
+            disasterChance = 0.0;
+        }
+    }
     /**
      * Stops the time
      */
