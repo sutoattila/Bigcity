@@ -2275,6 +2275,7 @@ public class Engine {
      * Generates a random disaster
      */
     public void makeDisaster() {
+        //int index=2;
         int index = rnd.nextInt(Disaster.values().length);
         Disaster.values()[index].activate(Engine.this);
         daysPassedWithoutDisaster = 0;

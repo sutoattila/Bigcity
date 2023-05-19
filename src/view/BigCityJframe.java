@@ -607,5 +607,7 @@ public class BigCityJframe extends JFrame {
     public void startTime() {
         isStopped = false;
     }
-    
+    public BuildPanel getBuildPanel(){
+        return buildPanel;
+    }
 }
