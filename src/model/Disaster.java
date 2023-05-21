@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JLabel;
 import res.ResourceLoader;
-import rightPanel.BuildPanel;
 import rightPanel.buildingStatPanel.BuildingStatPanel;
 
 public enum Disaster {
@@ -24,7 +23,7 @@ public enum Disaster {
 
         @Override
         public void accept(Engine e) {
-            setBuildPanel(e);
+            
             if (rnd == null) {
                 rnd = new Random();
             }
@@ -67,7 +66,7 @@ public enum Disaster {
 
         @Override
         public void accept(Engine e) {
-            setBuildPanel(e);
+            
             if (rnd == null) {
                 rnd = new Random();
             }
@@ -158,7 +157,7 @@ public enum Disaster {
 
         @Override
         public void accept(Engine e) {
-            setBuildPanel(e);
+            
             if (rnd == null) {
                 rnd = new Random();
             }
@@ -283,7 +282,7 @@ public enum Disaster {
             decreaseHappiness(e.getResidents(), -30);
             e.refreshHappiness();
             dialog.setActive();
-            setBuildPanel(e);
+            
         }
     }
     ), SMALL_TORNADO(
@@ -293,7 +292,7 @@ public enum Disaster {
 
         @Override
         public void accept(Engine e) {
-            setBuildPanel(e);
+            
             if (rnd == null) {
                 rnd = new Random();
             }
@@ -349,7 +348,7 @@ public enum Disaster {
             decreaseHappiness(e.getResidents(), -10);
             e.refreshHappiness();
             dialog.setActive();
-            setBuildPanel(e);
+            
         }
     }), MEDIUM_TORNADO(
             new Consumer<Engine>() {
@@ -358,7 +357,6 @@ public enum Disaster {
 
         @Override
         public void accept(Engine e) {
-            setBuildPanel(e);
             if (rnd == null) {
                 rnd = new Random();
             }
@@ -457,7 +455,6 @@ public enum Disaster {
             decreaseHappiness(e.getResidents(), -20);
             e.refreshHappiness();
             dialog.setActive();
-            setBuildPanel(e);
         }
     }), BIG_TORNADO(
             new Consumer<Engine>() {
@@ -466,7 +463,6 @@ public enum Disaster {
 
         @Override
         public void accept(Engine e) {
-            setBuildPanel(e);
             if (rnd == null) {
                 rnd = new Random();
             }
@@ -603,7 +599,6 @@ public enum Disaster {
             decreaseHappiness(e.getResidents(), -30);
             e.refreshHappiness();
             dialog.setActive();
-            setBuildPanel(e);
         }
     });
     ;
@@ -621,13 +616,6 @@ public enum Disaster {
      */
     public void activate(Engine e) {
         action.accept(e);
-    }
-    private static void setBuildPanel(Engine e){
-        Engine.setCursorSignal(CursorSignal.SELECT);
-        e.getBigCityJframe().getGrid().removeTheSelectionOfTheSelectedZone();
-        BuildPanel.deleteSelection();
-        e.getBigCityJframe().revalidate();
-        e.getBigCityJframe().refreshGrid();
     }
 
     private static void decreaseHappiness(List<Person> residents, int value) {

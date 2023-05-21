@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.swing.Box;
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -28,7 +27,11 @@ import view.BigCityJframe;
  */
 
 public class ThreeColumnLayout extends JPanel {
-    private JFrame parent;
+    private final JFrame parent;
+    /**
+     * Constructor
+     * @param parent 
+     */
     public ThreeColumnLayout(JFrame parent) {
         this.parent = parent;
         // Create a GridBagLayout
