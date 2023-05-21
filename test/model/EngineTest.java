@@ -1,9 +1,7 @@
 package model;
 
 import bigcity.Person;
-import bigcity.Residence;
 import java.util.ArrayList;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -635,11 +633,11 @@ public class EngineTest {
         Engine engine = new Engine(10, 10, 1, "bigcity");
         engine.setDaysPassedWithoutDisaster(100);
         engine.setDisasterChance(2.0);
-        engine.makeDisaster();
+        engine.makeDisasterForTesting();
         assertEquals(0, engine.getDaysPassedWithoutDisaster());
         assertEquals(1.0, engine.getDisasterChance());
         engine.setDisasterChance(0.0);
-        engine.makeDisaster();
+        engine.makeDisasterForTesting();
         assertEquals(0.0, engine.getDisasterChance());
     }
 }

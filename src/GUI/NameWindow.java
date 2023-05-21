@@ -13,7 +13,9 @@ import javax.swing.JLabel;
 public class NameWindow extends JFrame{
     private ThreeColumnLayout panel;
     private ImageIcon backgroundImage;
-
+    /**
+     * Constructor
+     */
     public NameWindow() {
 
         // Load the background image

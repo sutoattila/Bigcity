@@ -12,7 +12,11 @@ import roundPanel.RoundedBorder;
 
 public class StatElement extends JPanel {
     protected JLabel text;
-    
+    /**
+     * Constructor
+     * @param filename
+     * @param text 
+     */
     public StatElement(String filename, String text) {
         setPreferredSize(new Dimension(150, 40));
         

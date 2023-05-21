@@ -11,7 +11,9 @@ public class MainMenu extends JFrame {
     JLabel gap;
     private ImageIcon backgroundImage;
     protected LoadWindow load;
-
+    /**
+     * Constructor 
+     */
     public MainMenu() {
         // Set the title of the JFrame
         setTitle("BigCity");

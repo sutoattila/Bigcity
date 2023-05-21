@@ -137,6 +137,12 @@ public class Engine {
         this.citizenGenerator = new CitizenGenerator();
     }
 
+    public void setImg(int row, int column, BufferedImage image){
+        bigCityJframe.getGrid().placeImage(row,column,image);
+    }
+    public void removeImg(int row, int column){
+        bigCityJframe.getGrid().removeImage(row,column);
+    }
     
     /**
      * Constructor used for load an existing city
@@ -2269,6 +2275,7 @@ public class Engine {
      * Generates a random disaster
      */
     public void makeDisaster() {
+        //int index=2;
         int index = rnd.nextInt(Disaster.values().length);
         Disaster.values()[index].activate(Engine.this);
         daysPassedWithoutDisaster = 0;
@@ -2385,7 +2392,16 @@ public class Engine {
             System.out.println(e.getMessage());
         }
     }
-
+    /**
+     * Implements disaster without JFrame using
+     */
+    public void makeDisasterForTesting(){
+        daysPassedWithoutDisaster = 0;
+        disasterChance -= 1.0;
+        if (disasterChance < 0) {
+            disasterChance = 0.0;
+        }
+    }
     /**
      * Stops the time
      */
@@ -2398,5 +2414,9 @@ public class Engine {
      */
     public void startTime() {
         bigCityJframe.startTime();
+    }
+    
+    public BigCityJframe getBigCityJframe(){
+        return bigCityJframe;
     }
 }

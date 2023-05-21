@@ -10,8 +10,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -273,25 +279,6 @@ public class BigCityJframe extends JFrame {
             Engine.setCursorSignal(CursorSignal.DESTROY);
         });
         buildPanel.add(destroyZone);
-
-        //For testing placeImage method of grid.
-        JButton placeImage = new JButton("placeImage");
-        placeImage.addActionListener((e) -> {
-            try {
-                grid.placeImage(3, 3,
-                        ResourceLoader.loadBufferedImage(
-                                "rightPanel/images/woman.png"));
-            } catch (IOException ex) {
-
-            }
-        });
-        buildPanel.add(placeImage);
-        //For testing removeImage method of grid.
-        JButton removeImage = new JButton("removeImage");
-        removeImage.addActionListener((e) -> {
-            grid.removeImage(3, 3);
-        });
-        buildPanel.add(removeImage);
 
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
@@ -578,7 +565,9 @@ public class BigCityJframe extends JFrame {
     public BuildingStatPanel getStatPanel() {
         return statPanel;
     }
-
+    public Grid getGrid(){
+        return grid;
+    }
     public String getCityName() {
         return cityName;
     }
@@ -617,5 +606,8 @@ public class BigCityJframe extends JFrame {
      */
     public void startTime() {
         isStopped = false;
+    }
+    public BuildPanel getBuildPanel(){
+        return buildPanel;
     }
 }
