@@ -270,6 +270,7 @@ public class BigCityJframe extends JFrame {
                 egyetem
         );
 
+        /*
         // IDEIGLENES GOMB -----------------------------------------------------
         // Keep it for test. It's faster (not faster performance but easier to 
         // use) to destroy a zone with this. It makes easier to destroy multiple
@@ -279,6 +280,7 @@ public class BigCityJframe extends JFrame {
             Engine.setCursorSignal(CursorSignal.DESTROY);
         });
         buildPanel.add(destroyZone);
+        */
 
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
