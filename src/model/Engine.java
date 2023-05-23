@@ -1411,20 +1411,10 @@ public class Engine {
         }
     }
 
-    private void timePassedHelper(int newResidentsCount, int daysPassed) {
-
-        double ratio = daysPassed / 30.0;
-
-        //Find all residences.
-        //Find all industries and services connected to a residence. Store every 
-        //connections. Store the distances. Sort according the distances.
-        //Residences with no connection are stored separately from those with
-        //connections.
-        ArrayList<Residence> residences = findResidences();
-
-        ArrayList<ResidenceWorkplaceDistance> distances = new ArrayList<>();
-        ArrayList<Residence> residencesWithNoWorkplace = new ArrayList<>();
-
+    private void stockUp(ArrayList<Residence> residences, 
+            ArrayList<ResidenceWorkplaceDistance> distances,
+            ArrayList<Residence> residencesWithNoWorkplace) {
+        
         residences.forEach(residence -> {
             HashSet<Zone> foundZones = new HashSet<>();
             foundZones.add(residence);
@@ -1464,8 +1454,11 @@ public class Engine {
         });
 
         Collections.sort(distances);
-
-        //The new residents try to take the best places.
+    }
+    
+    private int tryTakeBestPlace(int newResidentsCount, 
+            ArrayList<Residence> residencesWithNoWorkplace,
+            ArrayList<ResidenceWorkplaceDistance> distances) {
         while (newResidentsCount > 0) {
             Person newPerson = citizenGenerator.createCitizen();
             boolean movedIn = residentTriesToMoveIn(newPerson, distances,
@@ -1479,24 +1472,11 @@ public class Engine {
 
             newResidentsCount--;
         }
-
-        //Calculate the happiness of each resident. The happiness changes with a
-        //calculated value everyday.
-        //has job: +1
-        //doesn't have job: -1
-        //Person objects should store the distance between house and workplace.
-        //distance between house and workplace: (distance/5==0) [1;4]-> +1,
-        //[5,...[ -> -1*2^n where n=distance/5
-        //Zone happiness change according range. (industry, stadium)
-        //Happiness change according saturation(home, job). If capacity==size
-        //and there is no police nearby, then -3.
-        //Calculate the average happiness. Write it to the top panel.
-        //has job: +1
-        //doesn't have job: -1
-        //Person objects should store the distance between house and workplace.
-        //distance between house and workplace: (distance/5==0) [1;4]-> +1,
-        //[5,...[ -> -1*2^n where n=distance/5
-        residents.forEach(resident -> {
+        return newResidentsCount;
+    }
+    
+    private void changeHappinessByJob(double ratio) {
+    residents.forEach(resident -> {
             if (null == resident.getJob()) {
                 resident.changeHappinessBy(-1 * ratio);                                 
             } else {
@@ -1512,7 +1492,31 @@ public class Engine {
                 resident.changeHappinessBy(happinessChangeAccordingDistance * ratio);     
             }
         });
-        //Find all industries and stadiums. Change happiness inside the range.
+    }
+    
+    private void changeHappinessByStadium(double ratio) {
+        findAllStadiums().forEach(stadium -> {
+            findCoordsInsideRange(stadium, Stadium.range)
+                    .forEach(coords -> {
+                        Zone zone = grid[coords.getY()][coords.getX()];
+                        if (null != zone) {
+                            if (zone instanceof Residence residence) {
+                                residence.getResidents().forEach(
+                                        resident -> {
+                                            resident.changeHappinessBy(4 * ratio);  
+                                        });
+                            } else if (zone instanceof Workplace workplace) {
+                                workplace.getWorkers().forEach(
+                                        worker -> {
+                                            worker.changeHappinessBy(4 * ratio);     
+                                        });
+                            }
+                        }
+                    });
+        });
+    }
+    
+    private void changeHappinessByIndusties(double ratio) {
         findAllIndustries().forEach(industry -> {
             if (industry.getSize() > 0) {
                 findCoordsInsideRange(industry, Industry.range)
@@ -1534,27 +1538,9 @@ public class Engine {
                         });
             }
         });
-
-        findAllStadiums().forEach(stadium -> {
-            findCoordsInsideRange(stadium, Stadium.range)
-                    .forEach(coords -> {
-                        Zone zone = grid[coords.getY()][coords.getX()];
-                        if (null != zone) {
-                            if (zone instanceof Residence residence) {
-                                residence.getResidents().forEach(
-                                        resident -> {
-                                            resident.changeHappinessBy(4 * ratio);  
-                                        });
-                            } else if (zone instanceof Workplace workplace) {
-                                workplace.getWorkers().forEach(
-                                        worker -> {
-                                            worker.changeHappinessBy(4 * ratio);     
-                                        });
-                            }
-                        }
-                    });
-        });
-
+    }
+    
+    private void changeHappinessByPolices(double ratio) {
         ///Happiness change according saturation(home, job). If capacity==size
         //and there is no police nearby, then -3.
         ArrayList<Coords> coordsInPoliceRange = new ArrayList<>();
@@ -1618,8 +1604,9 @@ public class Engine {
                 }
             }
         });
-
-        //Negative budget decrease the happiness.
+    }
+    
+    private void changeHappinessByNegativeMoney(double ratio) {
         if (money < 0) {
 
             Date currentDate = new Date(0);
@@ -1649,17 +1636,18 @@ public class Engine {
             yearsWithNegativeBudgetCount = 0;
             negativeBudgetStartYear = 0;
         }
-
-        //Happiness change according tax rate.
+    }
+    
+    private void changeHappinessByTax(double ratio) {
         int happinessChangeAccordingTaxRate = taxPercentage / 30;
         //System.out.println(-1 * happinessChangeAccordingTaxRate);
         if (0 != taxPercentage) {
             residents.forEach(person -> person
                     .changeHappinessBy(-1 * happinessChangeAccordingTaxRate * ratio)); 
         }
-
-        //Big difference between industry and service workers causes negative 
-        //happiness.
+    }
+    
+    private void changeHappinessByWorkingProportion(double ratio) {
         int numberOfIndustryWorkers = 0;
         int numberOfServiceWorkers = 0;
         for (Person resident : residents) {
@@ -1679,7 +1667,31 @@ public class Engine {
         }/* else {
             System.out.println("The difference is less than 50%.");
         }*/
+    }
+    
+    private void timePassedHelper(int newResidentsCount, int daysPassed) {
 
+        double ratio = daysPassed / 30.0;
+
+        ArrayList<Residence> residences = findResidences();
+        ArrayList<ResidenceWorkplaceDistance> distances = new ArrayList<>();
+        ArrayList<Residence> residencesWithNoWorkplace = new ArrayList<>();
+
+        stockUp(residences, distances, residencesWithNoWorkplace);
+
+        //The new residents try to take the best places.
+        newResidentsCount = tryTakeBestPlace(newResidentsCount,
+                residencesWithNoWorkplace,
+                distances);
+
+        changeHappinessByJob(ratio);
+        changeHappinessByIndusties(ratio);
+        changeHappinessByStadium(ratio);
+        changeHappinessByPolices(ratio);
+        changeHappinessByNegativeMoney(ratio);
+        changeHappinessByTax(ratio);
+        changeHappinessByWorkingProportion(ratio);
+        
         //Residents with low happiness move out. (<10%)
         //The starter group won't move out unless there is not enough place.
         ArrayList<Person> peopleMoveOut = new ArrayList<>();
