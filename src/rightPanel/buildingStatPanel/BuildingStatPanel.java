@@ -130,7 +130,7 @@ public class BuildingStatPanel extends JPanel {
         } else {
             hasCitizens = false;
         }
-        bStat = new BuildingStat(zone);
+        bStat = new BuildingStat(zone, bigCityJFrame.getEngine());
         addElements();
         setPreferredSize(new Dimension(170, 100));
     }
