@@ -38,7 +38,7 @@ public class PersonStat extends JPanel{
         this.add(Box.createRigidArea(new Dimension(20,0)));
         this.add(Box.createHorizontalGlue());
         JLabel happiness = new JLabel(person.getIntegerHappiness()+"%");
-        happiness.setFont(new Font("Arial", Font.BOLD, 15));
+        happiness.setFont(new Font("Arial", Font.BOLD, 13));
         happiness.setForeground(Color.MAGENTA.darker());
         this.add(happiness);
         setPreferredSize(new Dimension(100, 50));
