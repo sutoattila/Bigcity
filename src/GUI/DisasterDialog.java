@@ -51,6 +51,10 @@ public class DisasterDialog extends JDialog {
                     System.out.println("Sleep error");
                 }
                 DisasterDialog.this.setVisible(false);
+                e.getBigCityJframe().getGrid().ClearImages();
+                e.getBigCityJframe().getGrid().revalidate();
+                e.getBigCityJframe().getGrid().repaint();
+
                 e.startTime();
             }
         }
